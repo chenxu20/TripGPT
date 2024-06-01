@@ -7,50 +7,50 @@ import { db } from './config/firebase';
 import { getDocs, collection, addDoc } from 'firebase/firestore';
 
 function App() {
-  const [movieList, setMovieList] = useState([]);
-  const [newMovieTitle, setNewMovieTitle] = useState("");
-  const [newReleaseDate, setNewReleaseDate] = useState(0);
-  const [isNewMovieOscar, setIsNewMovieOscar] = useState(false);
+  // const [movieList, setMovieList] = useState([]);
+  // const [newMovieTitle, setNewMovieTitle] = useState("");
+  // const [newReleaseDate, setNewReleaseDate] = useState(0);
+  // const [isNewMovieOscar, setIsNewMovieOscar] = useState(false);
 
-  const moviesCollectionRef = collection(db, "movies");
+  // const moviesCollectionRef = collection(db, "movies");
 
-  const getMovieList = async () => {
-    //read data from DB
-    try {
-      const data = await getDocs(moviesCollectionRef);
-      const filteredData = data.docs.map( (doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setMovieList(filteredData);
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  // const getMovieList = async () => {
+  //   //read data from DB
+  //   try {
+  //     const data = await getDocs(moviesCollectionRef);
+  //     const filteredData = data.docs.map( (doc) => ({
+  //       ...doc.data(),
+  //       id: doc.id,
+  //     }));
+  //     setMovieList(filteredData);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
 
-  useEffect( () => {
+  // useEffect( () => {
 
-    getMovieList();
-  }, [])
+  //   getMovieList();
+  // }, [])
 
-  const onSubmitMovie = async () => {
-    try {
-        await addDoc(moviesCollectionRef, {
-        title: newMovieTitle,
-        releaseDate: newReleaseDate,
-        receivedAnOscar: isNewMovieOscar,
-      });
+  // const onSubmitMovie = async () => {
+  //   try {
+  //       await addDoc(moviesCollectionRef, {
+  //       title: newMovieTitle,
+  //       releaseDate: newReleaseDate,
+  //       receivedAnOscar: isNewMovieOscar,
+  //     });
 
-      getMovieList();
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  //     getMovieList();
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
 
   return (
     <div className="App">
       <Auth />
-      <div>
+      {/* <div>
         <input 
           placeholder="Movie title..." 
           onChange={ e => setNewMovieTitle(e.target.value)}
@@ -76,7 +76,7 @@ function App() {
             <p> Date: {movie.releaseDate} </p>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   )
 }
