@@ -11,7 +11,7 @@ const items = [{
     name: "My Trips",
     link: "/trips"
 }, {
-    name: "Profile",
+    name: "Sign in",
     link: "/signin"
 }];
 
