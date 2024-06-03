@@ -52,6 +52,7 @@
 .wrapper a {
     color: inherit;
     text-decoration-thickness: 2px;
+    transition: color 0.25s;
 }
 
 .wrapper a:hover {
