@@ -1,8 +1,7 @@
-# React + Vite
+# TripGPT
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Repository for team 6062, Orbital 2024.
 
-Currently, two official plugins are available:
+TripGPT is an integrated all-in-one web application for trip planning, where users are able to plan and record their itineraries effectively.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Read more about TripGPT [here](https://docs.google.com/document/d/13d1yeRQwGctGxK0xbxH41uOKBl_8LjMq69w_CJAJEhY/edit?usp=sharing).
