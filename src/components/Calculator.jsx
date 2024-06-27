@@ -1,6 +1,7 @@
 import "./Calculator.css"
 import React from "react"
 import AutoAddExpense from "./AutoAddExpense"
+import ManualAddExpense from "./ManualAddExpense"
 import { nanoid } from "nanoid"
 
 export default function Calculator() {
@@ -14,34 +15,7 @@ export default function Calculator() {
     const [name, setName] = React.useState("")
     const [counter, setCounter] = React.useState(0)
 
-    const displayTravellers = !(travellers.length) 
-        ? travellers 
-        : travellers.map(traveller => {
-            return (
-                <p>
-                    {traveller.id}
-                </p>)
-            }
-        )
-
-    const userElements = !(travellers.length)
-        ? travellers
-        : travellers.map(traveller => {
-            return (
-                <AutoAddExpense
-                    name={traveller.travellerName}
-                    key={traveller.id}
-                    value={traveller.netAmount}
-                    toggle={traveller.toggle}
-                    onClick={() => {
-                        toggleSelected(traveller.id)
-                        selectedNumber()
-                    }}
-                    expense={expense}
-                    count={counter}
-                />
-            )
-        })
+    console.log(travellers)
 
     React.useEffect(() => {
         let count = 0;
@@ -53,6 +27,53 @@ export default function Calculator() {
         setCounter(count)
     }, [travellers])
 
+    const displayTravellers = !(travellers.length) 
+        ? travellers 
+        : travellers.map(traveller => {
+            return (
+                <p>
+                    {traveller.id}
+                </p>)
+            }
+        )
+
+    const displayAutoSplit = !(travellers.length)
+        ? travellers
+        : travellers.map(traveller => {
+            return (
+                <AutoAddExpense
+                    name={traveller.travellerName}
+                    key={traveller.id}
+                    value={traveller.netAmount}
+                    toggle={traveller.toggle}
+                    onClick={() => {
+                        toggleSelected(traveller.id)
+                    }}
+                    expense={expense}
+                    count={counter}
+                />
+            )
+        })
+
+    const displayManualSplit = !(travellers.length)
+        ? travellers
+        : travellers.map(traveller => {
+            return (
+                <ManualAddExpense
+                    name={traveller.travellerName}
+                    key={traveller.id}
+                    value={traveller.netAmount}
+                    toggle={traveller.toggle}
+                    onClick={() => {
+                        toggleSelected(traveller.id)
+                    }}
+                    expense={expense}
+                    count={counter}
+                    updateAmount={(amount) => updateNetAmount(traveller.id, amount)}
+                />
+            )
+        })
+
     function toggleSelected(id) {
         setTravellers(prev => 
             prev.map(traveller => {
@@ -61,6 +82,16 @@ export default function Calculator() {
                     : traveller
             }
         ))
+    }
+
+    function updateNetAmount(id, amount) {
+        setTravellers(prev => 
+            prev.map(traveller => {
+                return traveller.id === id
+                    ? {...traveller, netAmount: traveller.netAmount - amount}
+                    : traveller
+            })
+        )
     }
 
     function toggleModal() {
@@ -101,13 +132,13 @@ export default function Calculator() {
                 }
             })
         } else {
-            if (split.auto) {
-                return {
-                    auto: false,
-                    manual: true
-                }
-            }
             setSplit(prev => {
+                if (split.auto) {
+                    return {
+                        auto: false,
+                        manual: true
+                    }
+                }
                 return {
                     ...prev,
                     manual: !prev.manual
@@ -166,7 +197,8 @@ export default function Calculator() {
                         <button name="auto" onClick={toggleSplit}>Split equally</button>
                         <button name="manual" onClick={toggleSplit}>Split manually</button>
                         <button>Confirm</button>
-                        {split.auto && userElements}
+                        {split.auto && displayAutoSplit}
+                        {split.manual && displayManualSplit}
                         <button className="close-modal" onClick={toggleModal}>
                         CLOSE
                         </button>

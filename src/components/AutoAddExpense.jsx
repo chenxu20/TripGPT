@@ -2,7 +2,6 @@ import React from "react"
 import "./AutoAddExpense.css"
 
 export default function AutoAddExpense(props) {
-    console.log(props.count)
     const individualExpense = <span className="expense-content">${(props.expense/props.count).toFixed(2)}</span>
     return (
         <div
