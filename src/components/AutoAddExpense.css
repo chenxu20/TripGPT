@@ -1,0 +1,8 @@
+.display-expense {
+    display: flex;
+    justify-content: space-between;
+}
+
+.expense-content {
+    padding: 2px 8px;
+}
