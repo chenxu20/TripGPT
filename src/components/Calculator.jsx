@@ -2,11 +2,16 @@ import "./Calculator.css"
 import React from "react"
 import AutoAddExpense from "./AutoAddExpense"
 import ManualAddExpense from "./ManualAddExpense"
+import Transactions from "./Transactions"
 import { nanoid } from "nanoid"
+import Payer from "./Payer"
+import { transactionCollection } from "../config/firebase"
+import { doc, addDoc, deleteDoc, getDocs, onSnapshot } from "firebase/firestore"
 
 export default function Calculator() {
     const [modal, setModal] = React.useState(false)
     const [travellers, setTravellers] = React.useState([])
+    const [description, setDescription] = React.useState()
     const [expense, setExpense] = React.useState()
     const [split, setSplit] = React.useState({
         auto: false,
@@ -14,8 +19,50 @@ export default function Calculator() {
     })
     const [name, setName] = React.useState("")
     const [counter, setCounter] = React.useState(0)
+    const [transactions, setTransactions] = React.useState([])
 
     console.log(travellers)
+    console.log(transactions)
+
+    React.useEffect(() => {
+        async function getData() {
+            try {
+                const snapshot = await getDocs(transactionCollection)
+                let fetchedData = []
+                snapshot.docs.forEach(doc => {
+                    let indivData = []
+                    indivData.push(doc.data().description, JSON.parse(doc.data().expenseTracker))
+                    fetchedData.push(indivData)
+                })
+                setTransactions(fetchedData)
+            } catch (error) {
+                console.error(`Error fetching documents: ${error}`)
+            }
+        }
+        getData()
+    }, [])
+
+    React.useEffect(() => {
+        if (split.auto) {
+            setTravellers(prev => prev.map(
+                traveller => {
+                    return {
+                        ...traveller,
+                        expensePlaceholder: (expense/counter).toFixed(2)
+                    }
+                }
+            ))
+        } else {
+            setTravellers(prev => prev.map(
+                traveller => {
+                    return {
+                        ...traveller,
+                        expensePlaceholder: 0
+                    }
+                }
+            ))
+        }
+    }, [split])
 
     React.useEffect(() => {
         let count = 0;
@@ -24,16 +71,44 @@ export default function Calculator() {
                 count++
             }
         }
+        console.log(count)
         setCounter(count)
     }, [travellers])
+
+    // React.useEffect(() => {
+    //     const fetchedData = []
+    //     const unsubscribe = onSnapshot(transactionCollection, (snapshot) => {
+    //         snapshot.docs.map(doc => {
+    //             fetchedData.push(doc.data().description, JSON.parse(doc.data().expenseTracker))
+    //         })
+    //     })
+    //     setTransactions(prevTransactions => {
+    //         return [...prevTransactions, fetchedData]
+    //     })
+    //     return unsubscribe
+    // }, [])
+
+    const displayTransactions = !(transactions.length)
+        ? transactions
+        : transactions.map(transaction => {
+            return (
+                <Transactions 
+                    transaction={transaction}
+                />
+            )
+        })
 
     const displayTravellers = !(travellers.length) 
         ? travellers 
         : travellers.map(traveller => {
             return (
-                <p>
-                    {traveller.id}
-                </p>)
+                <>
+                    <span>
+                        {traveller.id}
+                    </span>
+                    <button className="delete-btn" onClick={() => deleteTraveller(traveller.id)}>Delete traveller</button>
+                    <br></br>
+                </>)
             }
         )
 
@@ -51,6 +126,7 @@ export default function Calculator() {
                     }}
                     expense={expense}
                     count={counter}
+                    updateAmount={(amount) => updatePlaceholder(traveller.id, amount)}
                 />
             )
         })
@@ -69,7 +145,27 @@ export default function Calculator() {
                     }}
                     expense={expense}
                     count={counter}
-                    updateAmount={(amount) => updateNetAmount(traveller.id, amount)}
+                    updateAmount={(amount) => updatePlaceholder(traveller.id, amount)}
+                />
+            )
+        })
+
+    const displayPayer = !(travellers.length)
+        ? travellers
+        : travellers.map(traveller => {
+            return (
+                <Payer
+                    name={traveller.travellerName}
+                    key={traveller.id}
+                    value={traveller.netAmount}
+                    toggle={traveller.toggle}
+                    onClick={() => {
+                        toggleSelected(traveller.id)
+                    }}
+                    expense={expense}
+                    count={counter}
+                    updatePayer={() => updatePayer(traveller.id)}
+                    isPayer={traveller.isPayer}
                 />
             )
         })
@@ -78,17 +174,27 @@ export default function Calculator() {
         setTravellers(prev => 
             prev.map(traveller => {
                 return traveller.id === id
-                    ? {...traveller, toggle: !traveller.toggle}
+                    ? {...traveller, toggle: !traveller.toggle, expensePlaceholder: 0}
                     : traveller
             }
         ))
     }
 
-    function updateNetAmount(id, amount) {
+    function updatePayer(id) {
         setTravellers(prev => 
             prev.map(traveller => {
                 return traveller.id === id
-                    ? {...traveller, netAmount: traveller.netAmount - amount}
+                    ? {...traveller, isPayer: !traveller.isPayer}
+                    : traveller
+            })
+        )
+    }
+
+    function updatePlaceholder(id, amount) {
+        setTravellers(prev => 
+            prev.map(traveller => {
+                return traveller.id === id
+                    ? {...traveller, expensePlaceholder: amount}
                     : traveller
             })
         )
@@ -113,6 +219,10 @@ export default function Calculator() {
     }
 
     function toggleSplit(event) {
+        if (!description) {
+            alert("enter a description first!")
+            return
+        }
         if (!expense) {
             alert("enter an amount first!")
             return
@@ -157,11 +267,20 @@ export default function Calculator() {
                 return [...prevTraveller, {
                     travellerName: name,
                     netAmount: 0,
+                    expensePlaceholder: 0,
                     id: nanoid(),
-                    toggle: true
+                    toggle: true,
+                    isPayer: false
                 }]  
             })
         }
+    }
+
+    function deleteTraveller(id) {
+        setTravellers(prev => {
+            const updatedArr = prev.filter(traveller => traveller.id !== id)
+            return updatedArr
+        })
     }
     
     function trackChanges(event) {
@@ -172,6 +291,27 @@ export default function Calculator() {
             setExpense(event.target.value)
             setCounter(travellers.length)
         }
+        if (event.target.name === "description") {
+            setDescription(event.target.value)
+        }
+    }
+
+    function updateDatabase() {
+        const truncatedInfo = travellers.map(traveller => {
+            return {
+                travellerName: traveller.travellerName,
+                expensePlaceholder: traveller.expensePlaceholder,
+                isPayer: traveller.isPayer
+            }
+        })
+        addDoc(transactionCollection, {
+            description: description,
+            expenseTracker: JSON.stringify(truncatedInfo)
+        })
+        .then(() => {
+            alert("Success")
+            toggleModal()
+        })
     }
 
     if(modal) {
@@ -182,29 +322,35 @@ export default function Calculator() {
 
     return (
         <>
-            {displayTravellers}
-            {travellers.length !== 0 && <button onClick={toggleModal}>Add expense</button>}
-            <input name="traveller-name" className="traveller-name" placeholder ="Name" onChange={trackChanges} value={name} />
-            <button onClick={addTraveller}>Add Traveller</button>
-            {modal && (
-                <div className="modal">
-                    <div onClick={toggleModal} className="overlay"></div>
-                    <div className="modal-content">
-                        <input placeholder="Enter a description" />
-                        <br />
-                        $<input name="add-expense" onChange={trackChanges}></input>
-                        <br />
-                        <button name="auto" onClick={toggleSplit}>Split equally</button>
-                        <button name="manual" onClick={toggleSplit}>Split manually</button>
-                        <button>Confirm</button>
-                        {split.auto && displayAutoSplit}
-                        {split.manual && displayManualSplit}
-                        <button className="close-modal" onClick={toggleModal}>
-                        CLOSE
-                        </button>
+            <div>
+                {displayTravellers}
+                {travellers.length !== 0 && <button onClick={toggleModal}>Add expense</button>}
+                <input name="traveller-name" className="traveller-name" placeholder ="Name" onChange={trackChanges} value={name} />
+                <button onClick={addTraveller}>Add Traveller</button>
+                {modal && (
+                    <div className="modal">
+                        <div onClick={toggleModal} className="overlay"></div>
+                        <div className="modal-content">
+                            <input name="description" onChange={trackChanges} placeholder="Enter a description" />
+                            <br />
+                            $<input name="add-expense" onChange={trackChanges}></input>
+                            <br />
+                            {displayPayer}
+                            <button name="auto" onClick={toggleSplit}>Split equally</button>
+                            <button name="manual" onClick={toggleSplit}>Split manually</button>
+                            <button onClick={updateDatabase}>Confirm</button>
+                            {split.auto && displayAutoSplit}
+                            {split.manual && displayManualSplit}
+                            <button className="close-modal" onClick={toggleModal}>
+                            CLOSE
+                            </button>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
+            <div>
+                {displayTransactions}
+            </div>
         </>
     )
 }

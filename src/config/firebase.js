@@ -19,5 +19,5 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const googleProvider =  new GoogleAuthProvider();
 export const db = getFirestore(app);
-export const calculatorCollection = collection(db, "calculator")
+export const transactionCollection = collection(db, "transactions")
 //const analytics = getAnalytics(app);
