@@ -2,7 +2,7 @@ import React from "react"
 import "./AutoAddExpense.css"
 
 export default function AutoAddExpense(props) {
-    let expense = (props.expense/props.count).toFixed(2)
+    let expense = (props.expense/props.count)
     React.useEffect(() => {
         if (!props.toggle) {
             props.updateAmount(0)
@@ -11,7 +11,7 @@ export default function AutoAddExpense(props) {
         props.updateAmount(expense)}, [expense])
 
 
-    const individualExpense = <span className="expense-content">${expense}</span>
+    const individualExpense = <span className="expense-content">${expense.toFixed(2)}</span>
     return (
         <div
             className="display-expense"

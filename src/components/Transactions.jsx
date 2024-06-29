@@ -49,26 +49,52 @@ export default function Transactions(props) {
     for (let i = 0; i < props.transaction.expenseTracker.length; i++) {
         if (props.transaction.expenseTracker[i].isPayer) {
             payers.push(props.transaction.expenseTracker[i])
-        } else {
+        } 
+        if (props.transaction.expenseTracker[i].expensePlaceholder && !(props.transaction.expenseTracker[i].isPayer)) {
             payees.push(props.transaction.expenseTracker[i])
         }
     }
 
     let displayPayers = payers.map(payer => {
         return (
-            <>{payer.travellerName}</>
+            <>{payer.travellerName}, </>
         )
     })
+    displayPayers[displayPayers.length - 1] = <>{payers[payers.length - 1].travellerName}</>
+
     let displayPayees = payees.map(payee => {
         return (
-            <>{payee.travellerName}</>
+            <>{payee.travellerName}, </>
         )
     })
+    displayPayees[displayPayees.length - 1] = <>{payees[payees.length - 1].travellerName}</>
 
     function deleteTransaction() {
         if (!props.transaction?.id) {
             console.error('Transaction ID is missing');
             return;
+        }
+
+        let payeeAmount = 0
+
+        for (let i = 0; i < payees.length; i++) {
+            let tempAmountHolder
+            payeeAmount += parseFloat(payees[i].expensePlaceholder)
+            console.log(payees[i].expensePlaceholder)
+            const travellerDocRef = doc(db, "travellers-info", payees[i].id)
+            getDoc(travellerDocRef)
+                .then((doc) => {
+                    tempAmountHolder = doc.data().netAmount
+                    if (tempAmountHolder + parseFloat(payees[i].expensePlaceholder) < 0.0001 && tempAmountHolder + parseFloat(payees[i].expensePlaceholder) > -0.0001) {
+                        updateDoc(travellerDocRef, {
+                            netAmount: 0
+                        })
+                    } else {
+                        updateDoc(travellerDocRef, {
+                            netAmount: tempAmountHolder + parseFloat(payees[i].expensePlaceholder)
+                        })
+                    }
+                })
         }
 
         for (let i = 0; i < payers.length; i++) {
@@ -77,21 +103,15 @@ export default function Transactions(props) {
             getDoc(travellerDocRef)
                 .then((doc) => {
                     tempAmountHolder = doc.data().netAmount
-                    updateDoc(travellerDocRef, {
-                        netAmount: tempAmountHolder - parseFloat(payers[i].expensePlaceholder)
-                    })
-                })
-        }
-
-        for (let i = 0; i < payees.length; i++) {
-            let tempAmountHolder
-            const travellerDocRef = doc(db, "travellers-info", payees[i].id)
-            getDoc(travellerDocRef)
-                .then((doc) => {
-                    tempAmountHolder = doc.data().netAmount
-                    updateDoc(travellerDocRef, {
-                        netAmount: tempAmountHolder + parseFloat(payees[i].expensePlaceholder)
-                    })
+                    if (tempAmountHolder - payeeAmount / parseFloat(props.transaction.numPayer) < 0.0001 && tempAmountHolder - payeeAmount / parseFloat(props.transaction.numPayer)> -0.0001) {
+                        updateDoc(travellerDocRef, {
+                            netAmount: 0
+                        })
+                    } else {
+                        updateDoc(travellerDocRef, {
+                            netAmount: tempAmountHolder - payeeAmount / parseFloat(props.transaction.numPayer)
+                        })
+                    }
                 })
         }
 
@@ -106,7 +126,7 @@ export default function Transactions(props) {
     return (
         <div>
             <span>{props.transaction.description}: </span>
-            <span>{displayPayees} owes ${props.transaction.expenseTracker[0].expensePlaceholder} to {displayPayers}</span>
+            <span>{displayPayees} owes ${parseFloat(props.transaction.expenseTracker[0].expensePlaceholder).toFixed(2)} to {displayPayers}</span>
             <button onClick={deleteTransaction}>Delete Transaction</button>
             <button>Bill Cleared Up</button>
         </div>

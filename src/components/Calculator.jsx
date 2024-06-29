@@ -20,6 +20,7 @@ export default function Calculator() {
     const [name, setName] = React.useState("")
     const [counter, setCounter] = React.useState(0)
     const [transactions, setTransactions] = React.useState([])
+    const [numPayer, setNumPayer] = React.useState(0)
 
     React.useEffect(() => {
         async function getData() {
@@ -29,6 +30,7 @@ export default function Calculator() {
                     return {
                         description: doc.data().description,
                         expenseTracker: JSON.parse(doc.data().expenseTracker),
+                        numPayer: doc.data().numPayer,
                         id: doc.id
                     }
                 })
@@ -68,7 +70,7 @@ export default function Calculator() {
                 traveller => {
                     return {
                         ...traveller,
-                        expensePlaceholder: (expense/counter).toFixed(2)
+                        expensePlaceholder: (expense/counter)
                     }
                 }
             ))
@@ -85,13 +87,20 @@ export default function Calculator() {
     }, [split])
 
     React.useEffect(() => {
-        let count = 0;
+        let count = 0
+        let numPayer = 0
         for (let i = 0; i < travellers.length; i++) {
             if (travellers[i].toggle === true) {
                 count++
             }
         }
         setCounter(count)
+        for (let i = 0; i < travellers.length; i++) {
+            if (travellers[i].isPayer === true) {
+                numPayer++
+            }
+        }
+        setNumPayer(numPayer)
     }, [travellers])
 
     React.useEffect(() => {
@@ -100,6 +109,7 @@ export default function Calculator() {
                 return {
                     description: doc.data().description,
                     expenseTracker: JSON.parse(doc.data().expenseTracker),
+                    numPayer: doc.data().numPayer,
                     id: doc.id
                 }
             })
@@ -147,9 +157,9 @@ export default function Calculator() {
                     <span>
                         {traveller.travellerName}
                     </span>
-                    {netAmount > 0 && <span style={styles}>+{netAmount}</span>}
-                    {netAmount < 0 && <span style={styles}>{netAmount}</span>}
-                    {netAmount == 0 && <span style={styles}>{netAmount}</span>}
+                    {netAmount > 0 && <span style={styles}>+{netAmount.toFixed(2)}</span>}
+                    {netAmount < 0 && <span style={styles}>{netAmount.toFixed(2)}</span>}
+                    {netAmount == 0 && <span style={styles}>{netAmount.toFixed(2)}</span>}
                     <button className="delete-btn" onClick={() => deleteTraveller(traveller.id)}>Delete traveller</button>
                     <br></br>
                 </>)
@@ -171,6 +181,7 @@ export default function Calculator() {
                     expense={expense}
                     count={counter}
                     updateAmount={(amount) => updatePlaceholder(traveller.id, amount)}
+                    isPayer={traveller.isPayer}
                 />
             )
         })
@@ -190,6 +201,7 @@ export default function Calculator() {
                     expense={expense}
                     count={counter}
                     updateAmount={(amount) => updatePlaceholder(traveller.id, amount)}
+                    isPayer={traveller.isPayer}
                 />
             )
         })
@@ -340,16 +352,17 @@ export default function Calculator() {
     }
 
     function updateDatabase() {
-        const travellersInvolved = travellers.filter(traveller => traveller.toggle)
+        const travellersInvolved = travellers.filter(traveller => traveller.toggle || traveller.isPayer)
         for (let i = 0; i < travellersInvolved.length; i++) {
             const docRef = doc(db, "travellers-info", travellersInvolved[i].id)
+            console.log(expense, travellersInvolved[i].expensePlaceholder)
             if (travellersInvolved[i].isPayer) {
                 updateDoc(docRef, {
-                    netAmount: travellersInvolved[i].netAmount + expense - travellersInvolved[i].expensePlaceholder
+                    netAmount: parseFloat(travellersInvolved[i].netAmount) + parseFloat(expense) / numPayer - parseFloat(travellersInvolved[i].expensePlaceholder)
                 })
             } else {
                 updateDoc(docRef, {
-                    netAmount: travellersInvolved[i].netAmount - travellersInvolved[i].expensePlaceholder
+                    netAmount: parseFloat(travellersInvolved[i].netAmount) - parseFloat(travellersInvolved[i].expensePlaceholder)
                 })
             }
         }
@@ -364,7 +377,8 @@ export default function Calculator() {
         })
         addDoc(transactionCollection, {
             description: description,
-            expenseTracker: JSON.stringify(truncatedInfo)
+            expenseTracker: JSON.stringify(truncatedInfo),
+            numPayer: numPayer
         })
         .then(() => {
             alert("Success")
