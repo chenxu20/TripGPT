@@ -20,4 +20,5 @@ export const auth = getAuth(app);
 export const googleProvider =  new GoogleAuthProvider();
 export const db = getFirestore(app);
 export const transactionCollection = collection(db, "transactions")
+export const travellersCollection = collection(db, "travellers-info")
 //const analytics = getAnalytics(app);

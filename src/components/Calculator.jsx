@@ -5,8 +5,8 @@ import ManualAddExpense from "./ManualAddExpense"
 import Transactions from "./Transactions"
 import { nanoid } from "nanoid"
 import Payer from "./Payer"
-import { transactionCollection } from "../config/firebase"
-import { doc, addDoc, deleteDoc, getDocs, onSnapshot } from "firebase/firestore"
+import { transactionCollection, travellersCollection, db } from "../config/firebase"
+import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc } from "firebase/firestore"
 
 export default function Calculator() {
     const [modal, setModal] = React.useState(false)
@@ -21,9 +21,6 @@ export default function Calculator() {
     const [counter, setCounter] = React.useState(0)
     const [transactions, setTransactions] = React.useState([])
 
-    console.log(travellers)
-    console.log(transactions)
-
     React.useEffect(() => {
         async function getData() {
             try {
@@ -31,11 +28,33 @@ export default function Calculator() {
                 const fetchedData = snapshot.docs.map(doc => {
                     return {
                         description: doc.data().description,
-                        expenseTracker: JSON.parse(doc.data().expenseTracker)
+                        expenseTracker: JSON.parse(doc.data().expenseTracker),
+                        id: doc.id
                     }
                 })
-                console.log(fetchedData)
                 setTransactions(fetchedData)
+            } catch (error) {
+                console.error(`Error fetching documents: ${error}`)
+            }
+        }
+        getData()
+    }, [])
+
+    React.useEffect(() => {
+        async function getData() {
+            try {
+                const snapshot = await getDocs(travellersCollection)
+                const fetchedData = snapshot.docs.map(doc => {
+                    return {
+                        travellerName: doc.data().name,
+                        netAmount: doc.data().netAmount,
+                        expensePlaceholder: 0,
+                        toggle: true,
+                        isPayer: false,
+                        id: doc.id
+                    }
+                })
+                setTravellers(fetchedData)
             } catch (error) {
                 console.error(`Error fetching documents: ${error}`)
             }
@@ -72,7 +91,6 @@ export default function Calculator() {
                 count++
             }
         }
-        console.log(count)
         setCounter(count)
     }, [travellers])
 
@@ -90,6 +108,23 @@ export default function Calculator() {
         return () => unsubscribe()
     }, [])
 
+    React.useEffect(() => {
+        const unsubscribe = onSnapshot(travellersCollection, (snapshot) => {
+            const fetchedData = snapshot.docs.map(doc => {
+                return {
+                    travellerName: doc.data().name,
+                    netAmount: doc.data().netAmount,
+                    expensePlaceholder: 0,
+                    toggle: true,
+                    isPayer: false,
+                    id: doc.id
+                }
+            })
+        setTravellers(fetchedData)
+        })
+        return () => unsubscribe()
+    }, [])
+
     const displayTransactions = !(transactions.length)
         ? transactions
         : transactions.map(transaction => {
@@ -103,11 +138,18 @@ export default function Calculator() {
     const displayTravellers = !(travellers.length) 
         ? travellers 
         : travellers.map(traveller => {
+            const netAmount = traveller.netAmount
+            const styles = {
+                color: netAmount > 0 ? "green" : netAmount < 0 ? "red" : "white"
+            }
             return (
                 <>
                     <span>
-                        {traveller.id}
+                        {traveller.travellerName}
                     </span>
+                    {netAmount > 0 && <span style={styles}>+{netAmount}</span>}
+                    {netAmount < 0 && <span style={styles}>{netAmount}</span>}
+                    {netAmount == 0 && <span style={styles}>{netAmount}</span>}
                     <button className="delete-btn" onClick={() => deleteTraveller(traveller.id)}>Delete traveller</button>
                     <br></br>
                 </>)
@@ -229,7 +271,7 @@ export default function Calculator() {
             alert("enter an amount first!")
             return
         }
-        console.log(event)
+
         if (event.target.name === "auto") {
             setSplit(prev => {
                 if (split.manual) {
@@ -264,25 +306,24 @@ export default function Calculator() {
             setName("")
             alert("key in a valid name!")
         } else {
-            setTravellers(prevTraveller => {
-                setName("")
-                return [...prevTraveller, {
-                    travellerName: name,
-                    netAmount: 0,
-                    expensePlaceholder: 0,
-                    id: nanoid(),
-                    toggle: true,
-                    isPayer: false
-                }]  
+            addDoc(travellersCollection, {
+                name: name,
+                netAmount: 0
             })
+            .then(() => {
+                //alert("Success")
+            })
+            setName("")
         }
     }
 
     function deleteTraveller(id) {
-        setTravellers(prev => {
-            const updatedArr = prev.filter(traveller => traveller.id !== id)
-            return updatedArr
-        })
+        const docRef = doc(db, "travellers-info", id)
+        deleteDoc(docRef)
+            .then(() => {
+                //alert("Traveller successfully deleted!")
+            })
+            .catch((err) => alert(`Error removing document: ${err}`))
     }
     
     function trackChanges(event) {
@@ -299,11 +340,26 @@ export default function Calculator() {
     }
 
     function updateDatabase() {
+        const travellersInvolved = travellers.filter(traveller => traveller.toggle)
+        for (let i = 0; i < travellersInvolved.length; i++) {
+            const docRef = doc(db, "travellers-info", travellersInvolved[i].id)
+            if (travellersInvolved[i].isPayer) {
+                updateDoc(docRef, {
+                    netAmount: travellersInvolved[i].netAmount + expense - travellersInvolved[i].expensePlaceholder
+                })
+            } else {
+                updateDoc(docRef, {
+                    netAmount: travellersInvolved[i].netAmount - travellersInvolved[i].expensePlaceholder
+                })
+            }
+        }
+
         const truncatedInfo = travellers.map(traveller => {
             return {
                 travellerName: traveller.travellerName,
                 expensePlaceholder: traveller.expensePlaceholder,
-                isPayer: traveller.isPayer
+                isPayer: traveller.isPayer,
+                id: traveller.id
             }
         })
         addDoc(transactionCollection, {
