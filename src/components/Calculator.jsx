@@ -28,12 +28,13 @@ export default function Calculator() {
         async function getData() {
             try {
                 const snapshot = await getDocs(transactionCollection)
-                let fetchedData = []
-                snapshot.docs.forEach(doc => {
-                    let indivData = []
-                    indivData.push(doc.data().description, JSON.parse(doc.data().expenseTracker))
-                    fetchedData.push(indivData)
+                const fetchedData = snapshot.docs.map(doc => {
+                    return {
+                        description: doc.data().description,
+                        expenseTracker: JSON.parse(doc.data().expenseTracker)
+                    }
                 })
+                console.log(fetchedData)
                 setTransactions(fetchedData)
             } catch (error) {
                 console.error(`Error fetching documents: ${error}`)
@@ -75,18 +76,19 @@ export default function Calculator() {
         setCounter(count)
     }, [travellers])
 
-    // React.useEffect(() => {
-    //     const fetchedData = []
-    //     const unsubscribe = onSnapshot(transactionCollection, (snapshot) => {
-    //         snapshot.docs.map(doc => {
-    //             fetchedData.push(doc.data().description, JSON.parse(doc.data().expenseTracker))
-    //         })
-    //     })
-    //     setTransactions(prevTransactions => {
-    //         return [...prevTransactions, fetchedData]
-    //     })
-    //     return unsubscribe
-    // }, [])
+    React.useEffect(() => {
+        const unsubscribe = onSnapshot(transactionCollection, (snapshot) => {
+            const fetchedData = snapshot.docs.map(doc => {
+                return {
+                    description: doc.data().description,
+                    expenseTracker: JSON.parse(doc.data().expenseTracker),
+                    id: doc.id
+                }
+            })
+        setTransactions(fetchedData)
+        })
+        return () => unsubscribe()
+    }, [])
 
     const displayTransactions = !(transactions.length)
         ? transactions
@@ -335,12 +337,13 @@ export default function Calculator() {
                             <br />
                             $<input name="add-expense" onChange={trackChanges}></input>
                             <br />
+                            <p>Person who paid:</p>
                             {displayPayer}
                             <button name="auto" onClick={toggleSplit}>Split equally</button>
                             <button name="manual" onClick={toggleSplit}>Split manually</button>
-                            <button onClick={updateDatabase}>Confirm</button>
                             {split.auto && displayAutoSplit}
                             {split.manual && displayManualSplit}
+                            {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}
                             <button className="close-modal" onClick={toggleModal}>
                             CLOSE
                             </button>
