@@ -153,18 +153,18 @@ export default function Calculator() {
                 color: netAmount > 0 ? "green" : netAmount < 0 ? "red" : "white"
             }
             return (
-                <>
-                    <span>
+                <div className="display-traveller">
+                    <p>
                         {traveller.travellerName}
-                    </span>
-                    {netAmount > 0 && <span style={styles}>+{netAmount.toFixed(2)}</span>}
-                    {netAmount < 0 && <span style={styles}>{netAmount.toFixed(2)}</span>}
-                    {netAmount == 0 && <span style={styles}>{netAmount.toFixed(2)}</span>}
+                    </p>
+                    {netAmount > 0 && <p style={styles}>$+{netAmount.toFixed(2)}</p>}
+                    {netAmount < 0 && <p style={styles}>${netAmount.toFixed(2)}</p>}
+                    {netAmount == 0 && <p style={styles}>${netAmount.toFixed(2)}</p>}
                     <button className="delete-btn" onClick={() => deleteTraveller(traveller.id)}>Delete traveller</button>
-                    <br></br>
-                </>)
-            }
-        )
+                    <br />
+                </div>
+            )
+        })
 
     const displayAutoSplit = !(travellers.length)
         ? travellers
@@ -401,37 +401,44 @@ export default function Calculator() {
     }
 
     return (
-        <>
-            <div>
+        <div className="calculator-display-el">
+            <div className="traveller-el">
+                <h2>Bill Split Calculator</h2>
+                <div className="traveller-title">
+                    <span>Name</span>
+                    <span>Net Amount</span>
+                </div>
                 {displayTravellers}
-                {travellers.length !== 0 && <button onClick={toggleModal}>Add expense</button>}
                 <input name="traveller-name" className="traveller-name" placeholder ="Name" onChange={trackChanges} value={name} />
-                <button onClick={addTraveller}>Add Traveller</button>
-                {modal && (
-                    <div className="modal">
-                        <div onClick={toggleModal} className="overlay"></div>
-                        <div className="modal-content">
-                            <input name="description" onChange={trackChanges} placeholder="Enter a description" />
-                            <br />
-                            $<input name="add-expense" onChange={trackChanges}></input>
-                            <br />
-                            <p>Person who paid:</p>
-                            {displayPayer}
-                            <button name="auto" onClick={toggleSplit}>Split equally</button>
-                            <button name="manual" onClick={toggleSplit}>Split manually</button>
-                            {split.auto && displayAutoSplit}
-                            {split.manual && displayManualSplit}
-                            {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}
-                            <button className="close-modal" onClick={toggleModal}>
-                            CLOSE
-                            </button>
-                        </div>
-                    </div>
-                )}
+                <button onClick={addTraveller} className="add-traveller-button">Add Traveller</button>
+                <br />
             </div>
-            <div>
+            <div className="transaction-el">
+                {travellers.length !== 0 && <button onClick={toggleModal} className="add-expense-button">Add expense</button>}
+                <h2>Transaction Records</h2>
                 {displayTransactions}
             </div>
-        </>
+            {modal && (
+                <div className="modal">
+                    <div onClick={toggleModal} className="overlay"></div>
+                    <div className="modal-content">
+                        <input name="description" onChange={trackChanges} placeholder="Enter a description" />
+                        <br />
+                        $<input name="add-expense" onChange={trackChanges}></input>
+                        <br />
+                        <p>Person who paid:</p>
+                        {displayPayer}
+                        <button name="auto" onClick={toggleSplit}>Split equally</button>
+                        <button name="manual" onClick={toggleSplit}>Split manually</button>
+                        {split.auto && displayAutoSplit}
+                        {split.manual && displayManualSplit}
+                        {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}
+                        <button className="close-modal" onClick={toggleModal}>
+                        CLOSE
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
     )
 }

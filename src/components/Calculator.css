@@ -12,6 +12,21 @@ body.active-modal {
     position: fixed;
 }
 
+.calculator-display-el {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+}
+
+.traveller-el {
+    width: 40%;
+}
+
+.transaction-el {
+    width: 40%;
+    padding-top: 20px;
+}
+
 .overlay {
     background: rgba(49,49,49,0.8);
 }
@@ -38,4 +53,86 @@ body.active-modal {
 
 .expense-value {
     color: black;
+}
+
+.display-traveller {
+    /* width: 40%; */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px 10px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.display-traveller p {
+    width: 33%;
+    margin-right: auto;
+}
+
+.delete-btn {
+    height: auto; /* Reset the height to default */
+    padding: 5px 10px; /* Adjust padding to control the size of the button */
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 20px; /* Add border radius for rounded corners */
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.delete-btn:hover {
+    background-color: #da190b;
+}
+
+.traveller-title {
+    margin: 5px 10px;
+    padding: 10px;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Add expense button specific styling */
+.add-expense-button {
+    height: auto; /* Reset the height to default */
+    padding: 10px 20px; /* Adjust padding to control the size of the button */
+    color: white;
+    border: none;
+    border-radius: 20px; /* Add border radius for rounded corners */
+    cursor: pointer;
+    background-color: #008CBA; /* Blue background */
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.add-expense-button:hover {
+    background-color: #007BB5; /* Darker blue */
+}
+
+/* Add traveller button specific styling */
+.add-traveller-button {
+    height: auto; /* Reset the height to default */
+    padding: 5px 10px; /* Adjust padding to control the size of the button */
+    color: white;
+    border: none;
+    border-radius: 20px; /* Add border radius for rounded corners */
+    cursor: pointer;
+    background-color: #008CBA; /* Red background */
+    font-weight: bold;
+}
+
+.add-traveller-button:hover {
+    background-color: #007BB5; /* Darker red */
+}
+
+/* Input field styling */
+.traveller-name {
+    padding: 10px; /* Add padding */
+    margin: 4px 2px; /* Add some margin */
+    font-size: 16px; /* Increase font size */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 4px; /* Rounded corners */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }

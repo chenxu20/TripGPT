@@ -1,6 +1,7 @@
 import React from "react"
 import { doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore"
 import { db } from "../config/firebase"
+import "./Transactions.css"
 
 export default function Transactions(props) {
     let payers = []
@@ -89,10 +90,10 @@ export default function Transactions(props) {
     }
 
     return (
-        <div>
+        <div className="indiv-transaction-el">
             {displayPayees}
             {displayPayers}
-            <button onClick={deleteTransaction}>Delete Transaction</button>
+            <button onClick={deleteTransaction} className="delete-transaction-btn">Delete Transaction</button>
         </div>
     )
 }
