@@ -1,0 +1,59 @@
+body.active-modal {
+    overflow-y: hidden;
+}
+
+.modal, .overlay {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+}
+
+.overlay {
+    background: rgba(49,49,49,0.8);
+}
+.modal-content {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1.4;
+    background: #f1f1f1;
+    padding: 14px 28px;
+    border-radius: 3px;
+    max-width: 600px;
+    min-width: 300px;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 7px;
+}
+
+.trip-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 5%;
+    margin-right: 16%;
+}
+
+.add-trip-btn {
+    height: auto; /* Reset the height to default */
+    padding: 5px 10px; /* Adjust padding to control the size of the button */
+    color: white;
+    border: none;
+    border-radius: 20px; /* Add border radius for rounded corners */
+    cursor: pointer;
+    background-color: #008CBA; /* Red background */
+    font-weight: bold;
+}
+
+.add-trip-btn:hover {
+    background-color: #007BB5; /* Darker red */
+}
