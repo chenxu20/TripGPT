@@ -1,5 +1,5 @@
 import React from "react"
-//import "./AutoAddExpense.css"
+
 
 export default function ManualAddExpense(props) {
     const [expense, setExpense] = React.useState()

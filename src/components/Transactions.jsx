@@ -5,46 +5,6 @@ import { db } from "../config/firebase"
 export default function Transactions(props) {
     let payers = []
     let payees = []
-    //const [travellers, setTravellers] = React.useState([])
-
-    // React.useEffect(() => {
-    //     async function getData() {
-    //         try {
-    //             const snapshot = await getDocs(travellersCollection)
-    //             const fetchedData = snapshot.docs.map(doc => {
-    //                 return {
-    //                     travellerName: doc.data().name,
-    //                     netAmount: doc.data().netAmount,
-    //                     expensePlaceholder: 0,
-    //                     toggle: true,
-    //                     isPayer: false,
-    //                     id: doc.id
-    //                 }
-    //             })
-    //             setTravellers(fetchedData)
-    //         } catch (error) {
-    //             console.error(`Error fetching documents: ${error}`)
-    //         }
-    //     }
-    //     getData()
-    // }, [])
-
-    // React.useEffect(() => {
-    //     const unsubscribe = onSnapshot(travellersCollection, (snapshot) => {
-    //         const fetchedData = snapshot.docs.map(doc => {
-    //             return {
-    //                 travellerName: doc.data().name,
-    //                 netAmount: doc.data().netAmount,
-    //                 expensePlaceholder: 0,
-    //                 toggle: true,
-    //                 isPayer: false,
-    //                 id: doc.id
-    //             }
-    //         })
-    //     setTravellers(fetchedData)
-    //     })
-    //     return () => unsubscribe()
-    // }, [])
 
     for (let i = 0; i < props.transaction.expenseTracker.length; i++) {
         if (props.transaction.expenseTracker[i].isPayer) {
@@ -57,17 +17,23 @@ export default function Transactions(props) {
 
     let displayPayers = payers.map(payer => {
         return (
-            <>{payer.travellerName}, </>
+            <div>
+                <span>{props.transaction.description}: {payer.travellerName} should receive 
+                    ${parseFloat(payer.expensePlaceholder).toFixed(2)}</span>
+            </div>
         )
     })
-    displayPayers[displayPayers.length - 1] = <>{payers[payers.length - 1].travellerName}</>
+    //displayPayers[displayPayers.length - 1] = <>{payers[payers.length - 1].travellerName}</>
 
     let displayPayees = payees.map(payee => {
         return (
-            <>{payee.travellerName}, </>
+            <div>
+                <span>{props.transaction.description}: {payee.travellerName} needs to pay 
+                    ${parseFloat(payee.expensePlaceholder).toFixed(2)}</span>
+            </div>
         )
     })
-    displayPayees[displayPayees.length - 1] = <>{payees[payees.length - 1].travellerName}</>
+    //displayPayees[displayPayees.length - 1] = <>{payees[payees.length - 1].travellerName}</>
 
     function deleteTransaction() {
         if (!props.transaction?.id) {
@@ -80,7 +46,6 @@ export default function Transactions(props) {
         for (let i = 0; i < payees.length; i++) {
             let tempAmountHolder
             payeeAmount += parseFloat(payees[i].expensePlaceholder)
-            console.log(payees[i].expensePlaceholder)
             const travellerDocRef = doc(db, "travellers-info", payees[i].id)
             getDoc(travellerDocRef)
                 .then((doc) => {
@@ -103,13 +68,13 @@ export default function Transactions(props) {
             getDoc(travellerDocRef)
                 .then((doc) => {
                     tempAmountHolder = doc.data().netAmount
-                    if (tempAmountHolder - payeeAmount / parseFloat(props.transaction.numPayer) < 0.0001 && tempAmountHolder - payeeAmount / parseFloat(props.transaction.numPayer)> -0.0001) {
+                    if (tempAmountHolder - parseFloat(payers[i].expensePlaceholder) < 0.0001 && tempAmountHolder - parseFloat(payers[i].expensePlaceholder) > -0.0001) {
                         updateDoc(travellerDocRef, {
                             netAmount: 0
                         })
                     } else {
                         updateDoc(travellerDocRef, {
-                            netAmount: tempAmountHolder - payeeAmount / parseFloat(props.transaction.numPayer)
+                            netAmount: tempAmountHolder - parseFloat(payers[i].expensePlaceholder)
                         })
                     }
                 })
@@ -125,10 +90,9 @@ export default function Transactions(props) {
 
     return (
         <div>
-            <span>{props.transaction.description}: </span>
-            <span>{displayPayees} owes ${parseFloat(props.transaction.expenseTracker[0].expensePlaceholder).toFixed(2)} to {displayPayers}</span>
+            {displayPayees}
+            {displayPayers}
             <button onClick={deleteTransaction}>Delete Transaction</button>
-            <button>Bill Cleared Up</button>
         </div>
     )
 }

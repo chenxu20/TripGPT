@@ -355,7 +355,6 @@ export default function Calculator() {
         const travellersInvolved = travellers.filter(traveller => traveller.toggle || traveller.isPayer)
         for (let i = 0; i < travellersInvolved.length; i++) {
             const docRef = doc(db, "travellers-info", travellersInvolved[i].id)
-            console.log(expense, travellersInvolved[i].expensePlaceholder)
             if (travellersInvolved[i].isPayer) {
                 updateDoc(docRef, {
                     netAmount: parseFloat(travellersInvolved[i].netAmount) + parseFloat(expense) / numPayer - parseFloat(travellersInvolved[i].expensePlaceholder)
@@ -368,11 +367,20 @@ export default function Calculator() {
         }
 
         const truncatedInfo = travellers.map(traveller => {
-            return {
-                travellerName: traveller.travellerName,
-                expensePlaceholder: traveller.expensePlaceholder,
-                isPayer: traveller.isPayer,
-                id: traveller.id
+            if (traveller.isPayer) {
+                return {
+                    travellerName: traveller.travellerName,
+                    expensePlaceholder: expense / numPayer - traveller.expensePlaceholder,
+                    isPayer: traveller.isPayer,
+                    id: traveller.id
+                }
+            } else {
+                return {
+                    travellerName: traveller.travellerName,
+                    expensePlaceholder: traveller.expensePlaceholder,
+                    isPayer: traveller.isPayer,
+                    id: traveller.id
+                }
             }
         })
         addDoc(transactionCollection, {
