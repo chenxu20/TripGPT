@@ -4,7 +4,7 @@ import MyTrips from './MyTrips'
 export default function Home() {
     return (
         <div>
-            <h1>Home</h1>
+            <h1>Homes</h1>
             <MyTrips />
         </div>
     )
