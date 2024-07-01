@@ -22,7 +22,7 @@ export default function MyTrips() {
         end: ""
     })
     const [tripDetails, setTripDetails] = React.useState({
-        accomodations: ""
+        accommodations: ""
     })
     const [details, setDetails] = React.useState({
         outboundDetails: {},
@@ -163,14 +163,14 @@ export default function MyTrips() {
     return (
         <>
             <div>
-                <h2>My Trips</h2>
-                {data.length && 
+                <h2 className="trip-title">My Trips</h2>
+                {data.length > 0 && 
                 <div className="trip-display">
                     <span>Outbound Details</span>
                     <span>Inbound Details</span>
                     <span>Trip Details</span>
                 </div>}
-                {data.length && <hr />}
+                {data.length > 0 && <hr />}
                 {displayData}
                 <button className="add-trip-btn" onClick={toggleModal}>Add Trip</button>
             </div>

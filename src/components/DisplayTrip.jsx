@@ -1,7 +1,18 @@
 import React from "react"
 import "./DisplayTrip.css"
+import { db } from "../config/firebase"
+import { doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore"
 
 export default function DisplayTrip(props) {
+    function deleteTrip() {
+        const tripDocRef = doc(db, "trip-details", props.data.id)
+        deleteDoc(tripDocRef)
+            .then(() => {
+                alert("Trip successfully deleted!")
+            })
+            .catch((err) => alert(`Error removing document: ${err}`))
+    }
+
     return (
         <>
             <div className="trip-section">
@@ -18,9 +29,10 @@ export default function DisplayTrip(props) {
                     <p><strong>End Time:</strong> {props.data.inboundDetails.end}</p>
                 </div>
                 <div>
-                    <p><strong>Accommodations:</strong> {props.data.tripDetails.accomodations}</p>
+                    <p><strong>Accommodations:</strong> {props.data.tripDetails.accommodations}</p>
                 </div>
             </div>
+            <button onClick={deleteTrip} className="delete-trip-btn">Delete Trip</button>
             <hr />
         </>
     )

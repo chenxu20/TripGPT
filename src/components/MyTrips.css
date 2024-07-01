@@ -52,8 +52,13 @@ body.active-modal {
     cursor: pointer;
     background-color: #008CBA; /* Red background */
     font-weight: bold;
+    margin-left: 20px;
 }
 
 .add-trip-btn:hover {
     background-color: #007BB5; /* Darker red */
+}
+
+.trip-title {
+    margin-left: 20px;
 }
