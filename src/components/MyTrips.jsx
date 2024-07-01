@@ -163,7 +163,6 @@ export default function MyTrips() {
     return (
         <>
             <div>
-                <h2>My Trips</h2>
                 {data.length && 
                 <div className="trip-display">
                     <span>Outbound Details</span>

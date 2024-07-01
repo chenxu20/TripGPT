@@ -1,0 +1,29 @@
+.navbar {
+    background-color: #333333;
+    padding: .5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+}
+
+.navbar > ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    grid-gap: 20px;
+}
+
+.navbar-items {
+    padding: .5rem 1rem;
+}
+
+.navbar-items > a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.navbar-items > a:hover {
+    border-bottom: 3px solid white;
+}
