@@ -18,32 +18,3 @@ body {
   padding: 0;
   color: #ffffff;
 }
-
-.navbar {
-  padding: 5px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 80px;
-  border-radius: 10px;
-}
-
-.navbar > ul {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(4, auto);
-  grid-gap: 20px;
-}
-
-.navbar-contents {
-  padding: 0.7rem 1rem;
-}
-
-.navbar-contents > a {
-  text-decoration: none;
-  color: #ffffff;
-}
-
-.navbar-contents > a:hover {
-  border-bottom: 4px solid white;
-}
