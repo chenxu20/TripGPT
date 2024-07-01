@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, collection } from 'firebase/firestore';
 //import { getAnalytics } from "firebase/analytics";
 
 //Firebase configuration
@@ -19,4 +19,6 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const googleProvider =  new GoogleAuthProvider();
 export const db = getFirestore(app);
+export const transactionCollection = collection(db, "transactions")
+export const travellersCollection = collection(db, "travellers-info")
 //const analytics = getAnalytics(app);
