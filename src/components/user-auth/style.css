@@ -1,3 +1,7 @@
+.error-msg {
+    color: #ff0000;
+}
+
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -5,8 +9,8 @@
     align-items: center;
     max-width: 38rem;
     padding: 2rem;
-    margin: auto;
-    border: 1px solid #ffffff;
+    margin: 2rem auto;
+    border: 1px solid #cccccc;
     border-radius: 0.5rem;
 }
 
@@ -17,7 +21,7 @@
 }
 
 .wrapper input {
-    width: 100%;
+    width: 15rem;
     font-size: 1rem;
     font-family: inherit;
     font-weight: 400;
@@ -33,7 +37,7 @@
     font-family: inherit;
     font-weight: 600;
     cursor: pointer;
-    width: 50%;
+    width: 40%;
     padding: 0.6rem 1.2rem;
     background: #1a1a1a;
     transition: border-color 0.25s;
@@ -42,10 +46,10 @@
 
 .submit-button:hover {
     border-color: #646cff;
-    background: #333333;
+    background: #444444;
 }
 
-.wrapper p {
+.wrapper > p {
     font-weight: 500;
 }
 
