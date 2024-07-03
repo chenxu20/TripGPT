@@ -1,11 +1,15 @@
 import { React, createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../config/firebase';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
+import { auth, googleProvider } from '../config/firebase';
+import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
 
-const AuthContext = createContext();
+const AuthContext = createContext({
+    user: null,
+    isLoading: true
+});
 
 export const AuthContextProvider = ({children}) => {
     const [user, setUser] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
 
     const userSignUp = (email, password, name) => 
         createUserWithEmailAndPassword(auth, email, password)
@@ -13,19 +17,21 @@ export const AuthContextProvider = ({children}) => {
 
     const userSignIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
 
-    const googleUserSignIn = () => signInWithPopup(auth, new GoogleAuthProvider());
+    const googleUserSignIn = () => signInWithPopup(auth, googleProvider);
 
     const userSignOut = () => signOut(auth);
 
-    const forgotPassword = email => true;
+    const forgotPassword = email => sendPasswordResetEmail(auth, email);
 
     useEffect(() => onAuthStateChanged(auth, user => {
         console.log(user);
+        setIsLoading(true);
         setUser(user);
-    }))
+        setIsLoading(false);
+    }, []))
 
     return (
-        <AuthContext.Provider value={{ googleUserSignIn, user, userSignUp, userSignIn, userSignOut }}>
+        <AuthContext.Provider value={{ forgotPassword, googleUserSignIn, isLoading, user, userSignUp, userSignIn, userSignOut }}>
             {children}
         </AuthContext.Provider>
     );
