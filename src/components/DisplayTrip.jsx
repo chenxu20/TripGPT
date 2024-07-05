@@ -1,11 +1,11 @@
 import React from "react"
 import "./DisplayTrip.css"
-import { db } from "../config/firebase"
+import { database } from "../config/firebase"
 import { doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore"
 
 export default function DisplayTrip(props) {
     function deleteTrip() {
-        const tripDocRef = doc(db, "trip-details", props.data.id)
+        const tripDocRef = doc(database, "trip-details", props.data.id)
         deleteDoc(tripDocRef)
             .then(() => {
                 alert("Trip successfully deleted!")

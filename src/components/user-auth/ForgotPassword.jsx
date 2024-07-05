@@ -25,11 +25,11 @@ export const ForgotPassword = () => {
         <div className='wrapper'>
             <h1>Forgot Password</h1>
             <form onSubmit={handleResetPassword}>
-                <input 
+                <input
                     className="input-field"
                     type="email"
                     value={email}
-                    placeholder="Email" 
+                    placeholder="Email"
                     onChange={e => setEmail(e.target.value)}
                     required
                 />

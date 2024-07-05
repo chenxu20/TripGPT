@@ -7,13 +7,13 @@ const AuthContext = createContext({
     isLoading: true
 });
 
-export const AuthContextProvider = ({children}) => {
+export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState({});
     const [isLoading, setIsLoading] = useState(true);
 
-    const userSignUp = (email, password, name) => 
+    const userSignUp = (email, password, name) =>
         createUserWithEmailAndPassword(auth, email, password)
-        .then(() => updateProfile(auth.currentUser, { displayName: name }));    //Requires update: displayName can be used for XSS attack
+            .then(() => updateProfile(auth.currentUser, { displayName: name }));    //Requires update: displayName can be used for XSS attack
 
     const userSignIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
 

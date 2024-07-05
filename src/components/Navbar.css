@@ -7,7 +7,7 @@
     height: 80px;
 }
 
-.navbar > ul {
+.navbar>ul {
     list-style: none;
     display: grid;
     grid-template-columns: repeat(4, auto);
@@ -18,12 +18,12 @@
     padding: .5rem 1rem;
 }
 
-.navbar-items > a {
+.navbar-items>a {
     text-decoration: none;
     color: #ffffff;
     font-size: 1rem;
 }
 
-.navbar-items > a:hover {
+.navbar-items>a:hover {
     border-bottom: 3px solid white;
 }

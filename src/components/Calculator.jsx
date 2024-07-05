@@ -4,7 +4,7 @@ import AutoAddExpense from "./AutoAddExpense"
 import ManualAddExpense from "./ManualAddExpense"
 import Transactions from "./Transactions"
 import Payer from "./Payer"
-import { transactionCollection, travellersCollection, db } from "../config/firebase"
+import { transactionCollection, travellersCollection, database } from "../config/firebase"
 import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc } from "firebase/firestore"
 
 export default function Calculator() {
@@ -139,6 +139,7 @@ export default function Calculator() {
         : transactions.map(transaction => {
             return (
                 <Transactions 
+                    key={transaction.id}
                     transaction={transaction}
                 />
             )
@@ -152,7 +153,7 @@ export default function Calculator() {
                 color: netAmount > 0 ? "green" : netAmount < 0 ? "red" : "white"
             }
             return (
-                <div className="display-traveller">
+                <div className="display-traveller" key={traveller.id}>
                     <p>
                         {traveller.travellerName}
                     </p>
@@ -329,7 +330,7 @@ export default function Calculator() {
     }
 
     function deleteTraveller(id) {
-        const docRef = doc(db, "travellers-info", id)
+        const docRef = doc(database, "travellers-info", id)
         deleteDoc(docRef)
             .then(() => {
                 //alert("Traveller successfully deleted!")
@@ -353,7 +354,7 @@ export default function Calculator() {
     function updateDatabase() {
         const travellersInvolved = travellers.filter(traveller => traveller.toggle || traveller.isPayer)
         for (let i = 0; i < travellersInvolved.length; i++) {
-            const docRef = doc(db, "travellers-info", travellersInvolved[i].id)
+            const docRef = doc(database, "travellers-info", travellersInvolved[i].id)
             if (travellersInvolved[i].isPayer) {
                 updateDoc(docRef, {
                     netAmount: parseFloat(travellersInvolved[i].netAmount) + parseFloat(expense) / numPayer - parseFloat(travellersInvolved[i].expensePlaceholder)

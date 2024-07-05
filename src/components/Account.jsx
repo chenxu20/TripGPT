@@ -21,7 +21,7 @@ export const Account = () => {
             <h1>Account</h1>
             <p>Name: {user.displayName}</p>
             <p>Email: {user.email}</p>
-            <button onClick={ handleSignOut }>Sign Out</button>
+            <button onClick={handleSignOut}>Sign Out</button>
         </div>
     );
 }

@@ -8,9 +8,9 @@
 
 .divider::before,
 .divider::after {
-  content: '';
-  flex: 1;
-  border-bottom: 2px solid #cccccc;
+    content: '';
+    flex: 1;
+    border-bottom: 2px solid #cccccc;
 }
 
 .divider::before {
@@ -130,7 +130,7 @@
     margin-bottom: 1rem;
 }
 
-.wrapper > p {
+.wrapper>p {
     font-weight: 500;
 }
 

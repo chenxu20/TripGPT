@@ -35,12 +35,10 @@ export default function MyTrips() {
         ? data
         : data.map(indiv => {
             return (
-                <>
-                    <span></span>
-                    <DisplayTrip 
-                        data={indiv}
-                    />
-                </>
+                <DisplayTrip 
+                    key={indiv.id}
+                    data={indiv}
+                />
             )
         })
 

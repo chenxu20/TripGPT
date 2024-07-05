@@ -48,20 +48,20 @@ export const SignIn = () => {
             <button onClick={handleGoogleSignIn} className="form-button google-signin-button">Sign in with Google</button>
             <div className='divider'>or</div>
             <form onSubmit={handleSignIn}>
-                <input 
+                <input
                     className="input-field"
                     type="email"
                     value={email}
-                    placeholder="Email" 
+                    placeholder="Email"
                     onChange={e => setEmail(e.target.value)}
                     required
                 />
                 <div className="password-field">
-                    <input 
+                    <input
                         className="input-field"
                         type={showPassword ? "text" : "password"}
                         value={password}
-                        placeholder="Password" 
+                        placeholder="Password"
                         onChange={e => setPassword(e.target.value)}
                         required
                     />

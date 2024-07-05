@@ -18,7 +18,7 @@ export const SignUp = () => {
     const handleSignUp = async (e) => {
         e.preventDefault();
         try {
-            if(password !== confirmPassword) {
+            if (password !== confirmPassword) {
                 setError("Passwords do not match.");
                 return;
             }
@@ -37,24 +37,24 @@ export const SignUp = () => {
         <div className='wrapper'>
             <h1>Sign Up</h1>
             <form onSubmit={handleSignUp}>
-                <input 
+                <input
                     className="input-field"
                     type="name"
                     value={name}
-                    placeholder="Name" 
+                    placeholder="Name"
                     onChange={e => setName(e.target.value)}
                     required
                 />
-                <input 
+                <input
                     className="input-field"
                     type="email"
                     value={email}
-                    placeholder="Email" 
+                    placeholder="Email"
                     onChange={e => setEmail(e.target.value)}
                     required
                 />
                 <div className="password-field">
-                    <input 
+                    <input
                         className="input-field"
                         type={showPassword ? "text" : "password"}
                         value={password}
@@ -65,11 +65,11 @@ export const SignUp = () => {
                     <button onClick={toggleShowPassword} className="password-icon" type="button">{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
                 </div>
                 <div className="password-field">
-                    <input 
+                    <input
                         className="input-field"
                         type={showPassword ? "text" : "password"}
                         value={confirmPassword}
-                        placeholder="Confirm password" 
+                        placeholder="Confirm password"
                         onChange={e => setConfirmPassword(e.target.value)}
                         required
                     />

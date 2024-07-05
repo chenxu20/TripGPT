@@ -4,7 +4,7 @@ import { UserAuth } from '../context/AuthContext';
 import './Navbar.css'
 
 export default function Navbar() {
-    const {user} = UserAuth();
+    const { user } = UserAuth();
     const items = [{
         name: "Home",
         link: "/"
@@ -18,7 +18,7 @@ export default function Navbar() {
         name: user ? "Account" : "Sign in",
         link: user ? "/account" : "/signin"
     }];
-    
+
     return (
         <nav className="navbar">
             <h2>TripGPT</h2>
