@@ -1,62 +1,84 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { database } from '../config/firebase';
-import { collection, addDoc, onSnapshot, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 
 export const ItineraryContext = createContext();
 
 export const ItineraryContextProvider = ({ children }) => {
-    const [itinerary, setItinerary] = useState([]);
-    const itineraryCollection = collection(database, 'itinerary');
+    const [itineraries, setItineraries] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const itineraryCollection = collection(database, 'itineraries');
 
     useEffect(() => {
-        const fetchItineraries = async () => {
-            const querySnapshot = await getDocs(itineraryCollection);
-            const itinData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setItinerary(itinData);
-        };
-        fetchItineraries();
+        const unsubscribe = onSnapshot(itineraryCollection, snapshot => {
+            const itiData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setItineraries(itiData);
+            setLoading(false);
+        }, error => {
+            setError("Error: Failed to load itineraries.");
+            setLoading(false);
+        });
+        return () => unsubscribe();
     }, []);
 
-    const addItinerary = async (itinerary) => {
-        if (itinerary.trim()) {
-            const docRef = await addDoc(collection(database, 'itinerary'), {
-                name: itinerary,
-            });
-            setItinerary([...itinerary, { id: docRef.id, name: itinerary }]);
+    const addItinerary = async iti => {
+        if (iti.trim()) {
+            try {
+                await addDoc(itineraryCollection, { name: iti });
+            } catch (error) {
+                setError("Error: Failed to add itinerary.");
+            }
+        } else {
+            setError("Invalid itinerary name.");
         }
     };
 
     const deleteItinerary = async id => {
-        await deleteDoc(doc(database, 'itinerary', id));
-        setItinerary(itinerary.filter(iti => iti.id !== id));
-    };
-
-    const addEventItem = async (itiId, event) => {
-        if (event.trim()) {
-            const docRef = await addDoc(collection(database, `itinerary/${itiId}/events`), {
-                name: event,
-            });
-            setItinerary(itinerary.map(iti => {
-                if (iti.id === itiId) {
-                    const updatedEvents = [...(iti.events || []), { id: docRef.id, name: event }];
-                    return { ...iti, events: updatedEvents };
-                }
-                return iti;
-            }));
+        try {
+            await deleteDoc(doc(database, 'itineraries', id));
+        } catch (error) {
+            setError("Error: Failed to delete itinerary.");
         }
     };
 
+    const addEventItem = async (itiId, event) => {
+        if (event.name.trim()) {
+            try {
+                const eventCollection = collection(database, `itineraries/${itiId}/events`);
+                await addDoc(eventCollection, event);
+            } catch (error) {
+                setError("Error: Failed to add event.");
+            }
+        } else {
+            setError("Invalid event details.");
+        }
+    };
+
+    const updateEventItem = async (itiId, eventId, event) => {
+        if (event.name.trim()) {
+            try {
+                const eventRef = doc(database, `itineraries/${itiId}/events`, eventId);
+                await updateDoc(eventRef, event);
+            } catch (error) {
+                setError("Error: Failed to update event.");
+            }
+        } else {
+            setError("Invalid event details.");
+        }
+    }
+
     const removeEventItem = async (itiId, eventId) => {
-        const eventRef = doc(database, `itinerary/${itiId}/events`, eventId);
-        await deleteDoc(eventRef);
-        setItinerary(itinerary.map(iti => iti.id === itiId ? {
-            ...iti,
-            events: iti.events.filter(event => event.id !== eventId)
-        } : iti));
+        try {
+            const eventRef = doc(database, `itineraries/${itiId}/events`, eventId);
+            await deleteDoc(eventRef);
+        } catch (error) {
+            setError("Error: Failed to delete event.");
+        }
     };
 
     return (
-        <ItineraryContext.Provider value={{ itinerary, addItinerary, deleteItinerary, addEventItem, removeEventItem }}>
+        <ItineraryContext.Provider value={{ itineraries, setItineraries, addItinerary, deleteItinerary, addEventItem, updateEventItem, removeEventItem, loading, error }}>
             {children}
         </ItineraryContext.Provider>
     );

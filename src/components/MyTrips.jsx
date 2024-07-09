@@ -42,7 +42,7 @@ export default function MyTrips() {
             )
         })
 
-    console.log(displayData)
+    // console.log(displayData)
 
     const toggleModal = () => {
       setModal(!modal);
