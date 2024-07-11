@@ -12,7 +12,7 @@ export default function Navbar() {
         name: "Explore",
         link: "/explore"
     }, {
-        name: "My Trips",
+        name: "Trips",
         link: "/trips"
     }, {
         name: user ? "Account" : "Sign in",

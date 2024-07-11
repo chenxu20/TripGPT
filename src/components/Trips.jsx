@@ -15,7 +15,7 @@ export default function Trips() {
                         path="/"
                         element={
                             <div>
-                                <h1>My Trips</h1>
+                                <h1>Trips</h1>
                                 <ItineraryList />
                                 <br />
                                 <hr />

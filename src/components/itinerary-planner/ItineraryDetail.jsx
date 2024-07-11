@@ -31,7 +31,9 @@ export const ItineraryDetail = () => {
         }
         const eventsCollection = collection(database, `itineraries/${id}/events`);
         const unsubscribe = onSnapshot(eventsCollection, snapshot => {
-            setEvents(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            const fetchedEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const sortedEvents = fetchedEvents.sort((x, y) => x.startDate.toDate() - y.startDate.toDate());
+            setEvents(sortedEvents);
         });
 
         return () => unsubscribe();
@@ -57,6 +59,10 @@ export const ItineraryDetail = () => {
 
     const handleModeChange = e => {
         setMode(e.target.value);
+    }
+
+    function displayDateTime(date) {
+        return date.toDate().toLocaleString("en-GB");
     }
 
     return (
@@ -89,10 +95,10 @@ export const ItineraryDetail = () => {
                             <h3>{event.name}</h3>
                             {event.endDate ? (
                                 <>
-                                    <div>From: {event.startDate.toDate().toLocaleString()}</div>
-                                    <div>To: {event.endDate.toDate().toLocaleString()}</div>
+                                    <div>From: {displayDateTime(event.startDate)}</div>
+                                    <div>To: {displayDateTime(event.endDate)}</div>
                                 </>
-                            ) : <div>At: {event.startDate.toDate().toLocaleString()}</div>}
+                            ) : <div>At: {displayDateTime(event.startDate)}</div>}
                             {mode === Mode.EDIT && (
                                 <>
                                     <button onClick={() => openEditEventModal(event)}>Edit Event</button>

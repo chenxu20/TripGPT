@@ -6,11 +6,13 @@ export const AddItineraryItem = () => {
     const [itinerary, setItinerary] = useState('');
     const [message, setMessage] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async e => {
         e.preventDefault();
-        addItinerary(itinerary);
-        setItinerary('');
-        setMessage("Itinerary added successfully")
+        await addItinerary(itinerary);
+        if (!error) {
+            setMessage("Itinerary added successfully");
+            setItinerary('');
+        }
     };
 
     useEffect(() => {
@@ -26,6 +28,7 @@ export const AddItineraryItem = () => {
                 value={itinerary}
                 onChange={(e) => setItinerary(e.target.value)}
                 placeholder="Add Itinerary"
+                required
             />
             <button type="submit">Add Itinerary</button>
             {message && <span>{message}</span>}

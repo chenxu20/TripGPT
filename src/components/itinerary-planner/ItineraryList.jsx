@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { AddItineraryItem } from './AddItineraryItem';
 import { database } from '../../config/firebase';
-import { Link } from 'react-router-dom';
+import { ItineraryItem } from './ItineraryItem';
 
 export const ItineraryList = () => {
     const { itineraries, setItineraries, deleteItinerary } = useContext(ItineraryContext);
@@ -23,12 +23,9 @@ export const ItineraryList = () => {
         <div>
             <AddItineraryItem />
             <ul>
-            {itineraries.map(iti => (
-                <li key={iti.id}>
-                    <Link to={`./${iti.id}`}>{iti.name}</Link>
-                    <button onClick={() => deleteItinerary(iti.id)}>Delete itinerary</button>
-                </li>
-            ))}
+                {itineraries.map(iti => (
+                    <ItineraryItem key={iti.id} itinerary={iti} deleteItinerary={deleteItinerary} />
+                ))}
             </ul>
         </div>
     );
