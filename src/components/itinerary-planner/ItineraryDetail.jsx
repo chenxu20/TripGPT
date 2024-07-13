@@ -4,6 +4,9 @@ import { collection, onSnapshot } from 'firebase/firestore';
 import { AddEventItem } from './AddEventItem';
 import { database } from '../../config/firebase';
 import { useNavigate, useParams } from 'react-router-dom';
+import { AccommodationDetails } from './events/Accommodation';
+import { ActivityDetails } from './events/Activity';
+import { FlightDetails } from './events/Flight';
 import "./style.css";
 
 //Enum which manages mode state.
@@ -15,7 +18,7 @@ Object.freeze(Mode);
 
 export const ItineraryDetail = () => {
     const { id } = useParams();
-    const { itineraries, removeEventItem } = useContext(ItineraryContext);
+    const { itineraries, removeEventItem, eventTypes } = useContext(ItineraryContext);
     const [events, setEvents] = useState([]);
     const [itinerary, setItinerary] = useState('');
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -59,11 +62,24 @@ export const ItineraryDetail = () => {
 
     const handleModeChange = e => {
         setMode(e.target.value);
-    }
+    };
 
     function displayDateTime(date) {
         return date.toDate().toLocaleString("en-GB");
     }
+
+    const renderEventDetails = event => {
+        switch (event.type) {
+            case eventTypes.ACCOMMODATION:
+                return <AccommodationDetails event={event} displayDateTime={displayDateTime} />;
+            case eventTypes.ACTIVITY:
+                return <ActivityDetails event={event} displayDateTime={displayDateTime} />;
+            case eventTypes.FLIGHT:
+                return <FlightDetails event={event} displayDateTime={displayDateTime} />;
+            default:
+                return <div>Error: Bad event type.</div>;
+        }
+    };
 
     return (
         <div>
@@ -81,7 +97,6 @@ export const ItineraryDetail = () => {
                         itiId={id}
                         isOpen={modalIsOpen}
                         closeModal={closeModal}
-                        isEditing={!!eventToEdit}
                         eventToEdit={eventToEdit}
                         eventMessage={eventMessage}
                         setEventMessage={setEventMessage}
@@ -91,21 +106,13 @@ export const ItineraryDetail = () => {
             <ul>
                 {events.map(event => (
                     <li key={event.id}>
-                        <div>
-                            <h3>{event.name}</h3>
-                            {event.endDate ? (
-                                <>
-                                    <div>From: {displayDateTime(event.startDate)}</div>
-                                    <div>To: {displayDateTime(event.endDate)}</div>
-                                </>
-                            ) : <div>At: {displayDateTime(event.startDate)}</div>}
-                            {mode === Mode.EDIT && (
-                                <>
-                                    <button onClick={() => openEditEventModal(event)}>Edit Event</button>
-                                    <button onClick={() => removeEventItem(id, event.id)}>Remove Event</button>
-                                </>
-                            )}
-                        </div>
+                        {renderEventDetails(event)}
+                        {mode === Mode.EDIT && (
+                            <>
+                                <button onClick={() => openEditEventModal(event)}>Edit Event</button>
+                                <button onClick={() => removeEventItem(id, event.id)}>Remove Event</button>
+                            </>
+                        )}
                     </li>
                 ))}
             </ul>

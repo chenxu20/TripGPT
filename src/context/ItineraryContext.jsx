@@ -10,6 +10,14 @@ export const ItineraryContextProvider = ({ children }) => {
     const [error, setError] = useState("");
     const itineraryCollection = collection(database, 'itineraries');
 
+    //Enum to manage event type
+    const eventTypes = {
+        ACCOMMODATION: "accommodation",
+        ACTIVITY: "activity",
+        FLIGHT: "flight",
+        NO_TYPE: ""
+    };
+
     useEffect(() => {
         const unsubscribe = onSnapshot(itineraryCollection, snapshot => {
             const itiData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -94,7 +102,7 @@ export const ItineraryContextProvider = ({ children }) => {
     };
 
     return (
-        <ItineraryContext.Provider value={{ itineraries, setItineraries, addItinerary, deleteItinerary, addEventItem, updateEventItem, removeEventItem, loading, error }}>
+        <ItineraryContext.Provider value={{ itineraries, setItineraries, addItinerary, deleteItinerary, addEventItem, updateEventItem, removeEventItem, loading, error, eventTypes }}>
             {children}
         </ItineraryContext.Provider>
     );
