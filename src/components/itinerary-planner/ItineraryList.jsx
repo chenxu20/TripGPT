@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { AddItineraryItem } from './AddItineraryItem';
@@ -9,12 +9,22 @@ export const ItineraryList = () => {
     const { itineraries, setItineraries, deleteItinerary } = useContext(ItineraryContext);
 
     useEffect(() => {
-        const unsub = onSnapshot(collection(database, 'itineraries'), (snapshot) => {
+        const unsub = onSnapshot(collection(database, 'itineraries'), snapshot => {
             const data = snapshot.docs.map(doc => ({
                 ...doc.data(),
                 id: doc.id
             }));
-            setItineraries(data);
+
+            const currentDate = new Date();
+            const pastItineraries = data.filter(iti => iti.endDate.toDate() < currentDate);
+            const futureItineraries = data.filter(iti => iti.startDate.toDate() >= currentDate);
+
+            pastItineraries.sort((x, y) => y.endDate.toDate() - x.endDate.toDate());
+            futureItineraries.sort((x, y) => x.startDate.toDate() - y.startDate.toDate());
+
+            const sortedItineraries = [...futureItineraries, ...pastItineraries];
+
+            setItineraries(sortedItineraries);
         });
         return () => unsub();
     }, [setItineraries]);
