@@ -32,11 +32,11 @@ export const ItineraryList = () => {
     return (
         <div>
             <AddItineraryItem />
-            <ul>
+            <div className="itinerary-list-wrapper">
                 {itineraries.map(iti => (
                     <ItineraryItem key={iti.id} itinerary={iti} deleteItinerary={deleteItinerary} />
                 ))}
-            </ul>
+            </div>
         </div>
     );
 };

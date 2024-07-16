@@ -5,26 +5,34 @@ import { ItineraryContextProvider } from '../context/ItineraryContext'
 import { ItineraryList } from './itinerary-planner/ItineraryList'
 import { Route, Routes } from 'react-router-dom'
 import { ItineraryDetail } from './itinerary-planner/ItineraryDetail'
+import "./Trips.css"
 
 export default function Trips() {
     return (
         <ItineraryContextProvider>
-            <div>
+            <div className="trips-wrapper">
                 <Routes>
                     <Route
                         path="/"
                         element={
-                            <div>
+                            <>
                                 <h1>Trips</h1>
                                 <ItineraryList />
                                 <br />
                                 <hr />
                                 <MyTrips />
                                 <Calculator />
-                            </div>
+                            </>
                         }
                     />
-                    <Route path="/:id" element={<ItineraryDetail />} />
+                    <Route
+                        path="/:id"
+                        element={
+                            <>
+                                <ItineraryDetail />
+                            </>
+                        }
+                    />
                 </Routes>
             </div>
         </ItineraryContextProvider>

@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { doc, updateDoc, collection, onSnapshot } from 'firebase/firestore';
 import { database } from '../../config/firebase';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
+    const navigate = useNavigate();
+
     useEffect(() => {
         const eventsCollection = collection(database, `itineraries/${itinerary.id}/events`);
         const unsubscribe = onSnapshot(eventsCollection, async snapshot => {
@@ -38,11 +40,14 @@ export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
     }
 
     return (
-        <li key={itinerary.id}>
-            <Link to={`./${itinerary.id}`}>{itinerary.name}</Link>
-            {itinerary.startDate && itinerary.endDate && 
+        <li key={itinerary.id} className="itinerary-item">
+            <div className="itinerary-title">{itinerary.name}</div>
+            {itinerary.startDate && itinerary.endDate &&
                 <div>{displayDate(itinerary.startDate)} – {displayDate(itinerary.endDate)}</div>}
-            <button onClick={handleDelete}>Delete itinerary</button>
+            <div className="itinerary-item-buttons">
+                <button className="itinerary-button" onClick={() => navigate(`./${itinerary.id}`)}>View Itinerary</button>
+                <button className="itinerary-button" onClick={handleDelete}>Delete Itinerary</button>
+            </div>
         </li>
     );
 };

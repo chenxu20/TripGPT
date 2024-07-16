@@ -1,6 +1,7 @@
 import React from 'react';
 import { UserAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import "./user-auth/style.css";
 
 export const Account = () => {
     const { user, userSignOut } = UserAuth();
@@ -21,7 +22,7 @@ export const Account = () => {
             <h1>Account</h1>
             <p>Name: {user.displayName}</p>
             <p>Email: {user.email}</p>
-            <button onClick={handleSignOut}>Sign Out</button>
+            <button className="form-button" onClick={handleSignOut}>Sign Out</button>
         </div>
     );
 }

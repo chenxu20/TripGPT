@@ -57,12 +57,9 @@
 
 #remember-me {
     accent-color: #3236ff;
-    margin-right: 0.4rem;
     display: flex;
-}
-
-#remember-me input {
-    margin-right: 0.4rem;
+    align-items: center;
+    gap: 0.2rem;
 }
 
 .wrapper {
@@ -102,9 +99,10 @@
     font-weight: 600;
     cursor: pointer;
     padding: 0.6rem 1.2rem;
-    background: #1a1a1a;
+    background: #111111;
     transition: border-color 0.25s;
     margin: 10px 0;
+    border-radius: 2px;
 }
 
 .form-button:hover {

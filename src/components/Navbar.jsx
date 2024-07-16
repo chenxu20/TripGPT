@@ -1,7 +1,8 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { UserAuth } from '../context/AuthContext';
-import './Navbar.css'
+import './Navbar.css';
+import { FaEarthAmericas } from "react-icons/fa6";
 
 export default function Navbar() {
     const { user } = UserAuth();
@@ -21,7 +22,7 @@ export default function Navbar() {
 
     return (
         <nav className="navbar">
-            <h2>TripGPT</h2>
+            <h2><FaEarthAmericas />TripGPT</h2>
             <ul>
                 {items.map((x, index) => {
                     return (

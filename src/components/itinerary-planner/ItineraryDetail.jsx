@@ -8,6 +8,7 @@ import { AccommodationDetails } from './events/Accommodation';
 import { ActivityDetails } from './events/Activity';
 import { FlightDetails } from './events/Flight';
 import "./style.css";
+import { FaChevronLeft, FaHotel, FaMapMarkerAlt, FaPlane } from 'react-icons/fa';
 
 //Enum which manages mode state.
 const Mode = {
@@ -81,38 +82,64 @@ export const ItineraryDetail = () => {
         }
     };
 
+    function getEventTypeIcon(eventType) {
+        switch (eventType) {
+            case eventTypes.ACCOMMODATION:
+                return <FaHotel />;
+            case eventTypes.ACTIVITY:
+                return <FaMapMarkerAlt />;
+            case eventTypes.FLIGHT:
+                return <FaPlane />;
+            default:
+                return "";
+        }
+    }
+
     return (
-        <div>
-            <button onClick={() => navigate("/trips")}>Back</button>
-            <h1>{itinerary.name}</h1>
-            <select value={mode} onChange={handleModeChange}>
-                <option value={Mode.VIEW}>Viewing</option>
-                <option value={Mode.EDIT}>Editing</option>
-            </select>
-            <br />
-            {mode === Mode.EDIT && (
-                <>
-                    <button onClick={openAddEventModal}>Add Event</button>
-                    <AddEventItem
-                        itiId={id}
-                        isOpen={modalIsOpen}
-                        closeModal={closeModal}
-                        eventToEdit={eventToEdit}
-                        eventMessage={eventMessage}
-                        setEventMessage={setEventMessage}
-                    />
-                </>
-            )}
-            <ul>
+        <div className="event-list-wrapper">
+            <button onClick={() => navigate("/trips")} className="event-back-button"><FaChevronLeft />Trips</button>
+            <div className="event-list-header">
+                <h1 className="event-list-title">{itinerary.name}</h1>
+                <div className="mode-wrapper">
+                    <select value={mode} onChange={handleModeChange} className="mode-selector">
+                        <option value={Mode.VIEW}>Viewing</option>
+                        <option value={Mode.EDIT}>Editing</option>
+                    </select>
+                    {mode === Mode.EDIT && (
+                        <>
+                            <button onClick={openAddEventModal} className="itinerary-button">Add Event</button>
+                            <AddEventItem
+                                itiId={id}
+                                isOpen={modalIsOpen}
+                                closeModal={closeModal}
+                                eventToEdit={eventToEdit}
+                                eventMessage={eventMessage}
+                                setEventMessage={setEventMessage}
+                            />
+                        </>
+                    )}
+                </div>
+            </div>
+            <ul className="event-display">
                 {events.map(event => (
-                    <li key={event.id}>
-                        {renderEventDetails(event)}
-                        {mode === Mode.EDIT && (
-                            <>
-                                <button onClick={() => openEditEventModal(event)}>Edit Event</button>
-                                <button onClick={() => removeEventItem(id, event.id)}>Remove Event</button>
-                            </>
-                        )}
+                    <li key={event.id} className="event-wrapper">
+                        <div className="event-timeline">
+                            <div className="event-icon">
+                                {getEventTypeIcon(event.type)}
+                            </div>
+                            <div className="timeline-line"></div>
+                        </div>
+                        <div className="event-content-wrapper">
+                            <div className="event-content">
+                                {renderEventDetails(event)}
+                            </div>
+                            {mode === Mode.EDIT && (
+                                <div className="event-content-button">
+                                    <button onClick={() => openEditEventModal(event)} className="itinerary-button">Edit</button>
+                                    <button onClick={() => removeEventItem(id, event.id)} className="itinerary-button">Remove</button>
+                                </div>
+                            )}
+                        </div>
                     </li>
                 ))}
             </ul>

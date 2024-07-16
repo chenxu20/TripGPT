@@ -35,8 +35,8 @@ export const Activity = ({ initialEventState, eventToEdit }) => {
 
     const eventForm = () => (
         <>
-            <label>
-                Name:
+            <div>
+                <label>Name</label>
                 <input
                     type="text"
                     name="name"
@@ -45,75 +45,74 @@ export const Activity = ({ initialEventState, eventToEdit }) => {
                     placeholder="Activity name"
                     required
                 />
-            </label>
-            <br />
-            <label>
-                Start:
-                <input
-                    type="date"
-                    name="startDate"
-                    value={event.startDate}
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    type="time"
-                    name="startTime"
-                    value={event.startTime}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-            <br />
-            <label>
-                End:
-                <input
-                    type="date"
-                    name="endDate"
-                    value={event.endDate}
-                    onChange={handleChange}
-                    disabled={disableEnd}
-                    required={!disableEnd}
-                />
-                <input
-                    type="time"
-                    name="endTime"
-                    value={event.endTime}
-                    onChange={handleChange}
-                    disabled={disableEnd}
-                    required={!disableEnd}
-                />
-            </label>
-            <br />
-            <label>
-                <input
-                    type="checkbox"
-                    checked={disableEnd}
-                    onChange={handleEndCheckbox}
-                />
-                No end date
-            </label>
-            <br />
-            <label>
-                Location:
+            </div>
+            <div>
+                <label>Start</label>
+                <div className="event-form-datetime">
+                    <input
+                        type="date"
+                        name="startDate"
+                        value={event.startDate}
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        type="time"
+                        name="startTime"
+                        value={event.startTime}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+            </div>
+            <div>
+                <label>End</label>
+                <div className="event-form-datetime">
+                    <input
+                        type="date"
+                        name="endDate"
+                        value={event.endDate}
+                        onChange={handleChange}
+                        disabled={disableEnd}
+                        required={!disableEnd}
+                    />
+                    <input
+                        type="time"
+                        name="endTime"
+                        value={event.endTime}
+                        onChange={handleChange}
+                        disabled={disableEnd}
+                        required={!disableEnd}
+                    />
+                </div>
+                <label id="no-end-checkbox">
+                    <input
+                        type="checkbox"
+                        checked={disableEnd}
+                        onChange={handleEndCheckbox}
+                    />
+                    No end date
+                </label>
+            </div>
+            <div>
+                <label>Location</label>
                 <input
                     type="text"
                     name="location"
                     value={event.location}
                     onChange={handleChange}
-                    placeholder="Location"
+                    placeholder="Location (Optional)"
                 />
-            </label>
-            <br />
-            <label>
-                Notes:
+            </div>
+            <div>
+                <label>Notes</label>
                 <textarea
                     name="notes"
                     value={event.notes}
                     onChange={handleChange}
-                    placeholder="Notes"
+                    placeholder="Notes (Optional)"
                 />
-            </label>
+            </div>
         </>
     );
 
@@ -130,7 +129,7 @@ export const Activity = ({ initialEventState, eventToEdit }) => {
 
 export const ActivityDetails = ({ event, displayDateTime }) => (
     <>
-        <h3>{event.name}</h3>
+        <div className="event-content-title">{event.name}</div>
         {event.endDate ? (
             <>
                 <div>From: {displayDateTime(event.startDate)}</div>

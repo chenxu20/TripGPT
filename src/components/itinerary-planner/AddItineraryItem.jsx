@@ -10,7 +10,7 @@ export const AddItineraryItem = () => {
         e.preventDefault();
         await addItinerary(itinerary);
         if (!error) {
-            setMessage("Itinerary added successfully");
+            setMessage("Itinerary added successfully.");
             setItinerary('');
         }
     };
@@ -22,15 +22,17 @@ export const AddItineraryItem = () => {
     }, [error]);
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                value={itinerary}
-                onChange={(e) => setItinerary(e.target.value)}
-                placeholder="Add Itinerary"
-                required
-            />
-            <button type="submit">Add Itinerary</button>
+        <form onSubmit={handleSubmit} className="itinerary-add-form">
+            <div>
+                <input
+                    type="text"
+                    value={itinerary}
+                    onChange={(e) => setItinerary(e.target.value)}
+                    placeholder="Itinerary name"
+                    required
+                />
+                <button type="submit" className="itinerary-button">Add Itinerary</button>
+            </div>
             {message && <span>{message}</span>}
         </form>
     );

@@ -4,6 +4,7 @@ import "./style.css";
 import { Accommodation } from './events/Accommodation';
 import { Activity } from './events/Activity';
 import { Flight } from './events/Flight';
+import { FaChevronLeft } from 'react-icons/fa';
 
 //Enums managing form step
 const Steps = {
@@ -85,6 +86,7 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
             state.resetEvent?.();
         });
         setActiveType(eventTypes.NO_TYPE);
+        setEventMessage("");
     }
 
     const handleClear = () => {
@@ -153,10 +155,10 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
                 await updateEventItem(itiId, eventToEdit.id, newEvent);
                 setEventMessage("Event updated successfully.");
             } else {
+                await addEventItem(itiId, newEvent);
                 if (inboundFlight) {
                     await addEventItem(itiId, inboundFlight);
                 }
-                await addEventItem(itiId, newEvent);
                 setEventMessage("Event added successfully.");
                 setStep(Steps.SELECT_TYPE);
                 resetForm();
@@ -172,19 +174,21 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
                 return (
                     <>
                         <h3>Select Event type</h3>
-                        <button onClick={() => handleEventTypeSelect(eventTypes.FLIGHT)}>Flight</button>
-                        <button onClick={() => handleEventTypeSelect(eventTypes.ACCOMMODATION)}>Accommodation</button>
-                        <button onClick={() => handleEventTypeSelect(eventTypes.ACTIVITY)}>Activity</button>
+                        <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.FLIGHT)}>Flight</button>
+                        <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.ACCOMMODATION)}>Accommodation</button>
+                        <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.ACTIVITY)}>Activity</button>
                     </>
                 );
             case Steps.INPUT_DETAILS:
                 return (
-                    <form onSubmit={handleSubmit}>
+                    <form className="event-form" onSubmit={handleSubmit}>
                         {renderDetailsForm()}
-                        <br />
-                        <button type="submit">{eventToEdit ? "Update" : "Add"} Event</button>
-                        <button type="button" onClick={handleClear}>Clear</button>
-                        <br />
+                        <div>
+                            <div className="event-form-button-wrapper">
+                                <button type="submit" className="itinerary-button">{eventToEdit ? "Update" : "Add"} {capitalizeFirstLetter(activeType) || "Event"}</button>
+                                <button type="button" className="itinerary-button" onClick={handleClear}>Clear</button>
+                            </div>
+                        </div>
                         {eventMessage && <span>{eventMessage}</span>}
                     </form>
                 );
@@ -204,7 +208,10 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
             <div className="event-modal-content">
                 <button className="event-modal-close" onClick={closeModal}>X</button>
                 {step === Steps.INPUT_DETAILS && !eventToEdit &&
-                    <button type="button" onClick={() => setStep(Steps.SELECT_TYPE)}>Back</button>}
+                    <button type="button" className="event-modal-back-button" onClick={() => {
+                        setStep(Steps.SELECT_TYPE);
+                        setActiveType(eventTypes.NO_TYPE);
+                    }}><FaChevronLeft />Event type</button>}
                 <h2>{eventToEdit ? "Edit" : "Add"} {capitalizeFirstLetter(activeType) || "Event"}</h2>
                 {renderForm()}
             </div>

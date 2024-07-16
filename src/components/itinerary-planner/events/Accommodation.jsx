@@ -28,8 +28,8 @@ export const Accommodation = ({ initialEventState, eventToEdit }) => {
 
     const eventForm = () => (
         <>
-            <label>
-                Accommodation name:
+            <div>
+                <label>Name</label>
                 <input
                     type="text"
                     name="name"
@@ -38,10 +38,9 @@ export const Accommodation = ({ initialEventState, eventToEdit }) => {
                     placeholder="Accommodation name"
                     required
                 />
-            </label>
-            <br />
-            <label>
-                Accommodation address:
+            </div>
+            <div>
+                <label>Address</label>
                 <textarea
                     name="address"
                     value={event.address}
@@ -49,43 +48,45 @@ export const Accommodation = ({ initialEventState, eventToEdit }) => {
                     placeholder="Accommodation address"
                     required
                 />
-            </label>
-            <br />
-            <label>
-                Check in:
-                <input
-                    type="date"
-                    name="startDate"
-                    value={event.startDate}
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    type="time"
-                    name="startTime"
-                    value={event.startTime}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
-            <br />
-            <label>
-                Check out:
-                <input
-                    type="date"
-                    name="endDate"
-                    value={event.endDate}
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    type="time"
-                    name="endTime"
-                    value={event.endTime}
-                    onChange={handleChange}
-                    required
-                />
-            </label>
+            </div>
+            <div>
+                <label>Check in</label>
+                <div className="event-form-datetime">
+                    <input
+                        type="date"
+                        name="startDate"
+                        value={event.startDate}
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        type="time"
+                        name="startTime"
+                        value={event.startTime}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+            </div>
+            <div>
+                <label>Check out</label>
+                <div className="event-form-datetime">
+                    <input
+                        type="date"
+                        name="endDate"
+                        value={event.endDate}
+                        onChange={handleChange}
+                        required
+                    />
+                    <input
+                        type="time"
+                        name="endTime"
+                        value={event.endTime}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+            </div>
         </>
     );
 
@@ -100,7 +101,7 @@ export const Accommodation = ({ initialEventState, eventToEdit }) => {
 
 export const AccommodationDetails = ({ event, displayDateTime }) => (
     <>
-        <h3>{event.name}</h3>
+        <div className="event-content-title">{event.name}</div>
         <div>Address: {event.address}</div>
         <div>Check in: {displayDateTime(event.startDate)}</div>
         <div>Check out: {displayDateTime(event.endDate)}</div>
