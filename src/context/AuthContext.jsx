@@ -24,7 +24,6 @@ export const AuthContextProvider = ({ children }) => {
     const forgotPassword = email => sendPasswordResetEmail(auth, email);
 
     useEffect(() => onAuthStateChanged(auth, user => {
-        console.log(user);
         setIsLoading(true);
         setUser(user);
         setIsLoading(false);

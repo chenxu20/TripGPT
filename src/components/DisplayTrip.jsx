@@ -1,7 +1,7 @@
 import React from "react"
 import "./DisplayTrip.css"
 import { database } from "../config/firebase"
-import { doc, deleteDoc, updateDoc, getDoc } from "firebase/firestore"
+import { doc, deleteDoc } from "firebase/firestore"
 
 export default function DisplayTrip(props) {
     function deleteTrip() {

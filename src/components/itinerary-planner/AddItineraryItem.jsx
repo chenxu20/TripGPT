@@ -1,25 +1,39 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
 
 export const AddItineraryItem = () => {
-    const { addItinerary } = useContext(ItineraryContext);
+    const { addItinerary, error } = useContext(ItineraryContext);
     const [itinerary, setItinerary] = useState('');
+    const [message, setMessage] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async e => {
         e.preventDefault();
-        addItinerary(itinerary);
-        setItinerary('');
+        await addItinerary(itinerary);
+        if (!error) {
+            setMessage("Itinerary added successfully.");
+            setItinerary('');
+        }
     };
 
+    useEffect(() => {
+        if (error) {
+            setMessage(error);
+        }
+    }, [error]);
+
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                value={itinerary}
-                onChange={(e) => setItinerary(e.target.value)}
-                placeholder="Add Itinerary"
-            />
-            <button type="submit">Add Itinerary</button>
+        <form onSubmit={handleSubmit} className="itinerary-add-form">
+            <div>
+                <input
+                    type="text"
+                    value={itinerary}
+                    onChange={(e) => setItinerary(e.target.value)}
+                    placeholder="Itinerary name"
+                    required
+                />
+                <button type="submit" className="itinerary-button">Add Itinerary</button>
+            </div>
+            {message && <span>{message}</span>}
         </form>
     );
 };
