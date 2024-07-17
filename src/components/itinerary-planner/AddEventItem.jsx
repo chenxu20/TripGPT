@@ -3,7 +3,10 @@ import { ItineraryContext } from '../../context/ItineraryContext';
 import "./style.css";
 import { Accommodation } from './events/Accommodation';
 import { Activity } from './events/Activity';
+import { Attraction } from './events/Attraction';
+import { Food } from './events/Food';
 import { Flight } from './events/Flight';
+import { Transportation } from './events/Transportation';
 import { FaChevronLeft } from 'react-icons/fa';
 
 //Enums managing form step
@@ -26,7 +29,6 @@ function createDateTime(date, time) {
 export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMessage, setEventMessage }) => {
     const { addEventItem, updateEventItem, error, eventTypes } = useContext(ItineraryContext);
     const initialEventState = { name: '', type: eventTypes.NO_TYPE, startDate: '', startTime: '', endDate: '', endTime: '' };
-
     const [step, setStep] = useState(Steps.SELECT_TYPE);
     const [activeType, setActiveType] = useState(eventTypes.NO_TYPE);
 
@@ -46,10 +48,33 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
                 notes: ""
             }, eventToEdit
         }),
+        [eventTypes.ATTRACTION]: Attraction({
+            initialEventState: {
+                ...initialEventState,
+                type: eventTypes.ATTRACTION,
+                address: ""
+            }, eventToEdit
+        }),
         [eventTypes.FLIGHT]: Flight({
             initialEventState: {
                 ...initialEventState,
                 type: eventTypes.FLIGHT,
+                origin: "",
+                destination: ""
+            }, eventToEdit
+        }),
+        [eventTypes.FOOD]: Food({
+            initialEventState: {
+                ...initialEventState,
+                type: eventTypes.FOOD,
+                address: "",
+                notes: ""
+            }, eventToEdit
+        }),
+        [eventTypes.TRANSPORTATION]: Transportation({
+            initialEventState: {
+                ...initialEventState,
+                type: eventTypes.TRANSPORTATION,
                 origin: "",
                 destination: ""
             }, eventToEdit
@@ -174,9 +199,14 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
                 return (
                     <>
                         <h3>Select Event type</h3>
-                        <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.FLIGHT)}>Flight</button>
-                        <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.ACCOMMODATION)}>Accommodation</button>
-                        <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.ACTIVITY)}>Activity</button>
+                        <div className="event-types-wrapper">
+                            <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.FOOD)}>Food</button>
+                            <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.ACCOMMODATION)}>Accommodation</button>
+                            <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.ATTRACTION)}>Attraction</button>
+                            <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.FLIGHT)}>Flight</button>
+                            <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.TRANSPORTATION)}>Transportation</button>
+                            <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.ACTIVITY)}>Activity</button>
+                        </div>
                     </>
                 );
             case Steps.INPUT_DETAILS:

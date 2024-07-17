@@ -6,36 +6,27 @@ import { database } from '../../config/firebase';
 import { ItineraryItem } from './ItineraryItem';
 
 export const ItineraryList = () => {
-    const { itineraries, setItineraries, deleteItinerary } = useContext(ItineraryContext);
+    const { itineraries, deleteItinerary, loading, error } = useContext(ItineraryContext);
 
-    useEffect(() => {
-        const unsub = onSnapshot(collection(database, 'itineraries'), snapshot => {
-            const data = snapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id
-            }));
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
-            const currentDate = new Date();
-            const pastItineraries = data.filter(iti => iti.endDate.toDate() < currentDate);
-            const futureItineraries = data.filter(iti => iti.startDate.toDate() >= currentDate);
-
-            pastItineraries.sort((x, y) => y.endDate.toDate() - x.endDate.toDate());
-            futureItineraries.sort((x, y) => x.startDate.toDate() - y.startDate.toDate());
-
-            const sortedItineraries = [...futureItineraries, ...pastItineraries];
-
-            setItineraries(sortedItineraries);
-        });
-        return () => unsub();
-    }, [setItineraries]);
+    if (error) {
+        return <div>{error}</div>;
+    }
 
     return (
         <div>
             <AddItineraryItem />
             <div className="itinerary-list-wrapper">
-                {itineraries.map(iti => (
-                    <ItineraryItem key={iti.id} itinerary={iti} deleteItinerary={deleteItinerary} />
-                ))}
+                {itineraries.length === 0 ? (
+                    <div>No itineraries currently. Add one now!</div>
+                ) : (
+                    itineraries.map(iti => (
+                        <ItineraryItem key={iti.id} itinerary={iti} deleteItinerary={deleteItinerary} />
+                    ))
+                )}
             </div>
         </div>
     );

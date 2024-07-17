@@ -6,9 +6,13 @@ import { database } from '../../config/firebase';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AccommodationDetails } from './events/Accommodation';
 import { ActivityDetails } from './events/Activity';
+import { AttractionDetails } from './events/Attraction';
 import { FlightDetails } from './events/Flight';
+import { FoodDetails } from './events/Food';
+import { TransportationDetails } from './events/Transportation';
 import "./style.css";
-import { FaChevronLeft, FaHotel, FaMapMarkerAlt, FaPlane } from 'react-icons/fa';
+import { FaChevronLeft } from 'react-icons/fa';
+import { FaHotel, FaLocationDot, FaLandmark, FaPlane, FaUtensils, FaBus, FaCar, FaShip, FaTrainSubway } from 'react-icons/fa6';
 
 //Enum which manages mode state.
 const Mode = {
@@ -75,21 +79,44 @@ export const ItineraryDetail = () => {
                 return <AccommodationDetails event={event} displayDateTime={displayDateTime} />;
             case eventTypes.ACTIVITY:
                 return <ActivityDetails event={event} displayDateTime={displayDateTime} />;
+            case eventTypes.ATTRACTION:
+                return <AttractionDetails event={event} displayDateTime={displayDateTime} />;
             case eventTypes.FLIGHT:
                 return <FlightDetails event={event} displayDateTime={displayDateTime} />;
+            case eventTypes.FOOD:
+                return <FoodDetails event={event} displayDateTime={displayDateTime} />;
+            case eventTypes.TRANSPORTATION:
+                return <TransportationDetails event={event} displayDateTime={displayDateTime} />;
             default:
                 return <div>Error: Bad event type.</div>;
         }
     };
 
-    function getEventTypeIcon(eventType) {
-        switch (eventType) {
+    function getEventTypeIcon(event) {
+        switch (event.type) {
             case eventTypes.ACCOMMODATION:
                 return <FaHotel />;
             case eventTypes.ACTIVITY:
-                return <FaMapMarkerAlt />;
+                return <FaLocationDot />;
+            case eventTypes.ATTRACTION:
+                return <FaLandmark />;
             case eventTypes.FLIGHT:
                 return <FaPlane />;
+            case eventTypes.FOOD:
+                return <FaUtensils />;
+            case eventTypes.TRANSPORTATION:
+                switch (event.name) {
+                    case "bus":
+                        return <FaBus />;
+                    case "car":
+                        return <FaCar />;
+                    case "ferry":
+                        return <FaShip />;
+                    case "train":
+                        return <FaTrainSubway />;
+                    default:
+                        return "";
+                }
             default:
                 return "";
         }
@@ -101,7 +128,7 @@ export const ItineraryDetail = () => {
             <div className="event-list-header">
                 <h1 className="event-list-title">{itinerary.name}</h1>
                 <div className="mode-wrapper">
-                    <select value={mode} onChange={handleModeChange} className="mode-selector">
+                    <select value={mode} onChange={handleModeChange} className="drop-down">
                         <option value={Mode.VIEW}>Viewing</option>
                         <option value={Mode.EDIT}>Editing</option>
                     </select>
@@ -125,7 +152,7 @@ export const ItineraryDetail = () => {
                     <li key={event.id} className="event-wrapper">
                         <div className="event-timeline">
                             <div className="event-icon">
-                                {getEventTypeIcon(event.type)}
+                                {getEventTypeIcon(event)}
                             </div>
                             <div className="timeline-line"></div>
                         </div>

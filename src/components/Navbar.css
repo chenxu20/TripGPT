@@ -16,12 +16,14 @@
 .navbar>ul {
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(4, auto);
-    grid-gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 1rem;
+    padding: 0.5rem;
 }
 
 .navbar-items {
     padding: .5rem 1rem;
+    text-align: center;
 }
 
 .navbar-items>a {

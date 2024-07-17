@@ -8,12 +8,14 @@ export const Flight = ({ initialEventState, eventToEdit }) => {
 
     const handleChange = e => {
         const { name, value } = e.target;
-        setEvent(prev => ({ ...prev, [name]: value }));
+        const newValue = name === "name" ? value.toUpperCase() : value;
+        setEvent(prev => ({ ...prev, [name]: newValue }));
     };
 
     const handleInboundChange = e => {
         const { name, value } = e.target;
-        setInbound(prev => ({ ...prev, [name]: value }));
+        const newValue = name === "inboundName" ? value.toUpperCase() : value;
+        setInbound(prev => ({ ...prev, [name]: newValue }));
     };
 
     const handleFlightTypeChange = e => {

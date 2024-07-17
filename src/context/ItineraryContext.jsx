@@ -1,10 +1,12 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { database } from '../config/firebase';
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs, writeBatch, query, where } from 'firebase/firestore';
+import { UserAuth } from './AuthContext';
 
 export const ItineraryContext = createContext();
 
 export const ItineraryContextProvider = ({ children }) => {
+    const { user } = UserAuth();
     const [itineraries, setItineraries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -14,26 +16,43 @@ export const ItineraryContextProvider = ({ children }) => {
     const eventTypes = {
         ACCOMMODATION: "accommodation",
         ACTIVITY: "activity",
+        ATTRACTION: "attraction",
         FLIGHT: "flight",
+        FOOD: "food",
+        TRANSPORTATION: "transportation",
         NO_TYPE: ""
     };
 
     useEffect(() => {
-        const unsubscribe = onSnapshot(itineraryCollection, snapshot => {
-            const itiData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setItineraries(itiData);
+        if (user) {
+            const q = query(itineraryCollection, where("user", "==", user.uid));
+            const unsubscribe = onSnapshot(q, snapshot => {
+                const fetchedItineraries = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id}));
+                const currentDate = new Date();
+                const pastItineraries = fetchedItineraries.filter(iti => iti.endDate?.toDate() < currentDate);
+                const futureItineraries = fetchedItineraries.filter(iti => iti.startDate?.toDate() >= currentDate);
+                const undatedItineraries = fetchedItineraries.filter(iti => !iti.startDate);
+
+                pastItineraries.sort((x, y) => y.endDate.toDate() - x.endDate.toDate());
+                futureItineraries.sort((x, y) => x.startDate.toDate() - y.startDate.toDate());
+
+                const sortedItineraries = [...undatedItineraries, ...futureItineraries, ...pastItineraries];
+                setItineraries(sortedItineraries);
+                setLoading(false);
+            }, error => {
+                setError("Error: Failed to load itineraries.");
+                setLoading(false);
+            });
+            return () => unsubscribe();
+        } else {
             setLoading(false);
-        }, error => {
-            setError("Error: Failed to load itineraries.");
-            setLoading(false);
-        });
-        return () => unsubscribe();
-    }, []);
+        }
+    }, [user]);
 
     const addItinerary = async name => {
         if (name.trim()) {
             try {
-                await addDoc(itineraryCollection, { name, startDate: null, endDate: null });
+                await addDoc(itineraryCollection, { name, user: user.uid, startDate: null, endDate: null });
                 setError("");
             } catch (error) {
                 setError("Error: Failed to add itinerary.");
