@@ -33,6 +33,7 @@ export default function Calculator() {
                         description: doc.data().description,
                         expenseTracker: JSON.parse(doc.data().expenseTracker),
                         numPayer: doc.data().numPayer,
+                        expense: doc.data().expense,
                         id: doc.id
                     }
                 })
@@ -112,6 +113,7 @@ export default function Calculator() {
                     description: doc.data().description,
                     expenseTracker: JSON.parse(doc.data().expenseTracker),
                     numPayer: doc.data().numPayer,
+                    expense: doc.data().expense,
                     id: doc.id
                 }
             })
@@ -143,6 +145,7 @@ export default function Calculator() {
             return (
                 <Transactions
                     transaction={transaction}
+                    travellers={travellers}
                 />
             )
         })
@@ -409,6 +412,10 @@ export default function Calculator() {
     }
 
     function updateDatabase() {
+        if (numPayer === 0) {
+            alert("Select at least 1 payer!")
+            return
+        }
         const travellersInvolved = travellers.filter(traveller => traveller.toggle || traveller.isPayer)
         for (let i = 0; i < travellersInvolved.length; i++) {
             const docRef = doc(db, "travellers-info", travellersInvolved[i].id)
@@ -443,7 +450,8 @@ export default function Calculator() {
         addDoc(transactionCollection, {
             description: description,
             expenseTracker: JSON.stringify(truncatedInfo),
-            numPayer: numPayer
+            numPayer: numPayer,
+            expense: expense
         })
             .then(() => {
                 alert("Success")
@@ -458,9 +466,9 @@ export default function Calculator() {
     }
 
     if (editModal) {
-        document.body.classList.add('active-edit-modal')
+        document.body.classList.add('active-modal')
     } else {
-        document.body.classList.remove('active-edit-modal')
+        document.body.classList.remove('active-modal')
     }
 
     return (
@@ -485,9 +493,17 @@ export default function Calculator() {
                 <div className="modal">
                     <div onClick={toggleModal} className="overlay"></div>
                     <div className="modal-content">
-                        <input name="description" onChange={trackChanges} placeholder="Enter a description" />
+                        <label>Description:
+                            <input name="description" onChange={trackChanges} placeholder="Enter a description" />
+                        </label>
                         <br />
-                        $<input name="add-expense" onChange={trackChanges}></input>
+                        <label>Date:
+                            <input name="date" type="date" onChange={trackChanges} ></input>
+                        </label>
+                        <br />
+                        <label>Cost: $
+                            <input name="add-expense" onChange={trackChanges}></input>
+                        </label>
                         <br />
                         <p>Person who paid:</p>
                         {displayPayer}

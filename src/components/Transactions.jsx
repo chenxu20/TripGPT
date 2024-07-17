@@ -89,15 +89,10 @@ export default function Transactions(props) {
             .catch((err) => alert(`Error removing document: ${err}`))
     }
 
-    function editTransaction() {
-
-    }
-
     return (
         <div className="indiv-transaction-el">
             {displayPayees}
             {displayPayers}
-            <button onClick={editTransaction}>Edit Transaction</button>
             <button onClick={deleteTransaction} className="delete-transaction-btn">Delete Transaction</button>
         </div>
     )
