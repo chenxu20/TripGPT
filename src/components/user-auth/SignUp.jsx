@@ -17,12 +17,13 @@ export const SignUp = () => {
 
     const handleSignUp = async (e) => {
         e.preventDefault();
+        const sanitizedDisplayName = name.replace(/[^a-zA-Z0-9_\- ]/g, '');
         try {
             if (password !== confirmPassword) {
                 setError("Passwords do not match.");
                 return;
             }
-            await userSignUp(email, password, name);
+            await userSignUp(email, password, sanitizedDisplayName);
             alert("Your account has been created successfully.");
             navigate("/account");
         } catch (err) {
@@ -30,6 +31,15 @@ export const SignUp = () => {
             setError(getErrorMsg(err));
         }
     }
+
+    const handleNameChange = e => {
+        const sanitizedName = e.target.value.replace(/[^a-zA-Z0-9_\- ]/g, '');
+        if (sanitizedName.length <= 50) {
+            setName(sanitizedName);
+        } else {
+            setError("Name exceeds 50 characters.");
+        }
+    };
 
     const toggleShowPassword = () => setShowPassword(!showPassword);
 
@@ -39,10 +49,10 @@ export const SignUp = () => {
             <form onSubmit={handleSignUp}>
                 <input
                     className="input-field"
-                    type="name"
+                    type="text"
                     value={name}
                     placeholder="Name"
-                    onChange={e => setName(e.target.value)}
+                    onChange={handleNameChange}
                     required
                 />
                 <input
@@ -62,7 +72,9 @@ export const SignUp = () => {
                         onChange={e => setPassword(e.target.value)}
                         required
                     />
-                    <button onClick={toggleShowPassword} className="password-icon" type="button">{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
+                    <button onClick={toggleShowPassword} className="password-icon" type="button">
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
                 </div>
                 <div className="password-field">
                     <input
@@ -73,7 +85,9 @@ export const SignUp = () => {
                         onChange={e => setConfirmPassword(e.target.value)}
                         required
                     />
-                    <button onClick={toggleShowPassword} className="password-icon" type="button">{showPassword ? <FaEyeSlash /> : <FaEye />}</button>
+                    <button onClick={toggleShowPassword} className="password-icon" type="button">
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
                 </div>
                 {error && <span className="error-msg">{error}</span>}
                 <button type="submit" className='form-button submit-button'>Sign Up</button>
