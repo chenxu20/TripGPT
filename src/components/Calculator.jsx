@@ -3,13 +3,15 @@ import React from "react"
 import AutoAddExpense from "./AutoAddExpense"
 import ManualAddExpense from "./ManualAddExpense"
 import Transactions from "./Transactions"
-import { nanoid } from "nanoid"
 import Payer from "./Payer"
 import { transactionCollection, travellersCollection, db } from "../config/firebase"
-import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc } from "firebase/firestore"
+import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc, getDoc } from "firebase/firestore"
 
 export default function Calculator() {
     const [modal, setModal] = React.useState(false)
+    const [editModal, setEditModal] = React.useState(false)
+    const [editName, setEditName] = React.useState()
+    const [travellerId, setTravellerId] = React.useState()
     const [travellers, setTravellers] = React.useState([])
     const [description, setDescription] = React.useState()
     const [expense, setExpense] = React.useState()
@@ -70,7 +72,7 @@ export default function Calculator() {
                 traveller => {
                     return {
                         ...traveller,
-                        expensePlaceholder: (expense/counter)
+                        expensePlaceholder: (expense / counter)
                     }
                 }
             ))
@@ -113,7 +115,7 @@ export default function Calculator() {
                     id: doc.id
                 }
             })
-        setTransactions(fetchedData)
+            setTransactions(fetchedData)
         })
         return () => unsubscribe()
     }, [])
@@ -130,7 +132,7 @@ export default function Calculator() {
                     id: doc.id
                 }
             })
-        setTravellers(fetchedData)
+            setTravellers(fetchedData)
         })
         return () => unsubscribe()
     }, [])
@@ -139,14 +141,14 @@ export default function Calculator() {
         ? transactions
         : transactions.map(transaction => {
             return (
-                <Transactions 
+                <Transactions
                     transaction={transaction}
                 />
             )
         })
 
-    const displayTravellers = !(travellers.length) 
-        ? travellers 
+    const displayTravellers = !(travellers.length)
+        ? travellers
         : travellers.map(traveller => {
             const netAmount = traveller.netAmount
             const styles = {
@@ -161,6 +163,7 @@ export default function Calculator() {
                     {netAmount < 0 && <p style={styles}>${netAmount.toFixed(2)}</p>}
                     {netAmount == 0 && <p style={styles}>${netAmount.toFixed(2)}</p>}
                     <button className="delete-btn" onClick={() => deleteTraveller(traveller.id)}>Delete traveller</button>
+                    <button className="edit-btn" onClick={() => toggleEditModal(traveller.id)}>Edit Name</button>
                     <br />
                 </div>
             )
@@ -227,30 +230,30 @@ export default function Calculator() {
         })
 
     function toggleSelected(id) {
-        setTravellers(prev => 
+        setTravellers(prev =>
             prev.map(traveller => {
                 return traveller.id === id
-                    ? {...traveller, toggle: !traveller.toggle, expensePlaceholder: 0}
+                    ? { ...traveller, toggle: !traveller.toggle, expensePlaceholder: 0 }
                     : traveller
             }
-        ))
+            ))
     }
 
     function updatePayer(id) {
-        setTravellers(prev => 
+        setTravellers(prev =>
             prev.map(traveller => {
                 return traveller.id === id
-                    ? {...traveller, isPayer: !traveller.isPayer}
+                    ? { ...traveller, isPayer: !traveller.isPayer }
                     : traveller
             })
         )
     }
 
     function updatePlaceholder(id, amount) {
-        setTravellers(prev => 
+        setTravellers(prev =>
             prev.map(traveller => {
                 return traveller.id === id
-                    ? {...traveller, expensePlaceholder: amount}
+                    ? { ...traveller, expensePlaceholder: amount }
                     : traveller
             })
         )
@@ -259,11 +262,11 @@ export default function Calculator() {
     function toggleModal() {
         setModal(prevModal => !prevModal)
         setTravellers(prevTraveller => {
-                for (let i = 0; i < prevTraveller.length; i++) {
-                    prevTraveller[i].toggle = true
-                }
-                return prevTraveller
+            for (let i = 0; i < prevTraveller.length; i++) {
+                prevTraveller[i].toggle = true
             }
+            return prevTraveller
+        }
         )
         setExpense()
         setSplit(prev => {
@@ -272,6 +275,12 @@ export default function Calculator() {
                 manual: false
             }
         })
+    }
+
+    function toggleEditModal(id = "") {
+        setEditModal(prevModal => !prevModal)
+        setEditName()
+        setTravellerId(id)
     }
 
     function toggleSplit(event) {
@@ -322,22 +331,52 @@ export default function Calculator() {
                 name: name,
                 netAmount: 0
             })
-            .then(() => {
-                //alert("Success")
-            })
+                .then(() => {
+                    alert("Success")
+                })
             setName("")
         }
     }
 
     function deleteTraveller(id) {
         const docRef = doc(db, "travellers-info", id)
-        deleteDoc(docRef)
-            .then(() => {
-                //alert("Traveller successfully deleted!")
+        getDoc(docRef)
+            .then(doc => {
+                if (doc.data().netAmount != 0) {
+                    alert("The debt has not been cleared yet!")
+                } else {
+                    deleteDoc(docRef)
+                        .then(() => {
+                            alert("Traveller successfully deleted!")
+                        })
+                        .catch((err) => alert(`Error removing document: ${err}`))
+                }
             })
-            .catch((err) => alert(`Error removing document: ${err}`))
     }
-    
+
+    function editTraveller(id) {
+        const docRef = doc(db, "travellers-info", id)
+        updateDoc(docRef, {
+            name: editName
+        })
+            .then(() => {
+                for (let x = 0; x < transactions.length; x++) {
+                    for (let y = 0; y < transactions[x].expenseTracker.length; y++) {
+                        if (transactions[x].expenseTracker[y].id === travellerId) {
+                            const duplicateExpenseTracker = [...transactions[x].expenseTracker]
+                            duplicateExpenseTracker[y].travellerName = editName
+                            const docRef = doc(db, "transactions", transactions[x].id)
+                            updateDoc(docRef, {
+                                expenseTracker: duplicateExpenseTracker
+                            })
+                        }
+                    }
+                }
+            })
+            .then(() => alert("Changed name sucessfully!"))
+            .then(() => setEditModal())
+    }
+
     function trackChanges(event) {
         if (event.target.name === "traveller-name") {
             setName(event.target.value)
@@ -348,6 +387,9 @@ export default function Calculator() {
         }
         if (event.target.name === "description") {
             setDescription(event.target.value)
+        }
+        if (event.target.name === "edited-name") {
+            setEditName(event.target.value)
         }
     }
 
@@ -388,16 +430,22 @@ export default function Calculator() {
             expenseTracker: JSON.stringify(truncatedInfo),
             numPayer: numPayer
         })
-        .then(() => {
-            alert("Success")
-            toggleModal()
-        })
+            .then(() => {
+                alert("Success")
+                toggleModal()
+            })
     }
 
-    if(modal) {
+    if (modal) {
         document.body.classList.add('active-modal')
     } else {
         document.body.classList.remove('active-modal')
+    }
+
+    if (editModal) {
+        document.body.classList.add('active-edit-modal')
+    } else {
+        document.body.classList.remove('active-edit-modal')
     }
 
     return (
@@ -409,7 +457,7 @@ export default function Calculator() {
                     <span>Net Amount</span>
                 </div>
                 {displayTravellers}
-                <input name="traveller-name" className="traveller-name" placeholder ="Name" onChange={trackChanges} value={name} />
+                <input name="traveller-name" className="traveller-name" placeholder="Name" onChange={trackChanges} value={name} />
                 <button onClick={addTraveller} className="add-traveller-button">Add Traveller</button>
                 <br />
             </div>
@@ -434,7 +482,20 @@ export default function Calculator() {
                         {split.manual && displayManualSplit}
                         {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}
                         <button className="close-modal" onClick={toggleModal}>
-                        CLOSE
+                            CLOSE
+                        </button>
+                    </div>
+                </div>
+            )}
+            {editModal && (
+                <div className="modal">
+                    <div onClick={toggleEditModal} className="overlay"></div>
+                    <div className="modal-content">
+                        <input name="edited-name" onChange={trackChanges} placeholder="Enter new name" />
+                        <br />
+                        <button onClick={() => editTraveller(travellerId)}>Confirm</button>
+                        <button className="close-modal" onClick={toggleEditModal}>
+                            CLOSE
                         </button>
                     </div>
                 </div>
