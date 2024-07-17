@@ -10,7 +10,7 @@ export default function Transactions(props) {
     for (let i = 0; i < props.transaction.expenseTracker.length; i++) {
         if (props.transaction.expenseTracker[i].isPayer) {
             payers.push(props.transaction.expenseTracker[i])
-        } 
+        }
         if (props.transaction.expenseTracker[i].expensePlaceholder && !(props.transaction.expenseTracker[i].isPayer)) {
             payees.push(props.transaction.expenseTracker[i])
         }
@@ -19,7 +19,7 @@ export default function Transactions(props) {
     let displayPayers = payers.map(payer => {
         return (
             <div>
-                <span>{props.transaction.description}: {payer.travellerName} should receive 
+                <span>{props.transaction.description}: {payer.travellerName} should receive
                     ${parseFloat(payer.expensePlaceholder).toFixed(2)}</span>
             </div>
         )
@@ -29,7 +29,7 @@ export default function Transactions(props) {
     let displayPayees = payees.map(payee => {
         return (
             <div>
-                <span>{props.transaction.description}: {payee.travellerName} needs to pay 
+                <span>{props.transaction.description}: {payee.travellerName} needs to pay
                     ${parseFloat(payee.expensePlaceholder).toFixed(2)}</span>
             </div>
         )
@@ -89,10 +89,15 @@ export default function Transactions(props) {
             .catch((err) => alert(`Error removing document: ${err}`))
     }
 
+    function editTransaction() {
+
+    }
+
     return (
         <div className="indiv-transaction-el">
             {displayPayees}
             {displayPayers}
+            <button onClick={editTransaction}>Edit Transaction</button>
             <button onClick={deleteTransaction} className="delete-transaction-btn">Delete Transaction</button>
         </div>
     )

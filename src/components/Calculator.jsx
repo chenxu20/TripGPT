@@ -322,10 +322,21 @@ export default function Calculator() {
         }
     }
 
+    function nameExist(name) {
+        for (let counter = 0; counter < travellers.length; counter++) {
+            if (travellers[counter].travellerName == name) {
+                return true
+            }
+        }
+        return false
+    }
+
     function addTraveller() {
         if (!name) {
             setName("")
             alert("key in a valid name!")
+        } else if (nameExist(name)) {
+            alert("The name exists. Please key in a unique name!")
         } else {
             addDoc(travellersCollection, {
                 name: name,
@@ -356,25 +367,29 @@ export default function Calculator() {
 
     function editTraveller(id) {
         const docRef = doc(db, "travellers-info", id)
-        updateDoc(docRef, {
-            name: editName
-        })
-            .then(() => {
-                for (let x = 0; x < transactions.length; x++) {
-                    for (let y = 0; y < transactions[x].expenseTracker.length; y++) {
-                        if (transactions[x].expenseTracker[y].id === travellerId) {
-                            const duplicateExpenseTracker = [...transactions[x].expenseTracker]
-                            duplicateExpenseTracker[y].travellerName = editName
-                            const docRef = doc(db, "transactions", transactions[x].id)
-                            updateDoc(docRef, {
-                                expenseTracker: duplicateExpenseTracker
-                            })
+        if (nameExist(editName)) {
+            alert("The name exists. Please key in a unique name!")
+        } else {
+            updateDoc(docRef, {
+                name: editName
+            })
+                .then(() => {
+                    for (let x = 0; x < transactions.length; x++) {
+                        for (let y = 0; y < transactions[x].expenseTracker.length; y++) {
+                            if (transactions[x].expenseTracker[y].id === travellerId) {
+                                const duplicateExpenseTracker = [...transactions[x].expenseTracker]
+                                duplicateExpenseTracker[y].travellerName = editName
+                                const docRef = doc(db, "transactions", transactions[x].id)
+                                updateDoc(docRef, {
+                                    expenseTracker: duplicateExpenseTracker
+                                })
+                            }
                         }
                     }
-                }
-            })
-            .then(() => alert("Changed name sucessfully!"))
-            .then(() => setEditModal())
+                })
+                .then(() => alert("Changed name sucessfully!"))
+                .then(() => setEditModal())
+        }
     }
 
     function trackChanges(event) {
