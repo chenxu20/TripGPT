@@ -23,6 +23,7 @@ export default function Calculator() {
     const [counter, setCounter] = React.useState(0)
     const [transactions, setTransactions] = React.useState([])
     const [numPayer, setNumPayer] = React.useState(0)
+    const [date, setDate] = React.useState()
 
     React.useEffect(() => {
         async function getData() {
@@ -34,6 +35,7 @@ export default function Calculator() {
                         expenseTracker: JSON.parse(doc.data().expenseTracker),
                         numPayer: doc.data().numPayer,
                         expense: doc.data().expense,
+                        date: doc.data().date,
                         id: doc.id
                     }
                 })
@@ -114,6 +116,7 @@ export default function Calculator() {
                     expenseTracker: JSON.parse(doc.data().expenseTracker),
                     numPayer: doc.data().numPayer,
                     expense: doc.data().expense,
+                    date: doc.data().date,
                     id: doc.id
                 }
             })
@@ -291,6 +294,10 @@ export default function Calculator() {
             alert("enter a description first!")
             return
         }
+        if (!date) {
+            alert("exter the date of transaction first!")
+            return
+        }
         if (!expense) {
             alert("enter an amount first!")
             return
@@ -409,6 +416,9 @@ export default function Calculator() {
         if (event.target.name === "edited-name") {
             setEditName(event.target.value)
         }
+        if (event.target.name === "date") {
+            setDate(event.target.value)
+        }
     }
 
     function updateDatabase() {
@@ -451,7 +461,8 @@ export default function Calculator() {
             description: description,
             expenseTracker: JSON.stringify(truncatedInfo),
             numPayer: numPayer,
-            expense: expense
+            expense: expense,
+            date: date
         })
             .then(() => {
                 alert("Success")
@@ -494,15 +505,15 @@ export default function Calculator() {
                     <div onClick={toggleModal} className="overlay"></div>
                     <div className="modal-content">
                         <label>Description:
-                            <input name="description" onChange={trackChanges} placeholder="Enter a description" />
+                            <input name="description" onChange={trackChanges} placeholder="Enter a description" required />
                         </label>
                         <br />
                         <label>Date:
-                            <input name="date" type="date" onChange={trackChanges} ></input>
+                            <input name="date" type="date" onChange={trackChanges} required />
                         </label>
                         <br />
                         <label>Cost: $
-                            <input name="add-expense" onChange={trackChanges}></input>
+                            <input name="add-expense" onChange={trackChanges} required />
                         </label>
                         <br />
                         <p>Person who paid:</p>
