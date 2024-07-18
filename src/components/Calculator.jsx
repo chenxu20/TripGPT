@@ -270,11 +270,14 @@ export default function Calculator() {
         setTravellers(prevTraveller => {
             for (let i = 0; i < prevTraveller.length; i++) {
                 prevTraveller[i].toggle = true
+                prevTraveller[i].isPayer = false
             }
             return prevTraveller
         }
         )
         setExpense()
+        setDate()
+        setDescription()
         setSplit(prev => {
             return {
                 auto: false,
@@ -426,6 +429,10 @@ export default function Calculator() {
             alert("Select at least 1 payer!")
             return
         }
+        if (counter === 0) {
+            alert("Select at least 1 payee!")
+            return
+        }
         const travellersInvolved = travellers.filter(traveller => traveller.toggle || traveller.isPayer)
         for (let i = 0; i < travellersInvolved.length; i++) {
             const docRef = doc(db, "travellers-info", travellersInvolved[i].id)
@@ -518,8 +525,8 @@ export default function Calculator() {
                         <br />
                         <p>Person who paid:</p>
                         {displayPayer}
-                        <button name="auto" onClick={toggleSplit}>Split equally</button>
-                        <button name="manual" onClick={toggleSplit}>Split manually</button>
+                        <button name="auto" className={`auto-btn ${split.auto ? "auto-click" : ""}`} onClick={toggleSplit}>Split equally</button>
+                        <button name="manual" className={`manual-btn ${split.manual ? "manual-click" : ""}`} onClick={toggleSplit}>Split manually</button>
                         {split.auto && displayAutoSplit}
                         {split.manual && displayManualSplit}
                         {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}

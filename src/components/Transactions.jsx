@@ -8,10 +8,10 @@ export default function Transactions(props) {
     let payees = []
 
     for (let i = 0; i < props.transaction.expenseTracker.length; i++) {
-        if (props.transaction.expenseTracker[i].isPayer) {
+        if (props.transaction.expenseTracker[i].isPayer && props.transaction.expenseTracker[i].expensePlaceholder > 0) {
             payers.push(props.transaction.expenseTracker[i])
         }
-        if (props.transaction.expenseTracker[i].expensePlaceholder && !(props.transaction.expenseTracker[i].isPayer)) {
+        if ((props.transaction.expenseTracker[i].expensePlaceholder && !(props.transaction.expenseTracker[i].isPayer)) || (props.transaction.expenseTracker[i].expensePlaceholder < 0 && props.transaction.expenseTracker[i].isPayer)) {
             payees.push(props.transaction.expenseTracker[i])
         }
     }
@@ -30,7 +30,7 @@ export default function Transactions(props) {
         return (
             <div>
                 <span>{props.transaction.description}: {payee.travellerName} needs to pay
-                    ${parseFloat(payee.expensePlaceholder).toFixed(2)}</span>
+                    ${Math.abs(parseFloat(payee.expensePlaceholder)).toFixed(2)}</span>
             </div>
         )
     })
@@ -47,17 +47,18 @@ export default function Transactions(props) {
         for (let i = 0; i < payees.length; i++) {
             let tempAmountHolder
             payeeAmount += parseFloat(payees[i].expensePlaceholder)
+            let transactionAmount = Math.abs(parseFloat(payees[i].expensePlaceholder))
             const travellerDocRef = doc(db, "travellers-info", payees[i].id)
             getDoc(travellerDocRef)
                 .then((doc) => {
                     tempAmountHolder = doc.data().netAmount
-                    if (tempAmountHolder + parseFloat(payees[i].expensePlaceholder) < 0.0001 && tempAmountHolder + parseFloat(payees[i].expensePlaceholder) > -0.0001) {
+                    if (tempAmountHolder + transactionAmount < 0.0001 && tempAmountHolder + transactionAmount > -0.0001) {
                         updateDoc(travellerDocRef, {
                             netAmount: 0
                         })
                     } else {
                         updateDoc(travellerDocRef, {
-                            netAmount: tempAmountHolder + parseFloat(payees[i].expensePlaceholder)
+                            netAmount: tempAmountHolder + transactionAmount
                         })
                     }
                 })
