@@ -47,151 +47,174 @@ export const Flight = ({ initialEventState, eventToEdit }) => {
     const eventForm = () => (
         <>
             {!eventToEdit && (
-                <div id="flight-roundtrip-selection">
-                    <input
-                        type="radio"
-                        id="one-way"
-                        name="flightType"
-                        value="oneWay"
-                        checked={!isRoundTrip}
-                        onChange={handleFlightTypeChange}
-                    />
-                    <label htmlFor="one-way">One Way</label>
-                    <input
-                        type="radio"
-                        id="round-trip"
-                        name="flightType"
-                        value="roundTrip"
-                        checked={isRoundTrip}
-                        onChange={handleFlightTypeChange}
-                    />
-                    <label htmlFor="round-trip">Round Trip</label>
+                <div>
+                    <div id="flight-roundtrip-selection">
+                        <input
+                            type="radio"
+                            id="one-way"
+                            name="flightType"
+                            value="oneWay"
+                            checked={!isRoundTrip}
+                            onChange={handleFlightTypeChange}
+                        />
+                        <label htmlFor="one-way">One Way</label>
+                        <input
+                            type="radio"
+                            id="round-trip"
+                            name="flightType"
+                            value="roundTrip"
+                            checked={isRoundTrip}
+                            onChange={handleFlightTypeChange}
+                        />
+                        <label htmlFor="round-trip">Round Trip</label>
+                    </div>
                 </div>
             )}
             <div>
-                <label>Origin</label>
-                <input
-                    type="text"
-                    name="origin"
-                    value={event.origin}
-                    onChange={handleChange}
-                    placeholder="Flight origin"
-                    required
-                />
-            </div>
-            <div>
-                <label>Destination</label>
-                <input
-                    type="text"
-                    name="destination"
-                    value={event.destination}
-                    onChange={handleChange}
-                    placeholder="Flight destination"
-                    required
-                />
-            </div>
-            {isRoundTrip && <div><div className='flight-divider'>Outbound flight</div></div>}
-            <div>
-                <label>Flight number</label>
-                <input
-                    type="text"
-                    name="name"
-                    value={event.name}
-                    onChange={handleChange}
-                    placeholder="Flight number"
-                    required
-                />
-            </div>
-            <div>
-                <label>Departure</label>
-                <div className="event-form-datetime">
+                <label>
+                    Origin
                     <input
-                        type="date"
-                        name="startDate"
-                        value={event.startDate}
+                        type="text"
+                        name="origin"
+                        value={event.origin}
                         onChange={handleChange}
+                        placeholder="Flight origin"
                         required
                     />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Destination
                     <input
-                        type="time"
-                        name="startTime"
-                        value={event.startTime}
+                        type="text"
+                        name="destination"
+                        value={event.destination}
                         onChange={handleChange}
+                        placeholder="Flight destination"
                         required
                     />
+                </label>
+            </div>
+            {isRoundTrip && (
+                <div>
+                    <div className="flight-divider">Outbound flight</div>
                 </div>
+            )}
+            <div>
+                <label>
+                    Flight number
+                    <input
+                        type="text"
+                        name="name"
+                        value={event.name}
+                        onChange={handleChange}
+                        placeholder="Flight number"
+                        required
+                    />
+                </label>
             </div>
             <div>
-                <label>Arrival</label>
-                <div className="event-form-datetime">
-                    <input
-                        type="date"
-                        name="endDate"
-                        value={event.endDate}
-                        onChange={handleChange}
-                        required
-                    />
-                    <input
-                        type="time"
-                        name="endTime"
-                        value={event.endTime}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+                <label>
+                    Departure
+                    <div className="event-form-datetime">
+                        <input
+                            type="date"
+                            name="startDate"
+                            value={event.startDate}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="time"
+                            name="startTime"
+                            value={event.startTime}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </label>
+            </div>
+            <div>
+                <label>
+                    Arrival
+                    <div className="event-form-datetime">
+                        <input
+                            type="date"
+                            name="endDate"
+                            value={event.endDate}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="time"
+                            name="endTime"
+                            value={event.endTime}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </label>
             </div>
             {isRoundTrip && (
                 <>
-                    <div><div className="flight-divider">Inbound flight</div></div>
                     <div>
-                        <label>Flight number</label>
-                        <input
-                            type="text"
-                            name="inboundName"
-                            value={inbound.inboundName}
-                            onChange={handleInboundChange}
-                            placeholder="Flight number"
-                            required
-                        />
-
+                        <div className="flight-divider">Inbound flight</div>
                     </div>
                     <div>
-                        <label>Departure</label>
-                        <div className="event-form-datetime">
+                        <label>
+                            Flight number
                             <input
-                                type="date"
-                                name="inboundStartDate"
-                                value={inbound.inboundStartDate}
+                                type="text"
+                                name="inboundName"
+                                value={inbound.inboundName}
                                 onChange={handleInboundChange}
+                                placeholder="Flight number"
                                 required
                             />
-                            <input
-                                type="time"
-                                name="inboundStartTime"
-                                value={inbound.inboundStartTime}
-                                onChange={handleInboundChange}
-                                required
-                            />
-                        </div>
+                        </label>
                     </div>
                     <div>
-                        <label>Arrival</label>
-                        <div className="event-form-datetime">
-                            <input
-                                type="date"
-                                name="inboundEndDate"
-                                value={inbound.inboundEndDate}
-                                onChange={handleInboundChange}
-                                required
-                            />
-                            <input
-                                type="time"
-                                name="inboundEndTime"
-                                value={inbound.inboundEndTime}
-                                onChange={handleInboundChange}
-                                required
-                            />
-                        </div>
+                        <label>
+                            Departure
+                            <div className="event-form-datetime">
+                                <input
+                                    type="date"
+                                    name="inboundStartDate"
+                                    value={inbound.inboundStartDate}
+                                    onChange={handleInboundChange}
+                                    required
+                                />
+                                <input
+                                    type="time"
+                                    name="inboundStartTime"
+                                    value={inbound.inboundStartTime}
+                                    onChange={handleInboundChange}
+                                    required
+                                />
+                            </div>
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Arrival
+                            <div className="event-form-datetime">
+                                <input
+                                    type="date"
+                                    name="inboundEndDate"
+                                    value={inbound.inboundEndDate}
+                                    onChange={handleInboundChange}
+                                    required
+                                />
+                                <input
+                                    type="time"
+                                    name="inboundEndTime"
+                                    value={inbound.inboundEndTime}
+                                    onChange={handleInboundChange}
+                                    required
+                                />
+                            </div>
+                        </label>
                     </div>
                 </>
             )}

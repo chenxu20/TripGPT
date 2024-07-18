@@ -29,63 +29,71 @@ export const Accommodation = ({ initialEventState, eventToEdit }) => {
     const eventForm = () => (
         <>
             <div>
-                <label>Name</label>
-                <input
-                    type="text"
-                    name="name"
-                    value={event.name}
-                    onChange={handleChange}
-                    placeholder="Accommodation name"
-                    required
-                />
+                <label>
+                    Name
+                    <input
+                        type="text"
+                        name="name"
+                        value={event.name}
+                        onChange={handleChange}
+                        placeholder="Accommodation name"
+                        required
+                    />
+                </label>
             </div>
             <div>
-                <label>Address</label>
-                <textarea
-                    name="address"
-                    value={event.address}
-                    onChange={handleChange}
-                    placeholder="Accommodation address"
-                    required
-                />
+                <label>
+                    Address
+                    <textarea
+                        name="address"
+                        value={event.address}
+                        onChange={handleChange}
+                        placeholder="Accommodation address"
+                        required
+                    />
+                </label>
             </div>
             <div>
-                <label>Check in</label>
-                <div className="event-form-datetime">
-                    <input
-                        type="date"
-                        name="startDate"
-                        value={event.startDate}
-                        onChange={handleChange}
-                        required
-                    />
-                    <input
-                        type="time"
-                        name="startTime"
-                        value={event.startTime}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+                <label>
+                    Check in
+                    <div className="event-form-datetime">
+                        <input
+                            type="date"
+                            name="startDate"
+                            value={event.startDate}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="time"
+                            name="startTime"
+                            value={event.startTime}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </label>
             </div>
             <div>
-                <label>Check out</label>
-                <div className="event-form-datetime">
-                    <input
-                        type="date"
-                        name="endDate"
-                        value={event.endDate}
-                        onChange={handleChange}
-                        required
-                    />
-                    <input
-                        type="time"
-                        name="endTime"
-                        value={event.endTime}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+                <label>
+                    Check out
+                    <div className="event-form-datetime">
+                        <input
+                            type="date"
+                            name="endDate"
+                            value={event.endDate}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="time"
+                            name="endTime"
+                            value={event.endTime}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </label>
             </div>
         </>
     );

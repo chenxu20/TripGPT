@@ -7,12 +7,13 @@ export const ItineraryContext = createContext();
 
 export const ItineraryContextProvider = ({ children }) => {
     const { user } = UserAuth();
-    const [itineraries, setItineraries] = useState([]);
+    const [upcomingItineraries, setUpcomingItineraries] = useState([]);
+    const [pastItineraries, setPastItineraries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const itineraryCollection = collection(database, 'itineraries');
 
-    //Enum to manage event type
+    //Enum managing event type
     const eventTypes = {
         ACCOMMODATION: "accommodation",
         ACTIVITY: "activity",
@@ -27,7 +28,7 @@ export const ItineraryContextProvider = ({ children }) => {
         if (user) {
             const q = query(itineraryCollection, where("user", "==", user.uid));
             const unsubscribe = onSnapshot(q, snapshot => {
-                const fetchedItineraries = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id}));
+                const fetchedItineraries = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
                 const currentDate = new Date();
                 const pastItineraries = fetchedItineraries.filter(iti => iti.endDate?.toDate() < currentDate);
                 const futureItineraries = fetchedItineraries.filter(iti => iti.startDate?.toDate() >= currentDate);
@@ -36,8 +37,8 @@ export const ItineraryContextProvider = ({ children }) => {
                 pastItineraries.sort((x, y) => y.endDate.toDate() - x.endDate.toDate());
                 futureItineraries.sort((x, y) => x.startDate.toDate() - y.startDate.toDate());
 
-                const sortedItineraries = [...undatedItineraries, ...futureItineraries, ...pastItineraries];
-                setItineraries(sortedItineraries);
+                setUpcomingItineraries([...undatedItineraries, ...futureItineraries]);
+                setPastItineraries(pastItineraries);
                 setLoading(false);
             }, error => {
                 setError("Error: Failed to load itineraries.");
@@ -121,7 +122,7 @@ export const ItineraryContextProvider = ({ children }) => {
     };
 
     return (
-        <ItineraryContext.Provider value={{ itineraries, setItineraries, addItinerary, deleteItinerary, addEventItem, updateEventItem, removeEventItem, loading, error, eventTypes }}>
+        <ItineraryContext.Provider value={{ upcomingItineraries, pastItineraries, addItinerary, deleteItinerary, addEventItem, updateEventItem, removeEventItem, loading, error, eventTypes }}>
             {children}
         </ItineraryContext.Provider>
     );

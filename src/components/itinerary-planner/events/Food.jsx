@@ -36,82 +36,93 @@ export const Food = ({ initialEventState, eventToEdit }) => {
     const eventForm = () => (
         <>
             <div>
-                <label>Venue</label>
-                <input
-                    type="text"
-                    name="name"
-                    value={event.name}
-                    onChange={handleChange}
-                    placeholder="Venue"
-                    required
-                />
-            </div>
-            <div>
-                <label>Address</label>
-                <input
-                    type="text"
-                    name="address"
-                    value={event.address}
-                    onChange={handleChange}
-                    placeholder="Address (Optional)"
-                />
-            </div>
-            <div>
-                <label>Start</label>
-                <div className="event-form-datetime">
+                <label>
+                    Venue
                     <input
-                        type="date"
-                        name="startDate"
-                        value={event.startDate}
+                        type="text"
+                        name="name"
+                        value={event.name}
                         onChange={handleChange}
+                        placeholder="Venue"
                         required
                     />
-                    <input
-                        type="time"
-                        name="startTime"
-                        value={event.startTime}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-            </div>
-            <div>
-                <label>End</label>
-                <div className="event-form-datetime">
-                    <input
-                        type="date"
-                        name="endDate"
-                        value={event.endDate}
-                        onChange={handleChange}
-                        disabled={disableEnd}
-                        required={!disableEnd}
-                    />
-                    <input
-                        type="time"
-                        name="endTime"
-                        value={event.endTime}
-                        onChange={handleChange}
-                        disabled={disableEnd}
-                        required={!disableEnd}
-                    />
-                </div>
-                <label id="no-end-checkbox">
-                    <input
-                        type="checkbox"
-                        checked={disableEnd}
-                        onChange={handleEndCheckbox}
-                    />
-                    No end date
                 </label>
             </div>
             <div>
-                <label>Notes</label>
-                <textarea
-                    name="notes"
-                    value={event.notes}
-                    onChange={handleChange}
-                    placeholder="Notes (Optional)"
-                />
+                <label>
+                    Address
+                    <input
+                        type="text"
+                        name="address"
+                        value={event.address}
+                        onChange={handleChange}
+                        placeholder="Address (Optional)"
+                    />
+                </label>
+            </div>
+            <div>
+                <label>
+                    Start
+                    <div className="event-form-datetime">
+                        <input
+                            type="date"
+                            name="startDate"
+                            value={event.startDate}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="time"
+                            name="startTime"
+                            value={event.startTime}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </label>
+            </div>
+            <div>
+                <label>
+                    End
+                    <div className="event-form-datetime">
+                        <input
+                            type="date"
+                            name="endDate"
+                            value={event.endDate}
+                            onChange={handleChange}
+                            disabled={disableEnd}
+                            required={!disableEnd}
+                        />
+                        <input
+                            type="time"
+                            name="endTime"
+                            value={event.endTime}
+                            onChange={handleChange}
+                            disabled={disableEnd}
+                            required={!disableEnd}
+                        />
+                    </div>
+                    <label id="no-end-checkbox">
+                        <input
+                            type="checkbox"
+                            id="end-date-checkbox"
+                            checked={disableEnd}
+                            onChange={handleEndCheckbox}
+                        />
+                        No end date
+                    </label>
+                </label>
+            </div>
+            <div>
+                <label>
+                    Notes
+                    <textarea
+                        name="notes"
+                        value={event.notes}
+                        onChange={handleChange}
+                        placeholder="Notes (Optional)"
+                    />
+                </label>
             </div>
         </>
     );

@@ -13,8 +13,9 @@ import { TransportationDetails } from './events/Transportation';
 import "./style.css";
 import { FaChevronLeft } from 'react-icons/fa';
 import { FaHotel, FaLocationDot, FaLandmark, FaPlane, FaUtensils, FaBus, FaCar, FaShip, FaTrainSubway } from 'react-icons/fa6';
+import { ClipLoader } from 'react-spinners';
 
-//Enum which manages mode state.
+//Enum managing mode state.
 const Mode = {
     VIEW: 'view',
     EDIT: 'edit'
@@ -23,9 +24,9 @@ Object.freeze(Mode);
 
 export const ItineraryDetail = () => {
     const { id } = useParams();
-    const { itineraries, removeEventItem, eventTypes } = useContext(ItineraryContext);
+    const { upcomingItineraries, pastItineraries, removeEventItem, eventTypes, loading } = useContext(ItineraryContext);
     const [events, setEvents] = useState([]);
-    const [itinerary, setItinerary] = useState('');
+    const [itinerary, setItinerary] = useState(null);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [eventToEdit, setEventToEdit] = useState(null);
     const [eventMessage, setEventMessage] = useState('');
@@ -33,6 +34,7 @@ export const ItineraryDetail = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const itineraries = [...upcomingItineraries, ...pastItineraries]
         const currentItinerary = itineraries.find(iti => iti.id === id);
         if (currentItinerary) {
             setItinerary(currentItinerary);
@@ -45,7 +47,7 @@ export const ItineraryDetail = () => {
         });
 
         return () => unsubscribe();
-    }, [id, itineraries]);
+    }, [id, upcomingItineraries, pastItineraries]);
 
     function openAddEventModal() {
         setModalIsOpen(true);
@@ -122,13 +124,17 @@ export const ItineraryDetail = () => {
         }
     }
 
+    if (loading) {
+        return <div><ClipLoader color="#ffffff" /></div>;
+    }
+
     return (
         <div className="event-list-wrapper">
             <button onClick={() => navigate("/trips")} className="event-back-button"><FaChevronLeft />Trips</button>
             <div className="event-list-header">
-                <h1 className="event-list-title">{itinerary.name}</h1>
+                <h1 className="event-list-title">{itinerary?.name}</h1>
                 <div className="mode-wrapper">
-                    <select value={mode} onChange={handleModeChange} className="drop-down">
+                    <select value={mode} onChange={handleModeChange} className="drop-down" id="itinerary-mode-toggle">
                         <option value={Mode.VIEW}>Viewing</option>
                         <option value={Mode.EDIT}>Editing</option>
                     </select>
@@ -172,4 +178,4 @@ export const ItineraryDetail = () => {
             </ul>
         </div>
     );
-}
+};

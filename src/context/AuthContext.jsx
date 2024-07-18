@@ -1,75 +1,73 @@
-import { React, createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { auth, googleProvider } from '../config/firebase';
-import { createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
+import {
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    sendEmailVerification,
+    sendPasswordResetEmail,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    signOut,
+    updateProfile
+} from "firebase/auth";
 
 const AuthContext = createContext({
     user: null,
-    isLoading: true
+    loading: true,
+    error: null,
+    userSignUp: async () => { },
+    userSignIn: async () => { },
+    googleUserSignIn: async () => { },
+    userSignOut: async () => { },
+    forgotPassword: async () => { },
+    setError: () => { },
+    setLoading: () => { }
 });
 
 export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    const userSignUp = async (email, password, name) => {
-        setIsLoading(true);
-        try {
-            await createUserWithEmailAndPassword(auth, email, password);
-            await updateProfile(auth.currentUser, { displayName: name });
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const userSignIn = async (email, password) => {
-        setIsLoading(true);
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const googleUserSignIn = async () => {
-        setIsLoading(true);
-        try {
-            await signInWithPopup(auth, googleProvider);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const userSignOut = async () => {
-        setIsLoading(true);
-        try {
-            await signOut(auth);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const forgotPassword = async email => {
-        setIsLoading(true);
-        try {
-            await sendPasswordResetEmail(auth, email);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
             setUser(user);
-            setIsLoading(false);
+            setLoading(false);
         });
         return unsubscribe;
-    }, [])
+    }, []);
+
+    const userSignUp = async (email, password, name) => {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(auth.currentUser, { displayName: name });
+        await sendEmailVerification(userCred.user);
+        setUser(userCred.user);
+    };
+
+    const userSignIn = async (email, password) => {
+        const userCred = await signInWithEmailAndPassword(auth, email, password);
+        setUser(userCred.user);
+    };
+
+    const googleUserSignIn = async () => {
+        const userCred = await signInWithPopup(auth, googleProvider);
+        setUser(userCred.user);
+    };
+
+    const userSignOut = async () => {
+        await signOut(auth);
+        setUser(null);
+    };
+
+    const forgotPassword = async email => {
+        await sendPasswordResetEmail(auth, email);
+    };
 
     return (
-        <AuthContext.Provider value={{ forgotPassword, googleUserSignIn, isLoading, user, userSignUp, userSignIn, userSignOut }}>
+        <AuthContext.Provider value={{ forgotPassword, googleUserSignIn, loading, setLoading, user, userSignUp, userSignIn, userSignOut, error, setError }}>
             {children}
         </AuthContext.Provider>
     );
-}
+};
 
 export const UserAuth = () => useContext(AuthContext);

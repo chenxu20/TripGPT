@@ -9,7 +9,7 @@ import { Flight } from './events/Flight';
 import { Transportation } from './events/Transportation';
 import { FaChevronLeft } from 'react-icons/fa';
 
-//Enums managing form step
+//Enum managing form step
 const Steps = {
     SELECT_TYPE: 0,
     INPUT_DETAILS: 1
@@ -31,6 +31,7 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
     const initialEventState = { name: '', type: eventTypes.NO_TYPE, startDate: '', startTime: '', endDate: '', endTime: '' };
     const [step, setStep] = useState(Steps.SELECT_TYPE);
     const [activeType, setActiveType] = useState(eventTypes.NO_TYPE);
+    const [loading, setLoading] = useState(false);
 
     const stateMap = {
         [eventTypes.ACCOMMODATION]: Accommodation({
@@ -101,9 +102,7 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
     }, [isOpen, eventToEdit]);
 
     useEffect(() => {
-        if (error) {
-            setEventMessage(error);
-        }
+        setEventMessage(error ?? "");
     }, [error, setEventMessage]);
 
     function resetForm() {
@@ -126,56 +125,51 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
 
     const handleSubmit = async e => {
         e.preventDefault();
-
-        const currentState = stateMap[activeType];
-        if (!currentState) {
-            setEventMessage("Error adding event.");
-            return;
-        }
-
-        const startDateTime = createDateTime(currentState.event.startDate, currentState.event.startTime);
-        const endDateTime = currentState.disableEnd ? null : createDateTime(currentState.event.endDate, currentState.event.endTime);
-
-        if (endDateTime && startDateTime >= endDateTime) {
-            setEventMessage("Start date and time must be before end date and time.");
-            return;
-        }
-
-        const newEvent = {
-            ...(currentState.event),
-            startDate: startDateTime,
-            endDate: endDateTime
-        };
-
-        delete newEvent.startTime;
-        delete newEvent.endTime;
-
-        let inboundFlight;
-        if (activeType === eventTypes.FLIGHT && currentState.isRoundTrip) {
-            const inboundStartDateTime = createDateTime(currentState.inbound.inboundStartDate, currentState.inbound.inboundStartTime);
-            const inboundEndDateTime = createDateTime(currentState.inbound.inboundEndDate, currentState.inbound.inboundEndTime);
-
-            if (inboundStartDateTime >= inboundEndDateTime) {
-                setEventMessage("Start date and time must be before end date and time.");
-                return;
-            }
-
-            if (endDateTime >= inboundStartDateTime) {
-                setEventMessage("Inbound flight should be after outbound flight.");
-                return;
-            }
-
-            inboundFlight = {
-                name: currentState.inbound.inboundName,
-                type: activeType,
-                startDate: inboundStartDateTime,
-                endDate: inboundEndDateTime,
-                origin: currentState.event.destination,
-                destination: currentState.event.origin
-            };
-        }
-
+        setLoading(true);
         try {
+            const currentState = stateMap[activeType];
+            if (!currentState) {
+                throw new Error("Error: Bad event type.");
+            }
+            
+            const startDateTime = createDateTime(currentState.event.startDate, currentState.event.startTime);
+            const endDateTime = currentState.disableEnd ? null : createDateTime(currentState.event.endDate, currentState.event.endTime);
+
+            if (endDateTime && startDateTime >= endDateTime) {
+                throw new Error("Start date and time must be before end date and time.");
+            }
+
+            const newEvent = {
+                ...(currentState.event),
+                startDate: startDateTime,
+                endDate: endDateTime
+            };
+
+            delete newEvent.startTime;
+            delete newEvent.endTime;
+
+            let inboundFlight;
+            if (activeType === eventTypes.FLIGHT && currentState.isRoundTrip) {
+                const inboundStartDateTime = createDateTime(currentState.inbound.inboundStartDate, currentState.inbound.inboundStartTime);
+                const inboundEndDateTime = createDateTime(currentState.inbound.inboundEndDate, currentState.inbound.inboundEndTime);
+
+                if (inboundStartDateTime >= inboundEndDateTime) {
+                    throw new Error("Start date and time must be before end date and time.");
+                }
+
+                if (endDateTime >= inboundStartDateTime) {
+                    throw new Error("Inbound flight should be after outbound flight.");
+                }
+
+                inboundFlight = {
+                    name: currentState.inbound.inboundName,
+                    type: activeType,
+                    startDate: inboundStartDateTime,
+                    endDate: inboundEndDateTime,
+                    origin: currentState.event.destination,
+                    destination: currentState.event.origin
+                };
+            }
             if (eventToEdit) {
                 await updateEventItem(itiId, eventToEdit.id, newEvent);
                 setEventMessage("Event updated successfully.");
@@ -189,7 +183,9 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
                 resetForm();
             }
         } catch (error) {
-            setEventMessage("An error occurred. Try again.");
+            setEventMessage(error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -200,10 +196,10 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
                     <>
                         <h3>Select Event type</h3>
                         <div className="event-types-wrapper">
-                            <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.FOOD)}>Food</button>
+                            <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.FLIGHT)}>Flight</button>
                             <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.ACCOMMODATION)}>Accommodation</button>
                             <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.ATTRACTION)}>Attraction</button>
-                            <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.FLIGHT)}>Flight</button>
+                            <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.FOOD)}>Food</button>
                             <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.TRANSPORTATION)}>Transportation</button>
                             <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.ACTIVITY)}>Activity</button>
                         </div>
@@ -211,11 +207,13 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
                 );
             case Steps.INPUT_DETAILS:
                 return (
-                    <form className="event-form" onSubmit={handleSubmit}>
+                    <form id="add-event-form" onSubmit={handleSubmit} autoComplete="off">
                         {renderDetailsForm()}
                         <div>
                             <div className="event-form-button-wrapper">
-                                <button type="submit" className="itinerary-button">{eventToEdit ? "Update" : "Add"} {capitalizeFirstLetter(activeType) || "Event"}</button>
+                                <button type="submit" className="itinerary-button" disabled={loading}>
+                                    {eventToEdit ? "Update" : "Add"} {capitalizeFirstLetter(activeType) || "Event"}
+                                </button>
                                 <button type="button" className="itinerary-button" onClick={handleClear}>Clear</button>
                             </div>
                         </div>

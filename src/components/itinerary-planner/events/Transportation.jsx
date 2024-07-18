@@ -41,74 +41,84 @@ export const Transportation = ({ initialEventState, eventToEdit }) => {
     const eventForm = () => (
         <>
             <div>
-                <label>Type</label>
-                <select className="drop-down" id="transportation-type" name="name" value={transportType} onChange={handleTypeChange} required>
-                    <option value="" disabled>Select</option>
-                    <option value="bus">Bus</option>
-                    <option value="car">Car</option>
-                    <option value="ferry">Ferry</option>
-                    <option value="train">Train</option>
-                </select>
+                <label>
+                    Type
+                    <select className="drop-down" id="transportation-type" name="name" value={transportType} onChange={handleTypeChange} required>
+                        <option value="" disabled>Select</option>
+                        <option value="bus">Bus</option>
+                        <option value="car">Car</option>
+                        <option value="ferry">Ferry</option>
+                        <option value="train">Train</option>
+                    </select>
+                </label>
             </div>
             <div>
-                <label>Origin</label>
-                <input
-                    type="text"
-                    name="origin"
-                    value={event.origin}
-                    onChange={handleChange}
-                    placeholder="Origin"
-                    required
-                />
+                <label>
+                    Origin
+                    <input
+                        type="text"
+                        name="origin"
+                        value={event.origin}
+                        onChange={handleChange}
+                        placeholder="Origin"
+                        required
+                    />
+                </label>
             </div>
             <div>
-                <label>Destination</label>
-                <input
-                    type="text"
-                    name="destination"
-                    value={event.destination}
-                    onChange={handleChange}
-                    placeholder="Destination"
-                    required
-                />
+                <label>
+                    Destination
+                    <input
+                        type="text"
+                        name="destination"
+                        value={event.destination}
+                        onChange={handleChange}
+                        placeholder="Destination"
+                        required
+                    />
+                </label>
             </div>
             <div>
-                <label>Departure</label>
-                <div className="event-form-datetime">
-                    <input
-                        type="date"
-                        name="startDate"
-                        value={event.startDate}
-                        onChange={handleChange}
-                        required
-                    />
-                    <input
-                        type="time"
-                        name="startTime"
-                        value={event.startTime}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+                <label>
+                    Departure
+                    <div className="event-form-datetime">
+                        <input
+                            type="date"
+                            name="startDate"
+                            value={event.startDate}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="time"
+                            name="startTime"
+                            value={event.startTime}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </label>
             </div>
             <div>
-                <label>Arrival</label>
-                <div className="event-form-datetime">
-                    <input
-                        type="date"
-                        name="endDate"
-                        value={event.endDate}
-                        onChange={handleChange}
-                        required
-                    />
-                    <input
-                        type="time"
-                        name="endTime"
-                        value={event.endTime}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
+                <label>
+                    Arrival
+                    <div className="event-form-datetime">
+                        <input
+                            type="date"
+                            name="endDate"
+                            value={event.endDate}
+                            onChange={handleChange}
+                            required
+                        />
+                        <input
+                            type="time"
+                            name="endTime"
+                            value={event.endTime}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </label>
             </div>
         </>
     );

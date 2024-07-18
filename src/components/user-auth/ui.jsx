@@ -10,6 +10,8 @@ export const getErrorMsg = err => {
             return "Wrong email or password. Try again."
         case AuthErrorCodes.INVALID_PASSWORD:
             return "Wrong password. Try again."
+        case AuthErrorCodes.POPUP_CLOSED_BY_USER:
+            return "Sign in cancelled."
         case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
             return "Too many attempts. Try again later."
         case AuthErrorCodes.USER_DELETED:
@@ -17,6 +19,6 @@ export const getErrorMsg = err => {
         case AuthErrorCodes.WEAK_PASSWORD:
             return "Password should be at least 6 characters long."
         default:
-            return "An error occurred. Try again later."
+            return `Error: ${err.message}`;
     }
 };
