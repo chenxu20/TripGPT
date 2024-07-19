@@ -6,10 +6,12 @@ import { ClipLoader } from "react-spinners";
 export default function PublicRoute({ children }) {
     const { loading, user } = UserAuth();
 
-    if (loading) {
-        return <div><ClipLoader color="#ffffff" /></div>;
-    } else if (user) {
-        return <Navigate to="/account" />
+    if (user) {
+        if (loading) {
+            return <div><ClipLoader color="#ffffff" /></div>;
+        } else {
+            return <Navigate to="/account" />;
+        }
     }
 
     return children;

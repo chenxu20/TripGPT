@@ -6,10 +6,12 @@ import { ClipLoader } from "react-spinners";
 export default function ProtectedRoute({ children }) {
     const { loading, user } = UserAuth();
 
-    if (loading) {
-        return <div><ClipLoader color="#ffffff" /></div>;
-    } else if (!user) {
-        return <Navigate to="/signin" />
+    if (!user) {
+        if (loading) {
+            return <div><ClipLoader color="#ffffff" /></div>;
+        } else {
+            return <Navigate to="/signin" />;
+        }
     }
 
     return children;

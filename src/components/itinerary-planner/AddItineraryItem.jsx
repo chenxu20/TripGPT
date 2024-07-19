@@ -29,7 +29,7 @@ export const AddItineraryItem = () => {
                     type="text"
                     name="itineraryName"
                     value={itinerary}
-                    onChange={(e) => setItinerary(e.target.value)}
+                    onChange={e => setItinerary(e.target.value)}
                     placeholder="Itinerary name"
                     required
                     disabled={loading}

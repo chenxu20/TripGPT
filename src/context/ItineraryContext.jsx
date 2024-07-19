@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { database } from '../config/firebase';
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs, writeBatch, query, where, or } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs, writeBatch, query, where, or, arrayUnion, getDoc } from 'firebase/firestore';
 import { UserAuth } from './AuthContext';
 
 export const ItineraryContext = createContext();
@@ -66,10 +66,15 @@ export const ItineraryContextProvider = ({ children }) => {
         }
     };
 
-    const deleteItinerary = async id => {
+    const deleteItinerary = async itiId => {
         try {
+            const itineraryRef = doc(database, 'itineraries', itiId);
+            const itineraryDoc = await getDoc(itineraryRef);
+            if (itineraryDoc.exists && itineraryDoc.data().user !== user.uid) {
+                throw new Error("Only the owner can delete the itinerary.");
+            }
+
             const batch = writeBatch(database);
-            const itineraryRef = doc(database, 'itineraries', id);
             const eventCollection = collection(itineraryRef, 'events');
             const eventsSnapshot = await getDocs(eventCollection);
 
@@ -82,7 +87,27 @@ export const ItineraryContextProvider = ({ children }) => {
             await batch.commit();
             setError("");
         } catch (error) {
-            setError("Error: Failed to delete itinerary.");
+            setError(error.message);
+        }
+    };
+
+    const shareItinerary = async (itiId, email) => {
+        try {
+            const usersRef = collection(database, "users");
+            const q = query(usersRef, where("email", "==", email));
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                throw new Error("No user with this email.");
+            }
+
+            const userId = querySnapshot.docs[0].id;
+            const itineraryRef = doc(database, "itineraries", itiId);
+            await updateDoc(itineraryRef, {
+                sharedWith: arrayUnion(userId)
+            });
+            setError("");
+        } catch (error) {
+            setError(error.message);
         }
     };
 
@@ -125,7 +150,12 @@ export const ItineraryContextProvider = ({ children }) => {
     };
 
     return (
-        <ItineraryContext.Provider value={{ upcomingItineraries, pastItineraries, addItinerary, deleteItinerary, addEventItem, updateEventItem, removeEventItem, loading, error, eventTypes }}>
+        <ItineraryContext.Provider value={{
+            upcomingItineraries, pastItineraries,
+            addItinerary, deleteItinerary, shareItinerary,
+            addEventItem, updateEventItem, removeEventItem,
+            loading, error, eventTypes
+        }}>
             {children}
         </ItineraryContext.Provider>
     );

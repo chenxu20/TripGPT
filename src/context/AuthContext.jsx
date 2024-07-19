@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { auth, googleProvider } from '../config/firebase';
+import { auth, database, googleProvider } from '../config/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import {
     createUserWithEmailAndPassword,
     onAuthStateChanged,
@@ -11,18 +12,7 @@ import {
     updateProfile
 } from "firebase/auth";
 
-const AuthContext = createContext({
-    user: null,
-    loading: true,
-    error: null,
-    userSignUp: async () => { },
-    userSignIn: async () => { },
-    googleUserSignIn: async () => { },
-    userSignOut: async () => { },
-    forgotPassword: async () => { },
-    setError: () => { },
-    setLoading: () => { }
-});
+const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -41,6 +31,13 @@ export const AuthContextProvider = ({ children }) => {
         const userCred = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(auth.currentUser, { displayName: name });
         await sendEmailVerification(userCred.user);
+        const userRef = doc(database, "users", userCred.user.uid);
+        await setDoc(userRef, {
+            uid: userCred.user.uid,
+            name: name,
+            email: email,
+            createdAt: new Date()
+        });
         setUser(userCred.user);
     };
 
@@ -51,6 +48,18 @@ export const AuthContextProvider = ({ children }) => {
 
     const googleUserSignIn = async () => {
         const userCred = await signInWithPopup(auth, googleProvider);
+
+        const userRef = doc(database, "users", userCred.user.uid);
+        const userDocSnapshot = await getDoc(userRef);
+        if (!userDocSnapshot.exists()) {
+            await setDoc(userRef, {
+                uid: userCred.user.uid,
+                name: userCred.user.displayName,
+                email: userCred.user.email,
+                createdAt: new Date()
+            });
+        }
+
         setUser(userCred.user);
     };
 

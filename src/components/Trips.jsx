@@ -19,7 +19,6 @@ export default function Trips() {
                                 <h1>Trips</h1>
                                 <ItineraryList />
                                 <hr />
-                                <MyTrips />
                                 <Calculator />
                             </>
                         }

@@ -4,6 +4,11 @@ import { database } from '../../config/firebase';
 import { useNavigate } from 'react-router-dom';
 import { ItineraryContext } from '../../context/ItineraryContext';
 import { ClipLoader } from 'react-spinners';
+import { ShareItineraryItem } from './ShareItineraryItem';
+
+function displayDate(date) {
+    return date.toDate().toLocaleDateString("en-GB");
+}
 
 export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
     const navigate = useNavigate();
@@ -35,10 +40,6 @@ export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
         return () => unsubscribe();
     }, [itinerary.id]);
 
-    function displayDate(date) {
-        return date.toDate().toLocaleDateString("en-GB");
-    }
-
     const handleDelete = () => {
         const confirmDelete = window.confirm(`Are you sure you want to delete \"${itinerary.name}\"?`);
         if (confirmDelete) {
@@ -59,6 +60,7 @@ export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
                 <button className="itinerary-button" onClick={() => navigate(`./${itinerary.id}`)}>View Itinerary</button>
                 <button className="itinerary-button" onClick={handleDelete}>Delete Itinerary</button>
             </div>
+            <ShareItineraryItem itineraryId={itinerary.id} />
         </div>
     );
 };
