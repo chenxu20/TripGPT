@@ -4,8 +4,9 @@ import AutoAddExpense from "./AutoAddExpense"
 import ManualAddExpense from "./ManualAddExpense"
 import Transactions from "./Transactions"
 import Payer from "./Payer"
-import { transactionCollection, travellersCollection, db } from "../config/firebase"
-import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc, getDoc } from "firebase/firestore"
+import { calculatorsCollection, transactionCollection, travellersCollection, database } from "../config/firebase"
+import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc, getDoc, collection } from "firebase/firestore"
+import { useParams } from "react-router-dom"
 
 export default function Calculator() {
     const [modal, setModal] = React.useState(false)
@@ -24,11 +25,15 @@ export default function Calculator() {
     const [transactions, setTransactions] = React.useState([])
     const [numPayer, setNumPayer] = React.useState(0)
     const [date, setDate] = React.useState()
+    const { userId } = useParams()
+    const calculatorDocRef = doc(database, "calculators", userId)
+    const transactionColRef = collection(calculatorDocRef, "transactions")
+    const travellersColRef = collection(calculatorDocRef, "travellers-info")
 
     React.useEffect(() => {
         async function getData() {
             try {
-                const snapshot = await getDocs(transactionCollection)
+                const snapshot = await getDocs(transactionColRef)
                 const fetchedData = snapshot.docs.map(doc => {
                     return {
                         description: doc.data().description,
@@ -50,7 +55,7 @@ export default function Calculator() {
     React.useEffect(() => {
         async function getData() {
             try {
-                const snapshot = await getDocs(travellersCollection)
+                const snapshot = await getDocs(travellersColRef)
                 const fetchedData = snapshot.docs.map(doc => {
                     return {
                         travellerName: doc.data().name,
@@ -109,7 +114,7 @@ export default function Calculator() {
     }, [travellers])
 
     React.useEffect(() => {
-        const unsubscribe = onSnapshot(transactionCollection, (snapshot) => {
+        const unsubscribe = onSnapshot(transactionColRef, (snapshot) => {
             const fetchedData = snapshot.docs.map(doc => {
                 return {
                     description: doc.data().description,
@@ -126,7 +131,7 @@ export default function Calculator() {
     }, [])
 
     React.useEffect(() => {
-        const unsubscribe = onSnapshot(travellersCollection, (snapshot) => {
+        const unsubscribe = onSnapshot(travellersColRef, (snapshot) => {
             const fetchedData = snapshot.docs.map(doc => {
                 return {
                     travellerName: doc.data().name,
@@ -351,7 +356,7 @@ export default function Calculator() {
         } else if (nameExist(name)) {
             alert("The name exists. Please key in a unique name!")
         } else {
-            addDoc(travellersCollection, {
+            addDoc(travellersColRef, {
                 name: name,
                 netAmount: 0
             })
@@ -363,7 +368,7 @@ export default function Calculator() {
     }
 
     function deleteTraveller(id) {
-        const docRef = doc(db, "travellers-info", id)
+        const docRef = doc(database, "calculators", userId, "travellers-info", id)
         getDoc(docRef)
             .then(doc => {
                 if (doc.data().netAmount != 0) {
@@ -379,7 +384,7 @@ export default function Calculator() {
     }
 
     function editTraveller(id) {
-        const docRef = doc(db, "travellers-info", id)
+        const docRef = doc(database, "calculators", userId, "travellers-info", id)
         if (nameExist(editName)) {
             alert("The name exists. Please key in a unique name!")
         } else {
@@ -392,7 +397,7 @@ export default function Calculator() {
                             if (transactions[x].expenseTracker[y].id === travellerId) {
                                 const duplicateExpenseTracker = [...transactions[x].expenseTracker]
                                 duplicateExpenseTracker[y].travellerName = editName
-                                const docRef = doc(db, "transactions", transactions[x].id)
+                                const docRef = doc(database, "calculators", userId, "transactions", transactions[x].id)
                                 updateDoc(docRef, {
                                     expenseTracker: duplicateExpenseTracker
                                 })
@@ -435,7 +440,7 @@ export default function Calculator() {
         }
         const travellersInvolved = travellers.filter(traveller => traveller.toggle || traveller.isPayer)
         for (let i = 0; i < travellersInvolved.length; i++) {
-            const docRef = doc(db, "travellers-info", travellersInvolved[i].id)
+            const docRef = doc(database, "calculators", userId, "travellers-info", travellersInvolved[i].id)
             if (travellersInvolved[i].isPayer) {
                 updateDoc(docRef, {
                     netAmount: parseFloat(travellersInvolved[i].netAmount) + parseFloat(expense) / numPayer - parseFloat(travellersInvolved[i].expensePlaceholder)
@@ -464,7 +469,7 @@ export default function Calculator() {
                 }
             }
         })
-        addDoc(transactionCollection, {
+        addDoc(transactionColRef, {
             description: description,
             expenseTracker: JSON.stringify(truncatedInfo),
             numPayer: numPayer,

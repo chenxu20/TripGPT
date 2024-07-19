@@ -9,6 +9,7 @@ import { Route, Routes } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import { AuthContextProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import Calculator from './components/Calculator'
 
 export default function App() {
   return (
@@ -16,12 +17,13 @@ export default function App() {
       <AuthContextProvider>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />}/>
-          <Route path="/explore" element={<Explore />}/>
-          <Route path="/trips" element={<Trips />}/>
-          <Route path="/signin" element={<SignIn />}/>
-          <Route path="/signup" element={<SignUp />}/>
-          <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>}/>
+          <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/trips" element={<Trips />} />
+          <Route path="/trips/:userId" element={<Calculator />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
         </Routes>
       </AuthContextProvider>
     </div>
