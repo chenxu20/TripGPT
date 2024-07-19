@@ -24,6 +24,7 @@ export default function Calculator() {
     const [counter, setCounter] = React.useState(0)
     const [transactions, setTransactions] = React.useState([])
     const [numPayer, setNumPayer] = React.useState(0)
+    const [numPayee, setNumPayee] = React.useState(0)
     const [date, setDate] = React.useState()
     const { userId } = useParams()
     const calculatorDocRef = doc(database, "calculators", userId)
@@ -99,6 +100,7 @@ export default function Calculator() {
     React.useEffect(() => {
         let count = 0
         let numPayer = 0
+        let numPayee = 0
         for (let i = 0; i < travellers.length; i++) {
             if (travellers[i].toggle === true) {
                 count++
@@ -110,6 +112,12 @@ export default function Calculator() {
                 numPayer++
             }
         }
+        for (let i = 0; i < travellers.length; i++) {
+            if (travellers[i].expensePlaceholder !== 0) {
+                numPayee++
+            }
+        }
+        setNumPayee(numPayee)
         setNumPayer(numPayer)
     }, [travellers])
 
@@ -154,6 +162,7 @@ export default function Calculator() {
                 <Transactions
                     transaction={transaction}
                     travellers={travellers}
+                    userId={userId}
                 />
             )
         })
@@ -536,6 +545,9 @@ export default function Calculator() {
                             <button name="manual" className={`manual-btn ${split.manual ? "manual-click" : ""}`} onClick={toggleSplit}>Split manually</button>
                             {split.auto && displayAutoSplit}
                             {split.manual && displayManualSplit}
+                            {split.manual && numPayee > 0 && (
+                                <p>total expenditure: {expense}</p>
+                            )}
                             {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}
                             <button className="close-modal" onClick={toggleModal}>
                                 CLOSE

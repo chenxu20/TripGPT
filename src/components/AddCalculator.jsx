@@ -55,7 +55,7 @@ export default function AddCalculator() {
 
         querySnapshot.forEach((document) => {
             const docRef = doc(database, "calculators", rootDocId, subcollectionName, document.id)
-            batch.delete(docRef);
+            batch.delete(docRef)
         });
 
         await batch.commit()

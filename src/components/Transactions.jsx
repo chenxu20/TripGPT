@@ -48,7 +48,7 @@ export default function Transactions(props) {
             let tempAmountHolder
             payeeAmount += parseFloat(payees[i].expensePlaceholder)
             let transactionAmount = Math.abs(parseFloat(payees[i].expensePlaceholder))
-            const travellerDocRef = doc(database, "travellers-info", payees[i].id)
+            const travellerDocRef = doc(database, "calculators", props.userId, "travellers-info", payees[i].id)
             getDoc(travellerDocRef)
                 .then((doc) => {
                     tempAmountHolder = doc.data().netAmount
@@ -66,7 +66,7 @@ export default function Transactions(props) {
 
         for (let i = 0; i < payers.length; i++) {
             let tempAmountHolder
-            const travellerDocRef = doc(database, "travellers-info", payers[i].id)
+            const travellerDocRef = doc(database, "calculators", props.userId, "travellers-info", payers[i].id)
             getDoc(travellerDocRef)
                 .then((doc) => {
                     tempAmountHolder = doc.data().netAmount
@@ -82,7 +82,7 @@ export default function Transactions(props) {
                 })
         }
 
-        const transactionDocRef = doc(database, "transactions", props.transaction.id)
+        const transactionDocRef = doc(database, "calculators", props.userId, "transactions", props.transaction.id)
         deleteDoc(transactionDocRef)
             .then(() => {
                 alert("Transaction successfully deleted!")
