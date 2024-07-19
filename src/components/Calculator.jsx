@@ -25,6 +25,7 @@ export default function Calculator() {
     const [transactions, setTransactions] = React.useState([])
     const [numPayer, setNumPayer] = React.useState(0)
     const [numPayee, setNumPayee] = React.useState(0)
+    const [remainingAmount, setRemainingAmount] = React.useState(0)
     const [date, setDate] = React.useState()
     const { userId } = useParams()
     const calculatorDocRef = doc(database, "calculators", userId)
@@ -101,6 +102,7 @@ export default function Calculator() {
         let count = 0
         let numPayer = 0
         let numPayee = 0
+        let remainingAmount = expense
         for (let i = 0; i < travellers.length; i++) {
             if (travellers[i].toggle === true) {
                 count++
@@ -115,10 +117,12 @@ export default function Calculator() {
         for (let i = 0; i < travellers.length; i++) {
             if (travellers[i].expensePlaceholder !== 0) {
                 numPayee++
+                remainingAmount -= travellers[i].expensePlaceholder
             }
         }
         setNumPayee(numPayee)
         setNumPayer(numPayer)
+        setRemainingAmount(remainingAmount)
     }, [travellers])
 
     React.useEffect(() => {
@@ -447,6 +451,10 @@ export default function Calculator() {
             alert("Select at least 1 payee!")
             return
         }
+        if (remainingAmount < 0 || remainingAmount > 0) {
+            alert("Split your bills properly!")
+            return
+        }
         const travellersInvolved = travellers.filter(traveller => traveller.toggle || traveller.isPayer)
         for (let i = 0; i < travellersInvolved.length; i++) {
             const docRef = doc(database, "calculators", userId, "travellers-info", travellersInvolved[i].id)
@@ -545,8 +553,11 @@ export default function Calculator() {
                             <button name="manual" className={`manual-btn ${split.manual ? "manual-click" : ""}`} onClick={toggleSplit}>Split manually</button>
                             {split.auto && displayAutoSplit}
                             {split.manual && displayManualSplit}
-                            {split.manual && numPayee > 0 && (
-                                <p>total expenditure: {expense}</p>
+                            {split.manual && numPayee > 0 && remainingAmount >= 0 && (
+                                <p>total expenditure: ${expense}, remaining amount: ${remainingAmount}</p>
+                            )}
+                            {split.manual && numPayee > 0 && remainingAmount < 0 && (
+                                <p>error!</p>
                             )}
                             {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}
                             <button className="close-modal" onClick={toggleModal}>
