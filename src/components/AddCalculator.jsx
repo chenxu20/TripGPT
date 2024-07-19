@@ -1,6 +1,6 @@
 import React from "react"
 import { calculatorsCollection, transactionCollection, travellersCollection, database } from "../config/firebase"
-import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc, getDoc } from "firebase/firestore"
+import { doc, addDoc, deleteDoc, getDocs, onSnapshot, collection, updateDoc, getDoc, writeBatch } from "firebase/firestore"
 import { Link } from "react-router-dom"
 
 export default function AddCalculator() {
@@ -31,13 +31,35 @@ export default function AddCalculator() {
         )
     })
 
-    function deleteCalculator(id, name) {
+    async function deleteCalculator(id, name) {
         const confirmDel = window.confirm(`Are you sure you want to delete calculator for "${name}"?`)
         if (confirmDel) {
-            const docRef = doc(database, "calculators", id)
-            deleteDoc(docRef)
-                .then(alert("Deleted successfully!"))
+            try {
+                await deleteSubcollection(id, "travellers-info")
+                await deleteSubcollection(id, "transactions")
+                const docRef = doc(database, "calculators", id)
+                deleteDoc(docRef)
+                    .then(alert("Deleted successfully!"))
+            } catch (error) {
+                console.error('Error deleting subcollection:', error)
+                alert('Failed to delete subcollection')
+            }
         }
+    }
+
+    async function deleteSubcollection(rootDocId, subcollectionName) {
+        const subcollectionRef = collection(database, "calculators", rootDocId, subcollectionName)
+        const querySnapshot = await getDocs(subcollectionRef)
+
+        const batch = writeBatch(database)
+
+        querySnapshot.forEach((document) => {
+            const docRef = doc(database, "calculators", rootDocId, subcollectionName, document.id)
+            batch.delete(docRef);
+        });
+
+        await batch.commit()
+        console.log('Subcollection deleted successfully')
     }
 
     function handleChange(event) {
