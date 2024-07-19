@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
 import { database } from '../config/firebase';
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs, writeBatch, query, where } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, getDocs, writeBatch, query, where, or } from 'firebase/firestore';
 import { UserAuth } from './AuthContext';
 
 export const ItineraryContext = createContext();
@@ -26,7 +26,10 @@ export const ItineraryContextProvider = ({ children }) => {
 
     useEffect(() => {
         if (user) {
-            const q = query(itineraryCollection, where("user", "==", user.uid));
+            const q = query(itineraryCollection,
+                or(where("user", "==", user.uid),
+                    where("sharedWith", "array-contains", user.uid))
+            );
             const unsubscribe = onSnapshot(q, snapshot => {
                 const fetchedItineraries = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
                 const currentDate = new Date();
@@ -53,7 +56,7 @@ export const ItineraryContextProvider = ({ children }) => {
     const addItinerary = async name => {
         if (name.trim()) {
             try {
-                await addDoc(itineraryCollection, { name, user: user.uid, startDate: null, endDate: null });
+                await addDoc(itineraryCollection, { name, user: user.uid, startDate: null, endDate: null, sharedWith: [] });
                 setError("");
             } catch (error) {
                 setError("Error: Failed to add itinerary.");

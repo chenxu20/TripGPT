@@ -1,8 +1,6 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
-import { collection, onSnapshot } from 'firebase/firestore';
 import { AddItineraryItem } from './AddItineraryItem';
-import { database } from '../../config/firebase';
 import { ItineraryItem } from './ItineraryItem';
 import { ClipLoader } from 'react-spinners';
 
