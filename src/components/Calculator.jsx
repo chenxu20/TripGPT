@@ -6,7 +6,7 @@ import Transactions from "./Transactions"
 import Payer from "./Payer"
 import { calculatorsCollection, transactionCollection, travellersCollection, database } from "../config/firebase"
 import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc, getDoc, collection } from "firebase/firestore"
-import { useParams } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 
 export default function Calculator() {
     const [modal, setModal] = React.useState(false)
@@ -495,65 +495,68 @@ export default function Calculator() {
     }
 
     return (
-        <div className="calculator-display-el">
-            <div className="traveller-el">
-                <h2>Bill Split Calculator</h2>
-                <div className="traveller-title">
-                    <span>Name</span>
-                    <span>Net Amount</span>
-                </div>
-                {displayTravellers}
-                <input name="traveller-name" className="traveller-name" placeholder="Name" onChange={trackChanges} value={name} />
-                <button onClick={addTraveller} className="add-traveller-button">Add Traveller</button>
-                <br />
-            </div>
-            <div className="transaction-el">
-                {travellers.length !== 0 && <button onClick={toggleModal} className="add-expense-button">Add expense</button>}
-                <h2>Transaction Records</h2>
-                {displayTransactions}
-            </div>
-            {modal && (
-                <div className="modal">
-                    <div onClick={toggleModal} className="overlay"></div>
-                    <div className="modal-content">
-                        <label>Description:
-                            <input name="description" onChange={trackChanges} placeholder="Enter a description" required />
-                        </label>
-                        <br />
-                        <label>Date:
-                            <input name="date" type="date" onChange={trackChanges} required />
-                        </label>
-                        <br />
-                        <label>Cost: $
-                            <input name="add-expense" onChange={trackChanges} required />
-                        </label>
-                        <br />
-                        <p>Person who paid:</p>
-                        {displayPayer}
-                        <button name="auto" className={`auto-btn ${split.auto ? "auto-click" : ""}`} onClick={toggleSplit}>Split equally</button>
-                        <button name="manual" className={`manual-btn ${split.manual ? "manual-click" : ""}`} onClick={toggleSplit}>Split manually</button>
-                        {split.auto && displayAutoSplit}
-                        {split.manual && displayManualSplit}
-                        {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}
-                        <button className="close-modal" onClick={toggleModal}>
-                            CLOSE
-                        </button>
+        <>
+            <Link to="/trips"><button className="back-btn">{`< Trips`}</button></Link>
+            <div className="calculator-display-el">
+                <div className="traveller-el">
+                    <h2>Bill Split Calculator</h2>
+                    <div className="traveller-title">
+                        <span>Name</span>
+                        <span>Net Amount</span>
                     </div>
+                    {displayTravellers}
+                    <input name="traveller-name" className="traveller-name" placeholder="Name" onChange={trackChanges} value={name} />
+                    <button onClick={addTraveller} className="add-traveller-button">Add Traveller</button>
+                    <br />
                 </div>
-            )}
-            {editModal && (
-                <div className="modal">
-                    <div onClick={toggleEditModal} className="overlay"></div>
-                    <div className="modal-content">
-                        <input name="edited-name" onChange={trackChanges} placeholder="Enter new name" />
-                        <br />
-                        <button onClick={() => editTraveller(travellerId)}>Confirm</button>
-                        <button className="close-modal" onClick={toggleEditModal}>
-                            CLOSE
-                        </button>
+                <div className="transaction-el">
+                    {travellers.length !== 0 && <button onClick={toggleModal} className="add-expense-button">Add expense</button>}
+                    <h2>Transaction Records</h2>
+                    {displayTransactions}
+                </div>
+                {modal && (
+                    <div className="modal">
+                        <div onClick={toggleModal} className="overlay"></div>
+                        <div className="modal-content">
+                            <label>Description:
+                                <input name="description" onChange={trackChanges} placeholder="Enter a description" required />
+                            </label>
+                            <br />
+                            <label>Date:
+                                <input name="date" type="date" onChange={trackChanges} required />
+                            </label>
+                            <br />
+                            <label>Cost: $
+                                <input name="add-expense" onChange={trackChanges} required />
+                            </label>
+                            <br />
+                            <p>Person who paid:</p>
+                            {displayPayer}
+                            <button name="auto" className={`auto-btn ${split.auto ? "auto-click" : ""}`} onClick={toggleSplit}>Split equally</button>
+                            <button name="manual" className={`manual-btn ${split.manual ? "manual-click" : ""}`} onClick={toggleSplit}>Split manually</button>
+                            {split.auto && displayAutoSplit}
+                            {split.manual && displayManualSplit}
+                            {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}
+                            <button className="close-modal" onClick={toggleModal}>
+                                CLOSE
+                            </button>
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+                {editModal && (
+                    <div className="modal">
+                        <div onClick={toggleEditModal} className="overlay"></div>
+                        <div className="modal-content">
+                            <input name="edited-name" onChange={trackChanges} placeholder="Enter new name" />
+                            <br />
+                            <button onClick={() => editTraveller(travellerId)}>Confirm</button>
+                            <button className="close-modal" onClick={toggleEditModal}>
+                                CLOSE
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </>
     )
 }
