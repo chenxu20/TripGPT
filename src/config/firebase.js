@@ -17,9 +17,10 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const googleProvider =  new GoogleAuthProvider();
+export const googleProvider = new GoogleAuthProvider();
 export const database = getFirestore(app);
 export const transactionCollection = collection(database, "transactions")
 export const travellersCollection = collection(database, "travellers-info")
+export const calculatorsCollection = collection(database, "calculators")
 export const tripCollection = collection(database, "trip-details")
 //const analytics = getAnalytics(app);

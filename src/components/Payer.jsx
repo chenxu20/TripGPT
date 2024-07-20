@@ -1,12 +1,12 @@
 import React from "react"
+import "./Payer.css"
 
 export default function Payer(props) {
     return (
-        <div onClick={props.updatePayer} style={{
-            backgroundColor: props.isPayer ? 'red' : 'black',
-            color: props.isPayer ? 'black' : 'white',
-        }}>
-            {props.name}
+        <div>
+            <button className={`payer-name ${props.isPayer ? "payer" : ""}`} onClick={props.updatePayer}>{props.name}
+                <input type="checkbox" checked={props.isPayer}></input>
+            </button>
         </div>
     )
 }

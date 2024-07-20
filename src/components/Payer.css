@@ -1,0 +1,14 @@
+.payer-name {
+    width: 100%;
+    height: 100%;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.payer {
+    background-color: #18da11;
+}

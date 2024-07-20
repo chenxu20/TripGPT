@@ -4,11 +4,15 @@ import AutoAddExpense from "./AutoAddExpense"
 import ManualAddExpense from "./ManualAddExpense"
 import Transactions from "./Transactions"
 import Payer from "./Payer"
-import { transactionCollection, travellersCollection, database } from "../config/firebase"
-import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc } from "firebase/firestore"
+import { calculatorsCollection, transactionCollection, travellersCollection, database } from "../config/firebase"
+import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc, getDoc, collection, query, orderBy } from "firebase/firestore"
+import { useParams, Link } from "react-router-dom"
 
 export default function Calculator() {
     const [modal, setModal] = React.useState(false)
+    const [editModal, setEditModal] = React.useState(false)
+    const [editName, setEditName] = React.useState()
+    const [travellerId, setTravellerId] = React.useState()
     const [travellers, setTravellers] = React.useState([])
     const [description, setDescription] = React.useState()
     const [expense, setExpense] = React.useState()
@@ -20,48 +24,59 @@ export default function Calculator() {
     const [counter, setCounter] = React.useState(0)
     const [transactions, setTransactions] = React.useState([])
     const [numPayer, setNumPayer] = React.useState(0)
+    const [numPayee, setNumPayee] = React.useState(0)
+    const [remainingAmount, setRemainingAmount] = React.useState(0)
+    const [date, setDate] = React.useState()
+    const [visibleDates, setVisibleDates] = React.useState([])
+    let displayDate = ""
+    const { userId } = useParams()
+    const calculatorDocRef = doc(database, "calculators", userId)
+    const transactionColRef = collection(calculatorDocRef, "transactions")
+    const travellersColRef = collection(calculatorDocRef, "travellers-info")
 
-    React.useEffect(() => {
-        async function getData() {
-            try {
-                const snapshot = await getDocs(transactionCollection)
-                const fetchedData = snapshot.docs.map(doc => {
-                    return {
-                        description: doc.data().description,
-                        expenseTracker: JSON.parse(doc.data().expenseTracker),
-                        numPayer: doc.data().numPayer,
-                        id: doc.id
-                    }
-                })
-                setTransactions(fetchedData)
-            } catch (error) {
-                console.error(`Error fetching documents: ${error}`)
-            }
-        }
-        getData()
-    }, [])
+    // React.useEffect(() => {
+    //     async function getData() {
+    //         try {
+    //             const snapshot = await getDocs(transactionColRef)
+    //             const fetchedData = snapshot.docs.map(doc => {
+    //                 return {
+    //                     description: doc.data().description,
+    //                     expenseTracker: JSON.parse(doc.data().expenseTracker),
+    //                     numPayer: doc.data().numPayer,
+    //                     expense: doc.data().expense,
+    //                     date: doc.data().date,
+    //                     id: doc.id
+    //                 }
+    //             })
+    //             setTransactions(fetchedData)
+    //         } catch (error) {
+    //             console.error(`Error fetching documents: ${error}`)
+    //         }
+    //     }
+    //     getData()
+    // }, [])
 
-    React.useEffect(() => {
-        async function getData() {
-            try {
-                const snapshot = await getDocs(travellersCollection)
-                const fetchedData = snapshot.docs.map(doc => {
-                    return {
-                        travellerName: doc.data().name,
-                        netAmount: doc.data().netAmount,
-                        expensePlaceholder: 0,
-                        toggle: true,
-                        isPayer: false,
-                        id: doc.id
-                    }
-                })
-                setTravellers(fetchedData)
-            } catch (error) {
-                console.error(`Error fetching documents: ${error}`)
-            }
-        }
-        getData()
-    }, [])
+    // React.useEffect(() => {
+    //     async function getData() {
+    //         try {
+    //             const snapshot = await getDocs(travellersColRef)
+    //             const fetchedData = snapshot.docs.map(doc => {
+    //                 return {
+    //                     travellerName: doc.data().name,
+    //                     netAmount: doc.data().netAmount,
+    //                     expensePlaceholder: 0,
+    //                     toggle: true,
+    //                     isPayer: false,
+    //                     id: doc.id
+    //                 }
+    //             })
+    //             setTravellers(fetchedData)
+    //         } catch (error) {
+    //             console.error(`Error fetching documents: ${error}`)
+    //         }
+    //     }
+    //     getData()
+    // }, [])
 
     React.useEffect(() => {
         if (split.auto) {
@@ -69,7 +84,7 @@ export default function Calculator() {
                 traveller => {
                     return {
                         ...traveller,
-                        expensePlaceholder: (expense/counter)
+                        expensePlaceholder: (expense / counter)
                     }
                 }
             ))
@@ -88,6 +103,8 @@ export default function Calculator() {
     React.useEffect(() => {
         let count = 0
         let numPayer = 0
+        let numPayee = 0
+        let remainingAmount = expense
         for (let i = 0; i < travellers.length; i++) {
             if (travellers[i].toggle === true) {
                 count++
@@ -99,26 +116,37 @@ export default function Calculator() {
                 numPayer++
             }
         }
+        for (let i = 0; i < travellers.length; i++) {
+            if (travellers[i].expensePlaceholder !== 0) {
+                numPayee++
+                remainingAmount -= travellers[i].expensePlaceholder
+            }
+        }
+        setNumPayee(numPayee)
         setNumPayer(numPayer)
+        setRemainingAmount(remainingAmount)
     }, [travellers])
 
     React.useEffect(() => {
-        const unsubscribe = onSnapshot(transactionCollection, (snapshot) => {
+        const q = query(transactionColRef, orderBy("date", "desc"))
+        const unsubscribe = onSnapshot(q, snapshot => {
             const fetchedData = snapshot.docs.map(doc => {
                 return {
                     description: doc.data().description,
                     expenseTracker: JSON.parse(doc.data().expenseTracker),
                     numPayer: doc.data().numPayer,
+                    expense: doc.data().expense,
+                    date: doc.data().date,
                     id: doc.id
                 }
             })
-        setTransactions(fetchedData)
+            setTransactions(fetchedData)
         })
         return () => unsubscribe()
     }, [])
 
     React.useEffect(() => {
-        const unsubscribe = onSnapshot(travellersCollection, (snapshot) => {
+        const unsubscribe = onSnapshot(travellersColRef, (snapshot) => {
             const fetchedData = snapshot.docs.map(doc => {
                 return {
                     travellerName: doc.data().name,
@@ -129,7 +157,7 @@ export default function Calculator() {
                     id: doc.id
                 }
             })
-        setTravellers(fetchedData)
+            setTravellers(fetchedData)
         })
         return () => unsubscribe()
     }, [])
@@ -137,16 +165,42 @@ export default function Calculator() {
     const displayTransactions = !(transactions.length)
         ? transactions
         : transactions.map(transaction => {
-            return (
-                <Transactions 
-                    key={transaction.id}
-                    transaction={transaction}
-                />
-            )
+            if (displayDate === "" || transaction.date !== displayDate) {
+                displayDate = transaction.date
+                return (
+                    <div>
+                        {/* <button className="display-transaction-btn" onClick={() => toggleDateVisibility(transaction.date)}>
+                            <span>{transaction.date} Transactions</span>
+                            <span>{visibleDates.includes(transaction.date) ? "Hide information" : "Show information"}</span>
+                        </button> */}
+                        <div className="display-transaction-el">
+                            <h3>{transaction.date} Transactions</h3>
+                            <button className="display-transaction-btn" onClick={() => toggleDateVisibility(transaction.date)}>{visibleDates.includes(transaction.date) ? "Hide information" : "Show information"}</button>
+                        </div>
+                        {visibleDates.includes(transaction.date) && (
+                            <Transactions
+                                transaction={transaction}
+                                travellers={travellers}
+                                userId={userId}
+                            />
+                        )}
+                    </div>
+                )
+            } else {
+                return visibleDates.includes(transaction.date)
+                    ? <Transactions
+                        transaction={transaction}
+                        travellers={travellers}
+                        userId={userId}
+                    />
+                    : null
+            }
         })
 
-    const displayTravellers = !(travellers.length) 
-        ? travellers 
+    displayDate = ""
+
+    const displayTravellers = !(travellers.length)
+        ? travellers
         : travellers.map(traveller => {
             const netAmount = traveller.netAmount
             const styles = {
@@ -161,6 +215,7 @@ export default function Calculator() {
                     {netAmount < 0 && <p style={styles}>${netAmount.toFixed(2)}</p>}
                     {netAmount == 0 && <p style={styles}>${netAmount.toFixed(2)}</p>}
                     <button className="delete-btn" onClick={() => deleteTraveller(traveller.id)}>Delete traveller</button>
+                    <button className="edit-btn" onClick={() => toggleEditModal(traveller.id)}>Edit Name</button>
                     <br />
                 </div>
             )
@@ -226,31 +281,39 @@ export default function Calculator() {
             )
         })
 
+    function toggleDateVisibility(date) {
+        setVisibleDates(prevDates => {
+            return prevDates.includes(date)
+                ? prevDates.filter(d => d !== date)
+                : [...prevDates, date]
+        })
+    }
+
     function toggleSelected(id) {
-        setTravellers(prev => 
+        setTravellers(prev =>
             prev.map(traveller => {
                 return traveller.id === id
-                    ? {...traveller, toggle: !traveller.toggle, expensePlaceholder: 0}
+                    ? { ...traveller, toggle: !traveller.toggle, expensePlaceholder: 0 }
                     : traveller
             }
-        ))
+            ))
     }
 
     function updatePayer(id) {
-        setTravellers(prev => 
+        setTravellers(prev =>
             prev.map(traveller => {
                 return traveller.id === id
-                    ? {...traveller, isPayer: !traveller.isPayer}
+                    ? { ...traveller, isPayer: !traveller.isPayer }
                     : traveller
             })
         )
     }
 
     function updatePlaceholder(id, amount) {
-        setTravellers(prev => 
+        setTravellers(prev =>
             prev.map(traveller => {
                 return traveller.id === id
-                    ? {...traveller, expensePlaceholder: amount}
+                    ? { ...traveller, expensePlaceholder: amount }
                     : traveller
             })
         )
@@ -259,13 +322,16 @@ export default function Calculator() {
     function toggleModal() {
         setModal(prevModal => !prevModal)
         setTravellers(prevTraveller => {
-                for (let i = 0; i < prevTraveller.length; i++) {
-                    prevTraveller[i].toggle = true
-                }
-                return prevTraveller
+            for (let i = 0; i < prevTraveller.length; i++) {
+                prevTraveller[i].toggle = true
+                prevTraveller[i].isPayer = false
             }
+            return prevTraveller
+        }
         )
         setExpense()
+        setDate()
+        setDescription()
         setSplit(prev => {
             return {
                 auto: false,
@@ -274,9 +340,19 @@ export default function Calculator() {
         })
     }
 
+    function toggleEditModal(id = "") {
+        setEditModal(prevModal => !prevModal)
+        setEditName()
+        setTravellerId(id)
+    }
+
     function toggleSplit(event) {
         if (!description) {
             alert("enter a description first!")
+            return
+        }
+        if (!date) {
+            alert("exter the date of transaction first!")
             return
         }
         if (!expense) {
@@ -313,31 +389,76 @@ export default function Calculator() {
         }
     }
 
+    function nameExist(name) {
+        for (let counter = 0; counter < travellers.length; counter++) {
+            if (travellers[counter].travellerName == name) {
+                return true
+            }
+        }
+        return false
+    }
+
     function addTraveller() {
         if (!name) {
             setName("")
             alert("key in a valid name!")
+        } else if (nameExist(name)) {
+            alert("The name exists. Please key in a unique name!")
         } else {
-            addDoc(travellersCollection, {
+            addDoc(travellersColRef, {
                 name: name,
                 netAmount: 0
             })
-            .then(() => {
-                //alert("Success")
-            })
+                .then(() => {
+                    alert("Success")
+                })
             setName("")
         }
     }
 
     function deleteTraveller(id) {
-        const docRef = doc(database, "travellers-info", id)
-        deleteDoc(docRef)
-            .then(() => {
-                //alert("Traveller successfully deleted!")
+        const docRef = doc(database, "calculators", userId, "travellers-info", id)
+        getDoc(docRef)
+            .then(doc => {
+                if (doc.data().netAmount != 0) {
+                    alert("The debt has not been cleared yet!")
+                } else {
+                    deleteDoc(docRef)
+                        .then(() => {
+                            alert("Traveller successfully deleted!")
+                        })
+                        .catch((err) => alert(`Error removing document: ${err}`))
+                }
             })
-            .catch((err) => alert(`Error removing document: ${err}`))
     }
-    
+
+    function editTraveller(id) {
+        const docRef = doc(database, "calculators", userId, "travellers-info", id)
+        if (nameExist(editName)) {
+            alert("The name exists. Please key in a unique name!")
+        } else {
+            updateDoc(docRef, {
+                name: editName
+            })
+                .then(() => {
+                    for (let x = 0; x < transactions.length; x++) {
+                        for (let y = 0; y < transactions[x].expenseTracker.length; y++) {
+                            if (transactions[x].expenseTracker[y].id === travellerId) {
+                                const duplicateExpenseTracker = [...transactions[x].expenseTracker]
+                                duplicateExpenseTracker[y].travellerName = editName
+                                const docRef = doc(database, "calculators", userId, "transactions", transactions[x].id)
+                                updateDoc(docRef, {
+                                    expenseTracker: duplicateExpenseTracker
+                                })
+                            }
+                        }
+                    }
+                })
+                .then(() => alert("Changed name sucessfully!"))
+                .then(() => setEditModal())
+        }
+    }
+
     function trackChanges(event) {
         if (event.target.name === "traveller-name") {
             setName(event.target.value)
@@ -349,12 +470,48 @@ export default function Calculator() {
         if (event.target.name === "description") {
             setDescription(event.target.value)
         }
+        if (event.target.name === "edited-name") {
+            setEditName(event.target.value)
+        }
+        if (event.target.name === "date") {
+            setDate(event.target.value)
+        }
     }
 
     function updateDatabase() {
+        if (travellers.length === 1) {
+            alert("You only have 1 traveller now, add more travellers!")
+            return
+        }
+        if (numPayer === 0) {
+            alert("Select at least 1 payer!")
+            return
+        }
+        if (counter === 0) {
+            alert("Select at least 1 payee!")
+            return
+        }
+        if (remainingAmount < 0 || remainingAmount > 0) {
+            alert("Split your bills properly!")
+            return
+        }
+
+        if (numPayee === numPayer) {
+            let count = 0
+            for (let i = 0; i < travellers.length; i++) {
+                if (travellers[count].isPayer && travellers[count].expensePlaceholder !== 0) {
+                    count++
+                }
+            }
+            if (count === numPayee) {
+                alert("Choose different payers and payees!")
+                return
+            }
+        }
+
         const travellersInvolved = travellers.filter(traveller => traveller.toggle || traveller.isPayer)
         for (let i = 0; i < travellersInvolved.length; i++) {
-            const docRef = doc(database, "travellers-info", travellersInvolved[i].id)
+            const docRef = doc(database, "calculators", userId, "travellers-info", travellersInvolved[i].id)
             if (travellersInvolved[i].isPayer) {
                 updateDoc(docRef, {
                     netAmount: parseFloat(travellersInvolved[i].netAmount) + parseFloat(expense) / numPayer - parseFloat(travellersInvolved[i].expensePlaceholder)
@@ -383,62 +540,100 @@ export default function Calculator() {
                 }
             }
         })
-        addDoc(transactionCollection, {
+        addDoc(transactionColRef, {
             description: description,
             expenseTracker: JSON.stringify(truncatedInfo),
-            numPayer: numPayer
+            numPayer: numPayer,
+            expense: expense,
+            date: date
         })
-        .then(() => {
-            alert("Success")
-            toggleModal()
-        })
+            .then(() => {
+                alert("Success")
+                toggleModal()
+            })
     }
 
-    if(modal) {
+    if (modal) {
+        document.body.classList.add('active-modal')
+    } else {
+        document.body.classList.remove('active-modal')
+    }
+
+    if (editModal) {
         document.body.classList.add('active-modal')
     } else {
         document.body.classList.remove('active-modal')
     }
 
     return (
-        <div className="calculator-display-el">
-            <div className="traveller-el">
-                <h2>Bill Split Calculator</h2>
-                <div className="traveller-title">
-                    <span>Name</span>
-                    <span>Net Amount</span>
-                </div>
-                {displayTravellers}
-                <input name="traveller-name" className="traveller-name" placeholder ="Name" onChange={trackChanges} value={name} />
-                <button onClick={addTraveller} className="add-traveller-button">Add Traveller</button>
-                <br />
-            </div>
-            <div className="transaction-el">
-                {travellers.length !== 0 && <button onClick={toggleModal} className="add-expense-button">Add expense</button>}
-                <h2>Transaction Records</h2>
-                {displayTransactions}
-            </div>
-            {modal && (
-                <div className="modal">
-                    <div onClick={toggleModal} className="overlay"></div>
-                    <div className="modal-content">
-                        <input name="description" onChange={trackChanges} placeholder="Enter a description" />
-                        <br />
-                        $<input name="add-expense" onChange={trackChanges}></input>
-                        <br />
-                        <p>Person who paid:</p>
-                        {displayPayer}
-                        <button name="auto" onClick={toggleSplit}>Split equally</button>
-                        <button name="manual" onClick={toggleSplit}>Split manually</button>
-                        {split.auto && displayAutoSplit}
-                        {split.manual && displayManualSplit}
-                        {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}
-                        <button className="close-modal" onClick={toggleModal}>
-                        CLOSE
-                        </button>
+        <>
+            <Link to="/trips"><button className="back-btn">{`< Trips`}</button></Link>
+            <div className="calculator-display-el">
+                <div className="traveller-el">
+                    <h2>Bill Split Calculator</h2>
+                    <div className="traveller-title">
+                        <span>Name</span>
+                        <span>Net Amount</span>
                     </div>
+                    {displayTravellers}
+                    <input name="traveller-name" className="traveller-name" placeholder="Name" onChange={trackChanges} value={name} />
+                    <button onClick={addTraveller} className="add-traveller-button">Add Traveller</button>
+                    <br />
                 </div>
-            )}
-        </div>
+                <div className="transaction-el">
+                    {travellers.length !== 0 && <button onClick={toggleModal} className="add-expense-button">Add expense</button>}
+                    <h2>Transaction Records</h2>
+                    {displayTransactions}
+                </div>
+                {modal && (
+                    <div className="modal">
+                        <div onClick={toggleModal} className="overlay"></div>
+                        <div className="modal-content">
+                            <label>Description:
+                                <input name="description" onChange={trackChanges} placeholder="Enter a description" required />
+                            </label>
+                            <br />
+                            <label>Date:
+                                <input name="date" type="date" onChange={trackChanges} required />
+                            </label>
+                            <br />
+                            <label>Cost: $
+                                <input name="add-expense" onChange={trackChanges} required />
+                            </label>
+                            <br />
+                            <p>Person who paid:</p>
+                            {displayPayer}
+                            <button name="auto" className={`auto-btn ${split.auto ? "auto-click" : ""}`} onClick={toggleSplit}>Split equally</button>
+                            <button name="manual" className={`manual-btn ${split.manual ? "manual-click" : ""}`} onClick={toggleSplit}>Split manually</button>
+                            {split.auto && displayAutoSplit}
+                            {split.manual && displayManualSplit}
+                            {split.manual && numPayee > 0 && remainingAmount >= 0 && (
+                                <p>total expenditure: ${expense}, remaining amount: ${remainingAmount}</p>
+                            )}
+                            {split.manual && numPayee > 0 && remainingAmount < 0 && (
+                                <p>error!</p>
+                            )}
+                            {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}
+                            <button className="close-modal" onClick={toggleModal}>
+                                CLOSE
+                            </button>
+                        </div>
+                    </div>
+                )}
+                {editModal && (
+                    <div className="modal">
+                        <div onClick={toggleEditModal} className="overlay"></div>
+                        <div className="modal-content">
+                            <input name="edited-name" onChange={trackChanges} placeholder="Enter new name" />
+                            <br />
+                            <button onClick={() => editTraveller(travellerId)}>Confirm</button>
+                            <button className="close-modal" onClick={toggleEditModal}>
+                                CLOSE
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </>
     )
 }

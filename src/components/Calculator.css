@@ -2,7 +2,25 @@ body.active-modal {
     overflow-y: hidden;
 }
 
-.modal, .overlay {
+button {
+    padding: 0.7rem 1.2rem;
+    border: 2px solid #afafaf;
+    border-radius: 3px;
+    background-color: black;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+button:hover {
+    border-color: #646cff;
+    background: #444444;
+}
+
+.modal,
+.overlay {
     width: 100vw;
     height: 100vh;
     top: 0;
@@ -28,8 +46,9 @@ body.active-modal {
 }
 
 .overlay {
-    background: rgba(49,49,49,0.8);
+    background: rgba(49, 49, 49, 0.8);
 }
+
 .modal-content {
     position: absolute;
     top: 40%;
@@ -71,12 +90,15 @@ body.active-modal {
 }
 
 .delete-btn {
-    height: auto; /* Reset the height to default */
-    padding: 5px 10px; /* Adjust padding to control the size of the button */
+    height: auto;
+    /* Reset the height to default */
+    padding: 5px 10px;
+    /* Adjust padding to control the size of the button */
     background-color: #f44336;
     color: white;
     border: none;
-    border-radius: 20px; /* Add border radius for rounded corners */
+    border-radius: 20px;
+    /* Add border radius for rounded corners */
     cursor: pointer;
     font-weight: bold;
 }
@@ -96,43 +118,103 @@ body.active-modal {
 
 /* Add expense button specific styling */
 .add-expense-button {
-    height: auto; /* Reset the height to default */
-    padding: 10px 20px; /* Adjust padding to control the size of the button */
+    height: auto;
+    /* Reset the height to default */
+    padding: 10px 20px;
+    /* Adjust padding to control the size of the button */
     color: white;
     border: none;
-    border-radius: 20px; /* Add border radius for rounded corners */
+    border-radius: 20px;
+    /* Add border radius for rounded corners */
     cursor: pointer;
-    background-color: #008CBA; /* Blue background */
+    background-color: #008CBA;
+    /* Blue background */
     font-weight: bold;
     font-size: 20px;
 }
 
 .add-expense-button:hover {
-    background-color: #007BB5; /* Darker blue */
+    background-color: #007BB5;
+    /* Darker blue */
 }
 
 /* Add traveller button specific styling */
 .add-traveller-button {
-    height: auto; /* Reset the height to default */
-    padding: 5px 10px; /* Adjust padding to control the size of the button */
+    height: auto;
+    /* Reset the height to default */
+    padding: 5px 10px;
+    /* Adjust padding to control the size of the button */
     color: white;
     border: none;
-    border-radius: 20px; /* Add border radius for rounded corners */
+    border-radius: 20px;
+    /* Add border radius for rounded corners */
     cursor: pointer;
-    background-color: #008CBA; /* Red background */
+    background-color: #008CBA;
+    /* Red background */
     font-weight: bold;
 }
 
 .add-traveller-button:hover {
-    background-color: #007BB5; /* Darker red */
+    background-color: #007BB5;
+    /* Darker red */
 }
 
 /* Input field styling */
 .traveller-name {
-    padding: 10px; /* Add padding */
-    margin: 4px 2px; /* Add some margin */
-    font-size: 16px; /* Increase font size */
-    border: 1px solid #ccc; /* Light gray border */
-    border-radius: 4px; /* Rounded corners */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    padding: 10px;
+    /* Add padding */
+    margin: 4px 2px;
+    /* Add some margin */
+    font-size: 16px;
+    /* Increase font size */
+    border: 1px solid #ccc;
+    /* Light gray border */
+    border-radius: 4px;
+    /* Rounded corners */
+    box-sizing: border-box;
+    /* Include padding and border in the element's total width and height */
+}
+
+.auto-btn,
+.manual-btn {
+    background-color: rgb(6, 120, 201);
+}
+
+.auto-btn:hover,
+.manual-btn:hover {
+    background-color: #36afe7;
+    border-color: #a8c6fa;
+}
+
+.auto-click,
+.manual-click {
+    background-color: #056997;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.2);
+    transform: translateY(1px);
+}
+
+.back-btn {
+    background-color: inherit;
+    border: none;
+    align-items: center;
+    gap: .3rem;
+    padding: 1rem 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-left: 30px;
+}
+
+.back-btn:hover {
+    color: #646cff;
+    background: inherit;
+}
+
+.display-transaction-el {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.display-transaction-btn {
+    display: inline-block;
 }

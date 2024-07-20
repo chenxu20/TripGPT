@@ -8,18 +8,18 @@ export default function Transactions(props) {
     let payees = []
 
     for (let i = 0; i < props.transaction.expenseTracker.length; i++) {
-        if (props.transaction.expenseTracker[i].isPayer) {
+        if (props.transaction.expenseTracker[i].isPayer && props.transaction.expenseTracker[i].expensePlaceholder > 0) {
             payers.push(props.transaction.expenseTracker[i])
-        } 
-        if (props.transaction.expenseTracker[i].expensePlaceholder && !(props.transaction.expenseTracker[i].isPayer)) {
+        }
+        if ((props.transaction.expenseTracker[i].expensePlaceholder && !(props.transaction.expenseTracker[i].isPayer)) || (props.transaction.expenseTracker[i].expensePlaceholder < 0 && props.transaction.expenseTracker[i].isPayer)) {
             payees.push(props.transaction.expenseTracker[i])
         }
     }
 
     let displayPayers = payers.map(payer => {
         return (
-            <div key={payer.id}>
-                <span>{props.transaction.description}: {payer.travellerName} should receive 
+            <div>
+                <span>{payer.travellerName} should receive
                     ${parseFloat(payer.expensePlaceholder).toFixed(2)}</span>
             </div>
         )
@@ -28,9 +28,9 @@ export default function Transactions(props) {
 
     let displayPayees = payees.map(payee => {
         return (
-            <div key={payee.id}>
-                <span>{props.transaction.description}: {payee.travellerName} needs to pay 
-                    ${parseFloat(payee.expensePlaceholder).toFixed(2)}</span>
+            <div>
+                <span>{payee.travellerName} needs to pay
+                    ${Math.abs(parseFloat(payee.expensePlaceholder)).toFixed(2)}</span>
             </div>
         )
     })
@@ -47,17 +47,18 @@ export default function Transactions(props) {
         for (let i = 0; i < payees.length; i++) {
             let tempAmountHolder
             payeeAmount += parseFloat(payees[i].expensePlaceholder)
-            const travellerDocRef = doc(database, "travellers-info", payees[i].id)
+            let transactionAmount = Math.abs(parseFloat(payees[i].expensePlaceholder))
+            const travellerDocRef = doc(database, "calculators", props.userId, "travellers-info", payees[i].id)
             getDoc(travellerDocRef)
                 .then((doc) => {
                     tempAmountHolder = doc.data().netAmount
-                    if (tempAmountHolder + parseFloat(payees[i].expensePlaceholder) < 0.0001 && tempAmountHolder + parseFloat(payees[i].expensePlaceholder) > -0.0001) {
+                    if (tempAmountHolder + transactionAmount < 0.0001 && tempAmountHolder + transactionAmount > -0.0001) {
                         updateDoc(travellerDocRef, {
                             netAmount: 0
                         })
                     } else {
                         updateDoc(travellerDocRef, {
-                            netAmount: tempAmountHolder + parseFloat(payees[i].expensePlaceholder)
+                            netAmount: tempAmountHolder + transactionAmount
                         })
                     }
                 })
@@ -65,7 +66,7 @@ export default function Transactions(props) {
 
         for (let i = 0; i < payers.length; i++) {
             let tempAmountHolder
-            const travellerDocRef = doc(database, "travellers-info", payers[i].id)
+            const travellerDocRef = doc(database, "calculators", props.userId, "travellers-info", payers[i].id)
             getDoc(travellerDocRef)
                 .then((doc) => {
                     tempAmountHolder = doc.data().netAmount
@@ -81,7 +82,7 @@ export default function Transactions(props) {
                 })
         }
 
-        const transactionDocRef = doc(database, "transactions", props.transaction.id)
+        const transactionDocRef = doc(database, "calculators", props.userId, "transactions", props.transaction.id)
         deleteDoc(transactionDocRef)
             .then(() => {
                 alert("Transaction successfully deleted!")
@@ -91,6 +92,7 @@ export default function Transactions(props) {
 
     return (
         <div className="indiv-transaction-el">
+            <h4>Transaction Description: {props.transaction.description}</h4>
             {displayPayees}
             {displayPayers}
             <button onClick={deleteTransaction} className="delete-transaction-btn">Delete Transaction</button>

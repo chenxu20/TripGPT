@@ -1,6 +1,7 @@
 import React from 'react'
 import Calculator from './Calculator'
 import MyTrips from './MyTrips'
+import AddCalculator from './AddCalculator'
 import { ItineraryContextProvider } from '../context/ItineraryContext'
 import { ItineraryList } from './itinerary-planner/ItineraryList'
 import { Route, Routes } from 'react-router-dom'
@@ -19,7 +20,7 @@ export default function Trips() {
                                 <h1>Trips</h1>
                                 <ItineraryList />
                                 <hr />
-                                <Calculator />
+                                <AddCalculator />
                             </>
                         }
                     />
@@ -28,6 +29,14 @@ export default function Trips() {
                         element={
                             <>
                                 <ItineraryDetail />
+                            </>
+                        }
+                    />
+                    <Route
+                        path="/calculator/:id"
+                        element={
+                            <>
+                                <Calculator />
                             </>
                         }
                     />
