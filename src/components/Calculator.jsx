@@ -27,6 +27,7 @@ export default function Calculator() {
     const [numPayee, setNumPayee] = React.useState(0)
     const [remainingAmount, setRemainingAmount] = React.useState(0)
     const [date, setDate] = React.useState()
+    const payers = []
     const { userId } = useParams()
     const calculatorDocRef = doc(database, "calculators", userId)
     const transactionColRef = collection(calculatorDocRef, "transactions")
@@ -443,6 +444,10 @@ export default function Calculator() {
     }
 
     function updateDatabase() {
+        if (travellers.length === 1) {
+            alert("You only have 1 traveller now, add more travellers!")
+            return
+        }
         if (numPayer === 0) {
             alert("Select at least 1 payer!")
             return
@@ -455,6 +460,20 @@ export default function Calculator() {
             alert("Split your bills properly!")
             return
         }
+
+        if (numPayee === numPayer) {
+            let count = 0
+            for (let i = 0; i < travellers.length; i++) {
+                if (travellers[count].isPayer && travellers[count].expensePlaceholder !== 0) {
+                    count++
+                }
+            }
+            if (count === numPayee) {
+                alert("Choose different payers and payees!")
+                return
+            }
+        }
+
         const travellersInvolved = travellers.filter(traveller => traveller.toggle || traveller.isPayer)
         for (let i = 0; i < travellersInvolved.length; i++) {
             const docRef = doc(database, "calculators", userId, "travellers-info", travellersInvolved[i].id)
