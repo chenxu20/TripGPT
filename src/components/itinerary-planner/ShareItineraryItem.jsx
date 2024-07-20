@@ -48,7 +48,7 @@ export const ShareItineraryItem = ({ itineraryId }) => {
 
     return (
         <>
-            <button onClick={openModal} className="itinerary-button itinerary-share-button">Share</button>
+            <button onClick={openModal} className="dropdown-menu-button">Share</button>
             {isModalOpen && (
                 <div className="itinerary-modal">
                     <div className="itinerary-modal-overlay" onClick={closeModal}></div>
@@ -90,7 +90,6 @@ export const ShareItineraryItem = ({ itineraryId }) => {
                                 </label>
                                 {errorMessage && <span>{errorMessage}</span>}
                                 <button type="submit" className="itinerary-button" disabled={loading}>Share Itinerary</button>
-                                
                             </form>
                         }
                         {mode === Modes.LINK &&

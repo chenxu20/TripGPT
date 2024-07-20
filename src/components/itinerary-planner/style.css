@@ -395,41 +395,84 @@
     border-radius: 10px;
     width: 24rem;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
-    display: grid;
-    grid-template-columns: 6fr 1fr 4fr;
-    column-gap: 0.6rem;
-    row-gap: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.itinerary-item .itinerary-header {
+    display: flex;
+    justify-content: space-between;
 }
 
 .itinerary-item .itinerary-title {
     font-size: 1.4rem;
     font-weight: 700;
-    grid-column: 1 / 3;
-    grid-row: 1;
 }
 
-.itinerary-item .itinerary-dates {
-    grid-column: 1;
-    grid-row: 2;
+.itinerary-item .dropdown-wrapper {
+    position: relative;
 }
 
-.itinerary-item .itinerary-view-button {
-    grid-column: 3;
-    grid-row: 1 / 3;
-    align-self: start;
-    justify-self: center;
+.itinerary-item .dropdown-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.2rem;
 }
 
-.itinerary-item .itinerary-share-button {
-    grid-column: 1;
-    grid-row: 3;
-    justify-self: center;
+.itinerary-item .dropdown-menu {
+    position: absolute;
+    top: 2rem;
+    right: 0;
+    background: #242424;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.itinerary-item .itinerary-delete-button {
-    grid-column: 3;
-    grid-row: 3;
-    justify-self: center;
+.itinerary-item .dropdown-menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.itinerary-item .dropdown-menu li {
+    padding: 0.4rem 0.7rem;
+}
+
+.itinerary-item .dropdown-menu-button {
+    font-size: 1rem;
+    font-family: inherit;
+    width: 100%;
+    padding: 0.4rem 0.5rem;
+    background: none;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.itinerary-item .dropdown-menu-button:hover {
+    color: #646cff;
+}
+
+.itinerary-item-bottom {
+    display: flex;
+    gap: 1rem;
+}
+
+.itinerary-item-bottom .user-details {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.itinerary-item-bottom .view-button {
+    flex: 1;
+    text-align: center;
+    margin: auto;
 }
 
 #itinerary-share-form {
