@@ -34,50 +34,6 @@ export default function Calculator() {
     const transactionColRef = collection(calculatorDocRef, "transactions")
     const travellersColRef = collection(calculatorDocRef, "travellers-info")
 
-    // React.useEffect(() => {
-    //     async function getData() {
-    //         try {
-    //             const snapshot = await getDocs(transactionColRef)
-    //             const fetchedData = snapshot.docs.map(doc => {
-    //                 return {
-    //                     description: doc.data().description,
-    //                     expenseTracker: JSON.parse(doc.data().expenseTracker),
-    //                     numPayer: doc.data().numPayer,
-    //                     expense: doc.data().expense,
-    //                     date: doc.data().date,
-    //                     id: doc.id
-    //                 }
-    //             })
-    //             setTransactions(fetchedData)
-    //         } catch (error) {
-    //             console.error(`Error fetching documents: ${error}`)
-    //         }
-    //     }
-    //     getData()
-    // }, [])
-
-    // React.useEffect(() => {
-    //     async function getData() {
-    //         try {
-    //             const snapshot = await getDocs(travellersColRef)
-    //             const fetchedData = snapshot.docs.map(doc => {
-    //                 return {
-    //                     travellerName: doc.data().name,
-    //                     netAmount: doc.data().netAmount,
-    //                     expensePlaceholder: 0,
-    //                     toggle: true,
-    //                     isPayer: false,
-    //                     id: doc.id
-    //                 }
-    //             })
-    //             setTravellers(fetchedData)
-    //         } catch (error) {
-    //             console.error(`Error fetching documents: ${error}`)
-    //         }
-    //     }
-    //     getData()
-    // }, [])
-
     React.useEffect(() => {
         if (split.auto) {
             setTravellers(prev => prev.map(
