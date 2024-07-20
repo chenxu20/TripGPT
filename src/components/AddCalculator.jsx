@@ -25,8 +25,8 @@ export default function AddCalculator() {
         return (
             <div>
                 <p>{data.calculatorName}</p>
-                <Link to={`calculator/${data.id}`}><button>View Calculator</button></Link>
-                <button onClick={() => deleteCalculator(data.id, data.calculatorName)}>Delete Calculator</button>
+                <Link to={`calculator/${data.id}`}><button className="calculator-button">View Calculator</button></Link>
+                <button className="calculator-button" onClick={() => deleteCalculator(data.id, data.calculatorName)}>Delete Calculator</button>
             </div>
         )
     })
@@ -90,7 +90,7 @@ export default function AddCalculator() {
             <div>
                 <label>Enter name: <input placeholder="Calculator Name" onChange={handleChange} name="calculator-name" value={name}></input></label>
                 <br />
-                <button onClick={createCalculator}>Add Calculator</button>
+                <button onClick={createCalculator} className="calculator-button">Add Calculator</button>
             </div>
             {displayCalculator}
         </div>

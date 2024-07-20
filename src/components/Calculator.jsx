@@ -6,7 +6,8 @@ import Transactions from "./Transactions"
 import Payer from "./Payer"
 import { calculatorsCollection, transactionCollection, travellersCollection, database } from "../config/firebase"
 import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc, getDoc, collection, query, orderBy } from "firebase/firestore"
-import { useParams, Link } from "react-router-dom"
+import { useParams, Link, useNavigate } from "react-router-dom"
+import { FaChevronLeft } from "react-icons/fa"
 
 export default function Calculator() {
     const [modal, setModal] = React.useState(false)
@@ -33,6 +34,7 @@ export default function Calculator() {
     const calculatorDocRef = doc(database, "calculators", userId)
     const transactionColRef = collection(calculatorDocRef, "transactions")
     const travellersColRef = collection(calculatorDocRef, "travellers-info")
+    const navigate = useNavigate();
 
     React.useEffect(() => {
         if (split.auto) {
@@ -131,7 +133,7 @@ export default function Calculator() {
                         </button> */}
                         <div className="display-transaction-el">
                             <h3>{transaction.date} Transactions</h3>
-                            <button className="display-transaction-btn" onClick={() => toggleDateVisibility(transaction.date)}>{visibleDates.includes(transaction.date) ? "Hide information" : "Show information"}</button>
+                            <button className="display-transaction-btn calculator-button" onClick={() => toggleDateVisibility(transaction.date)}>{visibleDates.includes(transaction.date) ? "Hide information" : "Show information"}</button>
                         </div>
                         {visibleDates.includes(transaction.date) && (
                             <Transactions
@@ -171,7 +173,7 @@ export default function Calculator() {
                     {netAmount < 0 && <p style={styles}>${netAmount.toFixed(2)}</p>}
                     {netAmount == 0 && <p style={styles}>${netAmount.toFixed(2)}</p>}
                     <button className="delete-btn" onClick={() => deleteTraveller(traveller.id)}>Delete traveller</button>
-                    <button className="edit-btn" onClick={() => toggleEditModal(traveller.id)}>Edit Name</button>
+                    <button className="edit-btn calculator-button" onClick={() => toggleEditModal(traveller.id)}>Edit Name</button>
                     <br />
                 </div>
             )
@@ -523,7 +525,7 @@ export default function Calculator() {
 
     return (
         <>
-            <Link to="/trips"><button className="back-btn">{`< Trips`}</button></Link>
+            <button className="back-btn" onClick={() => navigate("/trips")}><FaChevronLeft />Trips</button>
             <div className="calculator-display-el">
                 <div className="traveller-el">
                     <h2>Bill Split Calculator</h2>
@@ -559,8 +561,8 @@ export default function Calculator() {
                             <br />
                             <p>Person who paid:</p>
                             {displayPayer}
-                            <button name="auto" className={`auto-btn ${split.auto ? "auto-click" : ""}`} onClick={toggleSplit}>Split equally</button>
-                            <button name="manual" className={`manual-btn ${split.manual ? "manual-click" : ""}`} onClick={toggleSplit}>Split manually</button>
+                            <button name="auto" className={`auto-btn calculator-button ${split.auto ? "auto-click" : ""}`} onClick={toggleSplit}>Split equally</button>
+                            <button name="manual" className={`manual-btn calculator-button ${split.manual ? "manual-click" : ""}`} onClick={toggleSplit}>Split manually</button>
                             {split.auto && displayAutoSplit}
                             {split.manual && displayManualSplit}
                             {split.manual && numPayee > 0 && remainingAmount >= 0 && (
@@ -569,8 +571,8 @@ export default function Calculator() {
                             {split.manual && numPayee > 0 && remainingAmount < 0 && (
                                 <p>error!</p>
                             )}
-                            {(split.auto || split.manual) && <button onClick={updateDatabase}>Confirm</button>}
-                            <button className="close-modal" onClick={toggleModal}>
+                            {(split.auto || split.manual) && <button className="calculator-button" onClick={updateDatabase}>Confirm</button>}
+                            <button className="close-modal calculator-button" onClick={toggleModal}>
                                 CLOSE
                             </button>
                         </div>
@@ -582,8 +584,8 @@ export default function Calculator() {
                         <div className="modal-content">
                             <input name="edited-name" onChange={trackChanges} placeholder="Enter new name" />
                             <br />
-                            <button onClick={() => editTraveller(travellerId)}>Confirm</button>
-                            <button className="close-modal" onClick={toggleEditModal}>
+                            <button className="calculator-button" onClick={() => editTraveller(travellerId)}>Confirm</button>
+                            <button className="close-modal calculator-button" onClick={toggleEditModal}>
                                 CLOSE
                             </button>
                         </div>
