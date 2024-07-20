@@ -38,6 +38,8 @@ export default function Trips() {
                             <>
                                 <Calculator />
                             </>
+                        }
+                    />
                 </Routes>
             </div>
         </ItineraryContextProvider>
