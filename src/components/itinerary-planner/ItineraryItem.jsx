@@ -54,13 +54,14 @@ export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
     return (
         <div key={itinerary.id} className="itinerary-item">
             <div className="itinerary-title">{itinerary.name}</div>
-            {itinerary.startDate && itinerary.endDate &&
-                <div>{displayDate(itinerary.startDate)} – {displayDate(itinerary.endDate)}</div>}
-            <div className="itinerary-item-buttons">
-                <button className="itinerary-button" onClick={() => navigate(`./${itinerary.id}`)}>View Itinerary</button>
-                <button className="itinerary-button" onClick={handleDelete}>Delete Itinerary</button>
+            <div className="itinerary-dates">
+                {itinerary.startDate && itinerary.endDate
+                    ? `${displayDate(itinerary.startDate)} – ${displayDate(itinerary.endDate)}`
+                    : "Undated Trip"}
             </div>
+            <button className="itinerary-button itinerary-view-button" onClick={() => navigate(`./${itinerary.id}`)}>View</button>
             <ShareItineraryItem itineraryId={itinerary.id} />
+            <button className="itinerary-button itinerary-delete-button" onClick={handleDelete}>Delete</button>
         </div>
     );
 };

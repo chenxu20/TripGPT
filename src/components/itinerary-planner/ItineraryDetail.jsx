@@ -27,7 +27,7 @@ export const ItineraryDetail = () => {
     const { upcomingItineraries, pastItineraries, removeEventItem, eventTypes, loading } = useContext(ItineraryContext);
     const [events, setEvents] = useState([]);
     const [itinerary, setItinerary] = useState(null);
-    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [eventToEdit, setEventToEdit] = useState(null);
     const [eventMessage, setEventMessage] = useState('');
     const [mode, setMode] = useState(Mode.VIEW);
@@ -50,21 +50,18 @@ export const ItineraryDetail = () => {
     }, [id, upcomingItineraries, pastItineraries]);
 
     function openAddEventModal() {
-        setModalIsOpen(true);
-        document.body.classList.add('active-modal');
+        setIsModalOpen(true);
     }
 
     function openEditEventModal(event) {
         setEventToEdit(event);
-        setModalIsOpen(true);
-        document.body.classList.add('active-modal');
+        setIsModalOpen(true);
     }
 
     function closeModal() {
         setEventMessage('');
         setEventToEdit(null);
-        setModalIsOpen(false);
-        document.body.classList.remove('active-modal');
+        setIsModalOpen(false);
     }
 
     const handleModeChange = e => {
@@ -143,7 +140,7 @@ export const ItineraryDetail = () => {
                             <button onClick={openAddEventModal} className="itinerary-button">Add Event</button>
                             <AddEventItem
                                 itiId={id}
-                                isOpen={modalIsOpen}
+                                isOpen={isModalOpen}
                                 closeModal={closeModal}
                                 eventToEdit={eventToEdit}
                                 eventMessage={eventMessage}

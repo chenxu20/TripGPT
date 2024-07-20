@@ -231,12 +231,12 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
     };
 
     return isOpen && (
-        <div className="event-modal">
-            <div className="event-modal-overlay" onClick={closeModal}></div>
-            <div className="event-modal-content">
-                <button className="event-modal-close" onClick={closeModal}>X</button>
+        <div className="itinerary-modal">
+            <div className="itinerary-modal-overlay" onClick={closeModal}></div>
+            <div className="itinerary-modal-content">
+                <button className="itinerary-modal-close-button" onClick={closeModal}>X</button>
                 {step === Steps.INPUT_DETAILS && !eventToEdit &&
-                    <button type="button" className="event-modal-back-button" onClick={() => {
+                    <button type="button" className="itinerary-modal-back-button" onClick={() => {
                         setStep(Steps.SELECT_TYPE);
                         setActiveType(eventTypes.NO_TYPE);
                     }}><FaChevronLeft />Event type</button>}
