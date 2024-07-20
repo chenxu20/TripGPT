@@ -1,56 +1,99 @@
-import React from 'react';
-import { useState } from "react";
-import { auth, app, googleProvider } from "../../config/firebase";
-import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import React, { useState, useEffect, useContext } from 'react';
 import "./style.css";
 import { Link, useNavigate } from 'react-router-dom';
-import { UserAuth } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
+import { getErrorMsg } from './ui';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export const SignIn = () => {
-    const [email, setEmail] = useState("");
+    const [email, setEmail] = useState(localStorage.getItem("rememberMe") || "");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const { userSignIn } = UserAuth();
-    const navigate = useNavigate("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [remember, setRemember] = useState(Boolean(localStorage.getItem("rememberMe")));
+    const [errorMessage, setErrorMessage] = useState("");
+    const { googleUserSignIn, userSignIn, loading, setLoading } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-    const processSignIn = async (e) => {
+    const handleSignIn = async e => {
         e.preventDefault();
-        setError("");
+        setLoading(true);
         try {
             await userSignIn(email, password);
+            if (remember) {
+                localStorage.setItem("rememberMe", email);
+            } else {
+                localStorage.removeItem("rememberMe");
+            }
             navigate("/account");
-        } catch (error) {
-            setError(error.message);
-            console.log(error.message);
+        } catch (err) {
+            setErrorMessage(getErrorMsg(err));
+        } finally {
+            setLoading(false);
         }
-    }
+    };
+
+    const handleGoogleSignIn = async () => {
+        setLoading(true);
+        try {
+            await googleUserSignIn();
+            navigate("/account");
+        } catch (err) {
+            setErrorMessage(getErrorMsg(err));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const toggleRemember = () => setRemember(!remember);
+    const toggleShowPassword = () => setShowPassword(!showPassword);
 
     return (
         <div className='wrapper'>
             <h1>Sign In</h1>
-            <form onSubmit={processSignIn}>
-                <input 
-                    type="email" placeholder="Email" onChange={e => setEmail(e.target.value)}>
-                </input>
-                <input 
-                    type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}>
-                </input>
-                <button type="submit" className='submit-button'>Sign In</button>
-            </form>
-            <p>Don't have an account? Sign up <Link to="/signup">here</Link>.</p>
+            <fieldset disabled={loading} className={`fieldset ${loading ? 'fieldset-disabled' : ''}`}>
+                <button onClick={handleGoogleSignIn} className="form-button">
+                    {loading ? "Signing in..." : "Sign in with Google"}
+                </button>
+                <div className='divider'>or</div>
+                <form onSubmit={handleSignIn} id="user-sign-in-form">
+                    <input
+                        className="input-field"
+                        type="email"
+                        id="sign-in-email"
+                        value={email}
+                        placeholder="Email"
+                        onChange={e => setEmail(e.target.value)}
+                        required
+                    />
+                    <div className="password-field">
+                        <input
+                            className="input-field"
+                            type={showPassword ? "text" : "password"}
+                            id="sign-in-password"
+                            value={password}
+                            placeholder="Password"
+                            onChange={e => setPassword(e.target.value)}
+                            required
+                        />
+                        <button onClick={toggleShowPassword} className="password-icon" type="button">
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                    </div>
+                    <div className="text-field">
+                        <label id="remember-me">
+                            <input type="checkbox" name="remember-me-checkbox" checked={remember} onChange={toggleRemember} />
+                            Remember me
+                        </label>
+                        <Link to="/forgot-password" id="forgot-link">Forgot password?</Link>
+                    </div>
+                    {errorMessage && <span className="error-msg">{errorMessage}</span>}
+                    <button type="submit" className="form-button">
+                        {loading ? "Signing in..." : "Sign In"}
+                    </button>
+                </form>
+                <hr width="100%" />
+                <p>Don't have an account? Sign up <Link to="/signup">here</Link>.</p>
+            </fieldset>
         </div>
     );
-/*
-    TO DO: Sign in with Google, and Sign Out feature
-
-    <button onClick={signInWithGoogle}>Sign In With Google</button>
-    const logout = async () => {
-        try {
-            await signOut(auth);
-        } catch (err) {
-            console.error(err);
-        }
-    }
-    <button onClick={logout}>Sign Out</button>
-*/
-}
+};

@@ -1,7 +1,6 @@
 import React from "react"
 import "./ManualAddExpense.css"
 
-
 export default function ManualAddExpense(props) {
     const [expense, setExpense] = React.useState()
 

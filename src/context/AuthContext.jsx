@@ -1,30 +1,79 @@
-import { React, createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../config/firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
+import { createContext, useContext, useEffect, useState } from 'react';
+import { auth, database, googleProvider } from '../config/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import {
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    sendEmailVerification,
+    sendPasswordResetEmail,
+    signInWithEmailAndPassword,
+    signInWithPopup,
+    signOut,
+    updateProfile
+} from "firebase/auth";
 
-const UserContext = createContext();
+export const AuthContext = createContext();
 
-export const AuthContextProvider = ({children}) => {
-    const [user, setUser] = useState({});
+export const AuthContextProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const userSignUp = (email, password, name) => 
-        createUserWithEmailAndPassword(auth, email, password)
-        .then(() => updateProfile(auth.currentUser, { displayName: name }));    //Requires update: displayName can be used for XSS attack
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, user => {
+            setUser(user);
+            setLoading(false);
+        });
+        return unsubscribe;
+    }, []);
 
-    const userSignIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
+    const userSignUp = async (email, password, name) => {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(auth.currentUser, { displayName: name });
+        await sendEmailVerification(userCred.user);
+        const userRef = doc(database, "users", userCred.user.uid);
+        await setDoc(userRef, {
+            uid: userCred.user.uid,
+            name: name,
+            email: email,
+            createdAt: new Date()
+        });
+        setUser(userCred.user);
+    };
 
-    const userSignOut = () => signOut(auth);
+    const userSignIn = async (email, password) => {
+        const userCred = await signInWithEmailAndPassword(auth, email, password);
+        setUser(userCred.user);
+    };
 
-    const forgotPassword = email => true;
+    const googleUserSignIn = async () => {
+        const userCred = await signInWithPopup(auth, googleProvider);
 
-    useEffect(() => onAuthStateChanged(auth, user => {
-        console.log(user);
-        setUser(user);
-    }))
+        const userRef = doc(database, "users", userCred.user.uid);
+        const userDocSnapshot = await getDoc(userRef);
+        if (!userDocSnapshot.exists()) {
+            await setDoc(userRef, {
+                uid: userCred.user.uid,
+                name: userCred.user.displayName,
+                email: userCred.user.email,
+                createdAt: new Date()
+            });
+        }
+
+        setUser(userCred.user);
+    };
+
+    const userSignOut = async () => {
+        await signOut(auth);
+        setUser(null);
+    };
+
+    const forgotPassword = async email => {
+        await sendPasswordResetEmail(auth, email);
+    };
 
     return (
-        <UserContext.Provider value={{ user, userSignUp, userSignIn, userSignOut }}>{children}</UserContext.Provider>
+        <AuthContext.Provider value={{ forgotPassword, googleUserSignIn, loading, setLoading, user, userSignUp, userSignIn, userSignOut }}>
+            {children}
+        </AuthContext.Provider>
     );
-}
-
-export const UserAuth = () => useContext(UserContext);
+};

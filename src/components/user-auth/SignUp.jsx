@@ -1,46 +1,109 @@
-import React from 'react'
-import { useState } from "react";
-import { auth, app, googleProvider } from "../../config/firebase";
-import { createUserWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-import "./style.css"
+import React, { useState, useContext } from 'react';
+import "./style.css";
 import { Link, useNavigate } from 'react-router-dom';
-import { UserAuth } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
+import { getErrorMsg } from './ui';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export const SignUp = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [error, setError] = useState("");
-    const { userSignUp } = UserAuth();
-    const navigate = useNavigate("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const { userSignUp, loading, setLoading } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-    const processSignUp = async (e) => {
+    const handleSignUp = async e => {
         e.preventDefault();
-        setError("");
+        setLoading(true);
+        setErrorMessage("");
+        const sanitizedDisplayName = name.replace(/[^a-zA-Z0-9_\- ]/g, '');
         try {
-            if(!(password === confirmPassword)) {
+            if (password !== confirmPassword) {
                 throw new Error("Passwords do not match.");
             }
-            await userSignUp(email, password, name);
+            await userSignUp(email, password, sanitizedDisplayName);
+            alert("Your account has been created successfully.");
             navigate("/account");
-        } catch (error) {
-            setError(error.message);
-            console.log(error.message);
+        } catch (err) {
+            setErrorMessage(getErrorMsg(err));
+        } finally {
+            setLoading(false);
         }
-    }
+    };
+
+    const handleNameChange = e => {
+        const sanitizedName = e.target.value.replace(/[^a-zA-Z0-9_\- ]/g, '');
+        if (sanitizedName.length <= 50) {
+            setName(sanitizedName);
+        } else {
+            setErrorMessage("Name exceeds 50 characters.");
+        }
+    };
+
+    const toggleShowPassword = () => setShowPassword(!showPassword);
 
     return (
         <div className='wrapper'>
             <h1>Sign Up</h1>
-            <form onSubmit={processSignUp}>
-                <input type="name" placeholder="Name" onChange={e => setName(e.target.value)} />
-                <input type="email" placeholder="Email" onChange={e => setEmail(e.target.value)} />
-                <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} />
-                <input type="password" placeholder="Confirm password" onChange={e => setConfirmPassword(e.target.value)} />
-                <button type="submit" className='submit-button'>Sign Up</button>
-            </form>
-            <p>Already a registered user? Sign in <Link to="/signin">here</Link>.</p>
+            <fieldset disabled={loading} className={`fieldset ${loading ? 'fieldset-disabled' : ''}`}>
+                <form onSubmit={handleSignUp} id="user-sign-up-form">
+                    <input
+                        className="input-field"
+                        type="text"
+                        id="sign-up-name"
+                        value={name}
+                        placeholder="Name"
+                        onChange={handleNameChange}
+                        required
+                    />
+                    <input
+                        className="input-field"
+                        type="email"
+                        id="sign-up-email"
+                        value={email}
+                        placeholder="Email"
+                        onChange={e => setEmail(e.target.value)}
+                        required
+                    />
+                    <div className="password-field">
+                        <input
+                            className="input-field"
+                            type={showPassword ? "text" : "password"}
+                            id="sign-up-password"
+                            value={password}
+                            placeholder="Password"
+                            onChange={e => setPassword(e.target.value)}
+                            required
+                        />
+                        <button onClick={toggleShowPassword} className="password-icon" type="button">
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                    </div>
+                    <div className="password-field">
+                        <input
+                            className="input-field"
+                            type={showPassword ? "text" : "password"}
+                            id="sign-up-password-confirm"
+                            value={confirmPassword}
+                            placeholder="Confirm password"
+                            onChange={e => setConfirmPassword(e.target.value)}
+                            required
+                        />
+                        <button onClick={toggleShowPassword} className="password-icon" type="button">
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                        </button>
+                    </div>
+                    {errorMessage && <span className="error-msg">{errorMessage}</span>}
+                    <button type="submit" className="form-button">
+                        {loading ? "Signing up..." : "Sign Up"}
+                    </button>
+                </form>
+                <hr width="100%" />
+                <p>Already a registered user? Sign in <Link to="/signin">here</Link>.</p>
+            </fieldset>
         </div>
     );
-}
+};

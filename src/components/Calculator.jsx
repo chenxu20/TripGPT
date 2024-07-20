@@ -207,7 +207,7 @@ export default function Calculator() {
                 color: netAmount > 0 ? "green" : netAmount < 0 ? "red" : "white"
             }
             return (
-                <div className="display-traveller">
+                <div className="display-traveller" key={traveller.id}>
                     <p>
                         {traveller.travellerName}
                     </p>

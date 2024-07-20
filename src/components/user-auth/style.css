@@ -1,23 +1,88 @@
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1rem 0;
+    width: 100%;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 2px solid #cccccc;
+}
+
+.divider::before {
+    margin-right: 1rem;
+}
+
+.divider::after {
+    margin-left: 1rem;
+}
+
+.error-msg {
+    color: #ff0000;
+    margin: 0.8rem 0 0.5rem 0;
+}
+
+.password-field {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.password-icon {
+    background: none;
+    border: none;
+    display: inherit;
+    position: absolute;
+    right: 0.8rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.text-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 18.5rem;
+}
+
+#forgot-link {
+    text-decoration: none;
+}
+
+#remember-me {
+    accent-color: #3236ff;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
 .wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     max-width: 38rem;
-    padding: 2rem;
-    margin: auto;
-    border: 1px solid #ffffff;
+    padding: 1.5rem 3rem;
+    margin: 2rem auto;
+    border: 2px solid #cccccc;
     border-radius: 0.5rem;
 }
 
 .wrapper form {
+    max-width: 22rem;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 0.5rem 0;
 }
 
-.wrapper input {
-    width: 100%;
+.input-field {
+    width: 18rem;
     font-size: 1rem;
     font-family: inherit;
     font-weight: 400;
@@ -28,21 +93,29 @@
     margin: 0.5rem 0;
 }
 
-.submit-button {
+.input-field:disabled {
+    background: #4b4b4b;
+}
+
+.form-button {
     font-size: 1rem;
     font-family: inherit;
     font-weight: 600;
     cursor: pointer;
-    width: 50%;
-    padding: 0.6rem 1.2rem;
-    background: #1a1a1a;
+    padding: 0.7rem 2rem;
+    background: #111111;
     transition: border-color 0.25s;
-    margin: 10px 0;
+    margin: 1rem 0 0.5rem 0;
+    border-radius: 2px;
 }
 
-.submit-button:hover {
+.form-button:hover {
     border-color: #646cff;
-    background: #333333;
+    background: #444444;
+}
+
+.form-button:disabled {
+    background-color: #4b4b4b;
 }
 
 .wrapper p {
@@ -57,4 +130,20 @@
 
 .wrapper a:hover {
     color: #646cff;
+}
+
+.fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.fieldset-disabled {
+    color: #888888;
+    pointer-events: none;
 }
