@@ -1,10 +1,10 @@
-import React from 'react';
-import { UserAuth } from '../context/AuthContext';
+import React, { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import "./user-auth/style.css";
 
 export const Account = () => {
-    const { user, userSignOut } = UserAuth();
+    const { user, userSignOut } = useContext(AuthContext);
     const navigate = useNavigate("");
 
     const handleSignOut = async () => {

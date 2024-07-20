@@ -1,10 +1,10 @@
-import React from "react";
-import { UserAuth } from "../context/AuthContext";
+import React, { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 
 export default function PublicRoute({ children }) {
-    const { loading, user } = UserAuth();
+    const { loading, user } = useContext(AuthContext);
 
     if (user) {
         if (loading) {

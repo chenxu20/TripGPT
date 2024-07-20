@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { UserAuth } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import './Navbar.css';
 import { FaEarthAmericas } from "react-icons/fa6";
 
 export default function Navbar() {
-    const { user } = UserAuth();
+    const { user } = useContext(AuthContext);
     const items = [{
         name: "Home",
         link: "/"

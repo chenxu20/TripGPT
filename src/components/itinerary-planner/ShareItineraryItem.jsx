@@ -8,26 +8,23 @@ const Modes = {
 }
 
 export const ShareItineraryItem = ({ itineraryId }) => {
-    const { shareItinerary, error } = useContext(ItineraryContext);
+    const { shareItinerary } = useContext(ItineraryContext);
     const [email, setEmail] = useState('');
-    const [message, setMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [mode, setMode] = useState(Modes.EMAIL);
 
-    useEffect(() => {
-        setMessage(error ?? "");
-    }, [error]);
-
     const handleShare = async e => {
         e.preventDefault();
         setLoading(true);
+        setErrorMessage("");
         try {
             await shareItinerary(itineraryId, email);
             setEmail("");
-            setMessage("Itinerary shared successfully.");
+            // setMessage("Itinerary shared successfully.");
         } catch (error) {
-            setMessage(error.message);
+            setErrorMessage(error.message);
         } finally {
             setLoading(false);
         }
@@ -35,20 +32,18 @@ export const ShareItineraryItem = ({ itineraryId }) => {
 
     function openModal() {
         setIsModalOpen(true);
-        document.body.classList.add('active-modal');
     }
 
     function closeModal() {
-        setMessage("");
+        setErrorMessage("");
         setEmail("");
-        document.body.classList.remove('active-modal');
         setIsModalOpen(false);
     }
 
     const handleModeChange = e => {
         setMode(e.target.value);
         setEmail("");
-        setMessage("");
+        setErrorMessage("");
     }
 
     return (
@@ -93,8 +88,9 @@ export const ShareItineraryItem = ({ itineraryId }) => {
                                         required
                                     />
                                 </label>
+                                {errorMessage && <span>{errorMessage}</span>}
                                 <button type="submit" className="itinerary-button" disabled={loading}>Share Itinerary</button>
-                                {message && <span>{message}</span>}
+                                
                             </form>
                         }
                         {mode === Modes.LINK &&

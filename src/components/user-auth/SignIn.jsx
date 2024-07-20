@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import "./style.css";
 import { Link, useNavigate } from 'react-router-dom';
-import { UserAuth } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import { getErrorMsg } from './ui';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
@@ -10,12 +10,9 @@ export const SignIn = () => {
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [remember, setRemember] = useState(Boolean(localStorage.getItem("rememberMe")));
-    const { googleUserSignIn, userSignIn, error, setError, loading, setLoading } = UserAuth();
+    const [errorMessage, setErrorMessage] = useState("");
+    const { googleUserSignIn, userSignIn, loading, setLoading } = useContext(AuthContext);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        setError("");
-    }, [setError]);
 
     const handleSignIn = async e => {
         e.preventDefault();
@@ -29,8 +26,7 @@ export const SignIn = () => {
             }
             navigate("/account");
         } catch (err) {
-            console.log(err);
-            setError(getErrorMsg(err));
+            setErrorMessage(getErrorMsg(err));
         } finally {
             setLoading(false);
         }
@@ -42,7 +38,7 @@ export const SignIn = () => {
             await googleUserSignIn();
             navigate("/account");
         } catch (err) {
-            setError(getErrorMsg(err));
+            setErrorMessage(getErrorMsg(err));
         } finally {
             setLoading(false);
         }
@@ -90,7 +86,7 @@ export const SignIn = () => {
                         </label>
                         <Link to="/forgot-password" id="forgot-link">Forgot password?</Link>
                     </div>
-                    {error && <span className="error-msg">{error}</span>}
+                    {errorMessage && <span className="error-msg">{errorMessage}</span>}
                     <button type="submit" className="form-button">
                         {loading ? "Signing in..." : "Sign In"}
                     </button>

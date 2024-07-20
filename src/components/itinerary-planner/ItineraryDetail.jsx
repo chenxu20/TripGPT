@@ -24,26 +24,36 @@ Object.freeze(Mode);
 
 export const ItineraryDetail = () => {
     const { id } = useParams();
-    const { upcomingItineraries, pastItineraries, removeEventItem, eventTypes, loading } = useContext(ItineraryContext);
+    const { upcomingItineraries, pastItineraries, removeEventItem, eventTypes } = useContext(ItineraryContext);
     const [events, setEvents] = useState([]);
     const [itinerary, setItinerary] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [eventToEdit, setEventToEdit] = useState(null);
-    const [eventMessage, setEventMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const [mode, setMode] = useState(Mode.VIEW);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const itineraries = [...upcomingItineraries, ...pastItineraries]
+        setLoading(true);
+        const itineraries = [...upcomingItineraries, ...pastItineraries];
         const currentItinerary = itineraries.find(iti => iti.id === id);
         if (currentItinerary) {
             setItinerary(currentItinerary);
+        } else {
+            setErrorMessage('Itinerary not found.');
+            setLoading(false);
+            return;
         }
         const eventsCollection = collection(database, `itineraries/${id}/events`);
         const unsubscribe = onSnapshot(eventsCollection, snapshot => {
             const fetchedEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             const sortedEvents = fetchedEvents.sort((x, y) => x.startDate.toDate() - y.startDate.toDate());
             setEvents(sortedEvents);
+            setLoading(false);
+        }, error => {
+            setErrorMessage("Failed to load events.");
+            setLoading(false);
         });
 
         return () => unsubscribe();
@@ -59,7 +69,7 @@ export const ItineraryDetail = () => {
     }
 
     function closeModal() {
-        setEventMessage('');
+        setErrorMessage("");
         setEventToEdit(null);
         setIsModalOpen(false);
     }
@@ -125,6 +135,10 @@ export const ItineraryDetail = () => {
         return <div><ClipLoader color="#ffffff" /></div>;
     }
 
+    if (errorMessage) {
+        return <div>{errorMessage}</div>;
+    }
+
     return (
         <div className="event-list-wrapper">
             <button onClick={() => navigate("/trips")} className="event-back-button"><FaChevronLeft />Trips</button>
@@ -143,8 +157,6 @@ export const ItineraryDetail = () => {
                                 isOpen={isModalOpen}
                                 closeModal={closeModal}
                                 eventToEdit={eventToEdit}
-                                eventMessage={eventMessage}
-                                setEventMessage={setEventMessage}
                             />
                         </>
                     )}

@@ -12,12 +12,11 @@ import {
     updateProfile
 } from "firebase/auth";
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
@@ -73,10 +72,8 @@ export const AuthContextProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ forgotPassword, googleUserSignIn, loading, setLoading, user, userSignUp, userSignIn, userSignOut, error, setError }}>
+        <AuthContext.Provider value={{ forgotPassword, googleUserSignIn, loading, setLoading, user, userSignUp, userSignIn, userSignOut }}>
             {children}
         </AuthContext.Provider>
     );
 };
-
-export const UserAuth = () => useContext(AuthContext);

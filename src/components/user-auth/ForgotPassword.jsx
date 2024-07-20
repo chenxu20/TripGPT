@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import "./style.css";
 import { Link, useNavigate } from 'react-router-dom';
-import { UserAuth } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import { getErrorMsg } from './ui';
 
 export const ForgotPassword = () => {
     const [email, setEmail] = useState("");
-    const { forgotPassword, error, setError, loading, setLoading } = UserAuth();
+    const [errorMessage, setErrorMessage] = useState("");
+    const { forgotPassword, loading, setLoading } = useContext(AuthContext);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        setError("");
-    }, [setError]);
 
     const handleResetPassword = async (e) => {
         e.preventDefault();
@@ -20,8 +17,8 @@ export const ForgotPassword = () => {
             await forgotPassword(email);
             alert("Check your email inbox for a link to reset your password.");
             navigate("/signin");
-        } catch (err) {
-            setError(getErrorMsg(err));
+        } catch (error) {
+            setErrorMessage(getErrorMsg(err));
         } finally {
             setLoading(false);
         }
@@ -41,7 +38,7 @@ export const ForgotPassword = () => {
                         onChange={e => setEmail(e.target.value)}
                         required
                     />
-                    {error && <span className="error-msg">{error}</span>}
+                    {errorMessage && <span className="error-msg">{errorMessage}</span>}
                     <button type="submit" className="form-button">Reset Password</button>
                 </form>
                 <hr width="100%" />

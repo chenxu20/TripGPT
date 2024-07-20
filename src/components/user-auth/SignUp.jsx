@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import "./style.css";
 import { Link, useNavigate } from 'react-router-dom';
-import { UserAuth } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import { getErrorMsg } from './ui';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
@@ -11,16 +11,14 @@ export const SignUp = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const { userSignUp, error, setError, loading, setLoading } = UserAuth();
+    const [errorMessage, setErrorMessage] = useState("");
+    const { userSignUp, loading, setLoading } = useContext(AuthContext);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        setError("");
-    }, [setError]);
 
     const handleSignUp = async e => {
         e.preventDefault();
         setLoading(true);
+        setErrorMessage("");
         const sanitizedDisplayName = name.replace(/[^a-zA-Z0-9_\- ]/g, '');
         try {
             if (password !== confirmPassword) {
@@ -30,8 +28,7 @@ export const SignUp = () => {
             alert("Your account has been created successfully.");
             navigate("/account");
         } catch (err) {
-            console.log(err);
-            setError(getErrorMsg(err));
+            setErrorMessage(getErrorMsg(err));
         } finally {
             setLoading(false);
         }
@@ -42,7 +39,7 @@ export const SignUp = () => {
         if (sanitizedName.length <= 50) {
             setName(sanitizedName);
         } else {
-            setError("Name exceeds 50 characters.");
+            setErrorMessage("Name exceeds 50 characters.");
         }
     };
 
@@ -99,7 +96,7 @@ export const SignUp = () => {
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                         </button>
                     </div>
-                    {error && <span className="error-msg">{error}</span>}
+                    {errorMessage && <span className="error-msg">{errorMessage}</span>}
                     <button type="submit" className="form-button">
                         {loading ? "Signing up..." : "Sign Up"}
                     </button>

@@ -2,25 +2,25 @@ import React, { useState, useContext, useEffect } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
 
 export const AddItineraryItem = () => {
-    const { addItinerary, error } = useContext(ItineraryContext);
-    const [itinerary, setItinerary] = useState('');
-    const [message, setMessage] = useState('');
+    const { addItinerary } = useContext(ItineraryContext);
+    const [itinerary, setItinerary] = useState("");
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleSubmit = async e => {
         e.preventDefault();
         setLoading(true);
-        await addItinerary(itinerary);
-        if (!error) {
-            setMessage("Itinerary added successfully.");
+        setErrorMessage("");
+        try {
+            await addItinerary(itinerary);
             setItinerary('');
+            // setMessage("Itinerary added successfully.");
+        } catch (error) {
+            setErrorMessage(error.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
-
-    useEffect(() => {
-        setMessage(error ?? "");
-    }, [error]);
 
     return (
         <form onSubmit={handleSubmit} id="itinerary-add-form" autoComplete="off">
@@ -34,9 +34,11 @@ export const AddItineraryItem = () => {
                     required
                     disabled={loading}
                 />
-                <button type="submit" className="itinerary-button" disabled={loading}>Add Itinerary</button>
+                <button type="submit" className="itinerary-button" disabled={loading}>
+                    {loading ? "Adding..." : "Add Itinerary"}
+                </button>
             </div>
-            {message && <span>{message}</span>}
+            {errorMessage && <span>{errorMessage}</span>}
         </form>
     );
 };

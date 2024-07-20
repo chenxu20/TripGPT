@@ -26,12 +26,13 @@ function createDateTime(date, time) {
     return new Date(`${date}T${time}`);
 }
 
-export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMessage, setEventMessage }) => {
-    const { addEventItem, updateEventItem, error, eventTypes } = useContext(ItineraryContext);
+export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit }) => {
+    const { addEventItem, updateEventItem, eventTypes } = useContext(ItineraryContext);
     const initialEventState = { name: '', type: eventTypes.NO_TYPE, startDate: '', startTime: '', endDate: '', endTime: '' };
     const [step, setStep] = useState(Steps.SELECT_TYPE);
     const [activeType, setActiveType] = useState(eventTypes.NO_TYPE);
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const stateMap = {
         [eventTypes.ACCOMMODATION]: Accommodation({
@@ -92,7 +93,7 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
                 if (currentState && currentState.setEventDetails) {
                     currentState.setEventDetails(eventToEdit);
                 } else {
-                    setEventMessage("An error occurred. Try again later.");
+                    setErrorMessage("Error: Bad event type.");
                 }
             } else {
                 setStep(Steps.SELECT_TYPE);
@@ -101,37 +102,36 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
         }
     }, [isOpen, eventToEdit]);
 
-    useEffect(() => {
-        setEventMessage(error ?? "");
-    }, [error, setEventMessage]);
-
     function resetForm() {
         Object.values(stateMap).forEach(state => {
             state.resetEvent?.();
         });
         setActiveType(eventTypes.NO_TYPE);
-        setEventMessage("");
+        setErrorMessage("");
     }
 
     const handleClear = () => {
         const currentState = stateMap[activeType];
         currentState.resetEvent?.();
+        setErrorMessage("");
     };
 
     const handleEventTypeSelect = type => {
         setActiveType(type);
+        setErrorMessage("");
         setStep(Steps.INPUT_DETAILS);
     };
 
     const handleSubmit = async e => {
         e.preventDefault();
         setLoading(true);
+        setErrorMessage("");
         try {
             const currentState = stateMap[activeType];
             if (!currentState) {
                 throw new Error("Error: Bad event type.");
             }
-            
+
             const startDateTime = createDateTime(currentState.event.startDate, currentState.event.startTime);
             const endDateTime = currentState.disableEnd ? null : createDateTime(currentState.event.endDate, currentState.event.endTime);
 
@@ -172,18 +172,18 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
             }
             if (eventToEdit) {
                 await updateEventItem(itiId, eventToEdit.id, newEvent);
-                setEventMessage("Event updated successfully.");
+                // setEventMessage("Event updated successfully.");
             } else {
                 await addEventItem(itiId, newEvent);
                 if (inboundFlight) {
                     await addEventItem(itiId, inboundFlight);
                 }
-                setEventMessage("Event added successfully.");
+                // setEventMessage("Event added successfully.");
                 setStep(Steps.SELECT_TYPE);
                 resetForm();
             }
         } catch (error) {
-            setEventMessage(error.message);
+            setErrorMessage(error.message);
         } finally {
             setLoading(false);
         }
@@ -203,31 +203,36 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, eventMess
                             <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.TRANSPORTATION)}>Transportation</button>
                             <button className="event-types-button" onClick={() => handleEventTypeSelect(eventTypes.ACTIVITY)}>Activity</button>
                         </div>
+                        {errorMessage && <span>{errorMessage}</span>}
                     </>
                 );
             case Steps.INPUT_DETAILS:
                 return (
                     <form id="add-event-form" onSubmit={handleSubmit} autoComplete="off">
                         {renderDetailsForm()}
+                        {errorMessage && <span>{errorMessage}</span>}
                         <div>
                             <div className="event-form-button-wrapper">
                                 <button type="submit" className="itinerary-button" disabled={loading}>
-                                    {eventToEdit ? "Update" : "Add"} {capitalizeFirstLetter(activeType) || "Event"}
+                                    {loading
+                                        ? eventToEdit ? "Updating..." : "Adding..."
+                                        : `${eventToEdit ? "Update" : "Add"} ${capitalizeFirstLetter(activeType) || "Event"}`
+                                    }
                                 </button>
                                 <button type="button" className="itinerary-button" onClick={handleClear}>Clear</button>
                             </div>
                         </div>
-                        {eventMessage && <span>{eventMessage}</span>}
+                        
                     </form>
                 );
             default:
-                return <div>An Error occurred. Try again.</div>;
+                return <div>An Error occurred. Unable to display form.</div>;
         }
     };
 
     const renderDetailsForm = () => {
         const currentState = stateMap[activeType];
-        return currentState ? currentState.eventForm() : <div>An Error occurred. Try again.</div>;
+        return currentState ? currentState.eventForm() : <div>An Error occurred. Unable to display form.</div>;
     };
 
     return isOpen && (
