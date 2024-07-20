@@ -208,3 +208,13 @@ button:hover {
     color: #646cff;
     background: inherit;
 }
+
+.display-transaction-el {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.display-transaction-btn {
+    display: inline-block;
+}

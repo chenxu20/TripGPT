@@ -5,7 +5,7 @@ import ManualAddExpense from "./ManualAddExpense"
 import Transactions from "./Transactions"
 import Payer from "./Payer"
 import { calculatorsCollection, transactionCollection, travellersCollection, database } from "../config/firebase"
-import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc, getDoc, collection } from "firebase/firestore"
+import { doc, addDoc, deleteDoc, getDocs, onSnapshot, updateDoc, getDoc, collection, query, orderBy } from "firebase/firestore"
 import { useParams, Link } from "react-router-dom"
 
 export default function Calculator() {
@@ -27,55 +27,56 @@ export default function Calculator() {
     const [numPayee, setNumPayee] = React.useState(0)
     const [remainingAmount, setRemainingAmount] = React.useState(0)
     const [date, setDate] = React.useState()
-    const payers = []
+    const [visibleDates, setVisibleDates] = React.useState([])
+    let displayDate = ""
     const { userId } = useParams()
     const calculatorDocRef = doc(database, "calculators", userId)
     const transactionColRef = collection(calculatorDocRef, "transactions")
     const travellersColRef = collection(calculatorDocRef, "travellers-info")
 
-    React.useEffect(() => {
-        async function getData() {
-            try {
-                const snapshot = await getDocs(transactionColRef)
-                const fetchedData = snapshot.docs.map(doc => {
-                    return {
-                        description: doc.data().description,
-                        expenseTracker: JSON.parse(doc.data().expenseTracker),
-                        numPayer: doc.data().numPayer,
-                        expense: doc.data().expense,
-                        date: doc.data().date,
-                        id: doc.id
-                    }
-                })
-                setTransactions(fetchedData)
-            } catch (error) {
-                console.error(`Error fetching documents: ${error}`)
-            }
-        }
-        getData()
-    }, [])
+    // React.useEffect(() => {
+    //     async function getData() {
+    //         try {
+    //             const snapshot = await getDocs(transactionColRef)
+    //             const fetchedData = snapshot.docs.map(doc => {
+    //                 return {
+    //                     description: doc.data().description,
+    //                     expenseTracker: JSON.parse(doc.data().expenseTracker),
+    //                     numPayer: doc.data().numPayer,
+    //                     expense: doc.data().expense,
+    //                     date: doc.data().date,
+    //                     id: doc.id
+    //                 }
+    //             })
+    //             setTransactions(fetchedData)
+    //         } catch (error) {
+    //             console.error(`Error fetching documents: ${error}`)
+    //         }
+    //     }
+    //     getData()
+    // }, [])
 
-    React.useEffect(() => {
-        async function getData() {
-            try {
-                const snapshot = await getDocs(travellersColRef)
-                const fetchedData = snapshot.docs.map(doc => {
-                    return {
-                        travellerName: doc.data().name,
-                        netAmount: doc.data().netAmount,
-                        expensePlaceholder: 0,
-                        toggle: true,
-                        isPayer: false,
-                        id: doc.id
-                    }
-                })
-                setTravellers(fetchedData)
-            } catch (error) {
-                console.error(`Error fetching documents: ${error}`)
-            }
-        }
-        getData()
-    }, [])
+    // React.useEffect(() => {
+    //     async function getData() {
+    //         try {
+    //             const snapshot = await getDocs(travellersColRef)
+    //             const fetchedData = snapshot.docs.map(doc => {
+    //                 return {
+    //                     travellerName: doc.data().name,
+    //                     netAmount: doc.data().netAmount,
+    //                     expensePlaceholder: 0,
+    //                     toggle: true,
+    //                     isPayer: false,
+    //                     id: doc.id
+    //                 }
+    //             })
+    //             setTravellers(fetchedData)
+    //         } catch (error) {
+    //             console.error(`Error fetching documents: ${error}`)
+    //         }
+    //     }
+    //     getData()
+    // }, [])
 
     React.useEffect(() => {
         if (split.auto) {
@@ -127,7 +128,8 @@ export default function Calculator() {
     }, [travellers])
 
     React.useEffect(() => {
-        const unsubscribe = onSnapshot(transactionColRef, (snapshot) => {
+        const q = query(transactionColRef, orderBy("date", "desc"))
+        const unsubscribe = onSnapshot(q, snapshot => {
             const fetchedData = snapshot.docs.map(doc => {
                 return {
                     description: doc.data().description,
@@ -163,14 +165,39 @@ export default function Calculator() {
     const displayTransactions = !(transactions.length)
         ? transactions
         : transactions.map(transaction => {
-            return (
-                <Transactions
-                    transaction={transaction}
-                    travellers={travellers}
-                    userId={userId}
-                />
-            )
+            if (displayDate === "" || transaction.date !== displayDate) {
+                displayDate = transaction.date
+                return (
+                    <div>
+                        {/* <button className="display-transaction-btn" onClick={() => toggleDateVisibility(transaction.date)}>
+                            <span>{transaction.date} Transactions</span>
+                            <span>{visibleDates.includes(transaction.date) ? "Hide information" : "Show information"}</span>
+                        </button> */}
+                        <div className="display-transaction-el">
+                            <h3>{transaction.date} Transactions</h3>
+                            <button className="display-transaction-btn" onClick={() => toggleDateVisibility(transaction.date)}>{visibleDates.includes(transaction.date) ? "Hide information" : "Show information"}</button>
+                        </div>
+                        {visibleDates.includes(transaction.date) && (
+                            <Transactions
+                                transaction={transaction}
+                                travellers={travellers}
+                                userId={userId}
+                            />
+                        )}
+                    </div>
+                )
+            } else {
+                return visibleDates.includes(transaction.date)
+                    ? <Transactions
+                        transaction={transaction}
+                        travellers={travellers}
+                        userId={userId}
+                    />
+                    : null
+            }
         })
+
+    displayDate = ""
 
     const displayTravellers = !(travellers.length)
         ? travellers
@@ -253,6 +280,14 @@ export default function Calculator() {
                 />
             )
         })
+
+    function toggleDateVisibility(date) {
+        setVisibleDates(prevDates => {
+            return prevDates.includes(date)
+                ? prevDates.filter(d => d !== date)
+                : [...prevDates, date]
+        })
+    }
 
     function toggleSelected(id) {
         setTravellers(prev =>

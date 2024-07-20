@@ -19,7 +19,7 @@ export default function Transactions(props) {
     let displayPayers = payers.map(payer => {
         return (
             <div>
-                <span>{props.transaction.description}: {payer.travellerName} should receive
+                <span>{payer.travellerName} should receive
                     ${parseFloat(payer.expensePlaceholder).toFixed(2)}</span>
             </div>
         )
@@ -29,7 +29,7 @@ export default function Transactions(props) {
     let displayPayees = payees.map(payee => {
         return (
             <div>
-                <span>{props.transaction.description}: {payee.travellerName} needs to pay
+                <span>{payee.travellerName} needs to pay
                     ${Math.abs(parseFloat(payee.expensePlaceholder)).toFixed(2)}</span>
             </div>
         )
@@ -92,6 +92,7 @@ export default function Transactions(props) {
 
     return (
         <div className="indiv-transaction-el">
+            <h4>Transaction Description: {props.transaction.description}</h4>
             {displayPayees}
             {displayPayers}
             <button onClick={deleteTransaction} className="delete-transaction-btn">Delete Transaction</button>
