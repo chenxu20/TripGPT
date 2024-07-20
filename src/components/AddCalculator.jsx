@@ -84,7 +84,7 @@ export default function AddCalculator() {
     }
 
     return (
-        <div>
+        <div className="calculator-wrapper">
             <h2>Bill Split Calculator</h2>
             <p>Travelling with friends? Add a calculator below to record your expenses and split the bill automatically!</p>
             <div>

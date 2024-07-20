@@ -522,7 +522,7 @@ export default function Calculator() {
     }
 
     return (
-        <>
+        <div className="calculator-wrapper">
             <Link to="/trips"><button className="back-btn">{`< Trips`}</button></Link>
             <div className="calculator-display-el">
                 <div className="traveller-el">
@@ -590,6 +590,6 @@ export default function Calculator() {
                     </div>
                 )}
             </div>
-        </>
+        </div>
     )
 }
