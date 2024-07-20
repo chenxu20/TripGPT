@@ -33,7 +33,7 @@ export default function Trips() {
                         }
                     />
                     <Route
-                        path="/calculator/:id"
+                        path="/calculator/:userId"
                         element={
                             <>
                                 <Calculator />
