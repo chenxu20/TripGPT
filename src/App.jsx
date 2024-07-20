@@ -20,7 +20,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/trips" element={<Trips />} />
-          <Route path="/trips/:userId" element={<Calculator />} />
+          <Route path="/trips/calculator/:userId" element={<Calculator />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />

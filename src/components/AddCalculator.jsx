@@ -25,7 +25,7 @@ export default function AddCalculator() {
         return (
             <div>
                 <p>{data.calculatorName}</p>
-                <Link to={data.id}><button>View Calculator</button></Link>
+                <Link to={`calculator/${data.id}`}><button>View Calculator</button></Link>
                 <button onClick={() => deleteCalculator(data.id, data.calculatorName)}>Delete Calculator</button>
             </div>
         )
