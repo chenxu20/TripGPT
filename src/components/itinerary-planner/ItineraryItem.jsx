@@ -11,8 +11,9 @@ function displayDate(date) {
     return date.toDate().toLocaleDateString("en-GB");
 }
 
-export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
+export const ItineraryItem = ({ itinerary }) => {
     const navigate = useNavigate();
+    const { duplicateItinerary, deleteItinerary } = useContext(ItineraryContext);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [sharedUsers, setSharedUsers] = useState([]);
@@ -90,17 +91,33 @@ export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
                 setShowDropdown(false);
             }
         };
-    
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [dropdownRef]);
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         const confirmDelete = window.confirm(`Are you sure you want to delete \"${itinerary.name}\"?`);
         if (confirmDelete) {
-            deleteItinerary(itinerary.id);
+            try {
+                await deleteItinerary(itinerary.id);
+                //TODO: Confirm message
+                setShowDropdown(false);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    };
+
+    const handleDuplicate = async () => {
+        try {
+            await duplicateItinerary(itinerary.id);
+            //TODO: Send confirm duplicate message
+            setShowDropdown(false);
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -136,10 +153,10 @@ export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
                                             <ShareItineraryItem itineraryId={itinerary.id} />
                                         </li>
                                         <li>
-                                            <button className="dropdown-menu-button" onClick={() => {
-                                                setShowDropdown(false);
-                                                handleDelete();
-                                            }}>Delete</button>
+                                            <button className="dropdown-menu-button" onClick={handleDuplicate}>Duplicate</button>
+                                        </li>
+                                        <li>
+                                            <button className="dropdown-menu-button" onClick={handleDelete}>Delete</button>
                                         </li>
                                     </ul>
                                 </div>

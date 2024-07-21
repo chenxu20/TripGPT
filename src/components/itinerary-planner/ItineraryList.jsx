@@ -5,7 +5,7 @@ import { ItineraryItem } from './ItineraryItem';
 import { ClipLoader } from 'react-spinners';
 
 export const ItineraryList = () => {
-    const { upcomingItineraries, pastItineraries, deleteItinerary, loading, error } = useContext(ItineraryContext);
+    const { upcomingItineraries, pastItineraries, loading, error } = useContext(ItineraryContext);
 
     if (loading) {
         return <div><ClipLoader color="#ffffff" /></div>;
@@ -25,7 +25,7 @@ export const ItineraryList = () => {
                         <div>No upcoming trips found.</div>
                     ) : (
                         upcomingItineraries.map(iti => (
-                            <ItineraryItem key={iti.id} itinerary={iti} deleteItinerary={deleteItinerary} />
+                            <ItineraryItem key={iti.id} itinerary={iti} />
                         ))
                     )}
                 </div>
@@ -35,7 +35,7 @@ export const ItineraryList = () => {
                         <div>No past trips found.</div>
                     ) : (
                         pastItineraries.map(iti => (
-                            <ItineraryItem key={iti.id} itinerary={iti} deleteItinerary={deleteItinerary} />
+                            <ItineraryItem key={iti.id} itinerary={iti} />
                         ))
                     )}
                 </div>
