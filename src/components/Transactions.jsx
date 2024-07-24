@@ -84,9 +84,6 @@ export default function Transactions(props) {
 
         const transactionDocRef = doc(database, "calculators", props.userId, "transactions", props.transaction.id)
         deleteDoc(transactionDocRef)
-            .then(() => {
-                alert("Transaction successfully deleted!")
-            })
             .catch((err) => alert(`Error removing document: ${err}`))
     }
 

@@ -27,7 +27,6 @@ export default function Calculator() {
     const [numPayer, setNumPayer] = React.useState(0)
     const [numPayee, setNumPayee] = React.useState(0)
     const [remainingAmount, setRemainingAmount] = React.useState(0)
-    const [date, setDate] = React.useState()
     const [visibleDates, setVisibleDates] = React.useState([])
     let displayDate = ""
     const { userId } = useParams()
@@ -35,6 +34,14 @@ export default function Calculator() {
     const transactionColRef = collection(calculatorDocRef, "transactions")
     const travellersColRef = collection(calculatorDocRef, "travellers-info")
     const navigate = useNavigate();
+
+    let curr = new Date()
+    curr.setDate(curr.getDate())
+    let currDate = curr.toISOString().substring(0, 10)
+
+    const [date, setDate] = React.useState(currDate)
+    console.log("currdate is " + currDate)
+    console.log("date is " + date)
 
     React.useEffect(() => {
         if (split.auto) {
@@ -78,6 +85,7 @@ export default function Calculator() {
             if (travellers[i].expensePlaceholder !== 0) {
                 numPayee++
                 remainingAmount -= travellers[i].expensePlaceholder
+                remainingAmount = remainingAmount.toFixed(2)
             }
         }
         setNumPayee(numPayee)
@@ -288,7 +296,7 @@ export default function Calculator() {
         }
         )
         setExpense()
-        setDate()
+        setDate(currDate)
         setDescription()
         setSplit(prev => {
             return {
@@ -306,15 +314,19 @@ export default function Calculator() {
 
     function toggleSplit(event) {
         if (!description) {
-            alert("enter a description first!")
+            alert("Enter a description first!")
             return
         }
         if (!date) {
-            alert("exter the date of transaction first!")
+            alert("Enter the date of transaction first!")
             return
         }
         if (!expense) {
-            alert("enter an amount first!")
+            alert("Enter an amount first!")
+            return
+        }
+        if (isNaN(expense)) {
+            alert("Key in valid numbers!")
             return
         }
 
@@ -367,9 +379,6 @@ export default function Calculator() {
                 name: name,
                 netAmount: 0
             })
-                .then(() => {
-                    alert("Success")
-                })
             setName("")
         }
     }
@@ -382,9 +391,6 @@ export default function Calculator() {
                     alert("The debt has not been cleared yet!")
                 } else {
                     deleteDoc(docRef)
-                        .then(() => {
-                            alert("Traveller successfully deleted!")
-                        })
                         .catch((err) => alert(`Error removing document: ${err}`))
                 }
             })
@@ -449,7 +455,23 @@ export default function Calculator() {
             alert("Select at least 1 payee!")
             return
         }
-        if (remainingAmount < 0 || remainingAmount > 0) {
+        if (!description) {
+            alert("Enter a description first!")
+            return
+        }
+        if (!date) {
+            alert("Enter the date of transaction first!")
+            return
+        }
+        if (!expense) {
+            alert("Enter an amount first!")
+            return
+        }
+        if (isNaN(expense)) {
+            alert("Key in valid numbers!")
+            return
+        }
+        if (!split.auto && (remainingAmount < 0 || remainingAmount > 0)) {
             alert("Split your bills properly!")
             return
         }
@@ -552,7 +574,7 @@ export default function Calculator() {
                             </label>
                             <br />
                             <label>Date:
-                                <input name="date" type="date" onChange={trackChanges} required />
+                                <input name="date" type="date" onChange={trackChanges} defaultValue={currDate} max={currDate} required />
                             </label>
                             <br />
                             <label>Cost: $

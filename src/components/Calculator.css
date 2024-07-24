@@ -30,6 +30,11 @@ body.active-modal {
     position: fixed;
 }
 
+.modal-content {
+    overflow: auto;
+    height: 70%;
+}
+
 .calculator-display-el {
     display: flex;
     align-items: flex-start;

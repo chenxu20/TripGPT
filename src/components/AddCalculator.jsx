@@ -76,7 +76,6 @@ export default function AddCalculator() {
         addDoc(calculatorsCollection, {
             calculatorName: name
         })
-            .then(alert("Successfully added!"))
             .then(setName(""))
             .catch(error => {
                 console.error("Error adding document: ", error);
