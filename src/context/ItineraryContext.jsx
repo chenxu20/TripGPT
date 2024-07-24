@@ -54,11 +54,11 @@ export const ItineraryContextProvider = ({ children }) => {
         }
     }, [user]);
 
-    const addItinerary = async name => {
-        if (name.trim()) {
-            await addDoc(itineraryCollection, { name, user: user.uid, startDate: null, endDate: null, sharedWith: [] });
+    const addItinerary = async (name, destination) => {
+        if (name.trim() && destination.trim()) {
+            await addDoc(itineraryCollection, { name, destination, user: user.uid, startDate: null, endDate: null, sharedWith: [] });
         } else {
-            throw new Error("Invalid itinerary name.");
+            throw new Error("Invalid itinerary details.");
         }
     };
 
@@ -97,6 +97,28 @@ export const ItineraryContextProvider = ({ children }) => {
         });
     };
 
+    const duplicateItinerary = async itiId => {
+        const itineraryRef = doc(database, "itineraries", itiId);
+        const itineraryDoc = await getDoc(itineraryRef);
+        if (!itineraryDoc.exists) {
+            throw new Error("Error: Failed to fetch itinerary.");
+        }
+        const itineraryData = itineraryDoc.data();
+        const newItineraryRef = await addDoc(itineraryCollection, {
+            ...itineraryData,
+            name: `${itineraryData.name} (Copy)`,
+            user: user.uid,
+            sharedWith: []
+        });
+
+        const eventCollection = collection(itineraryRef, 'events');
+        const eventsSnapshot = await getDocs(eventCollection);
+        const newEventCollection = collection(database, `itineraries/${newItineraryRef.id}/events`);
+        eventsSnapshot.forEach(async doc => {
+            await addDoc(newEventCollection, doc.data());
+        })
+    }
+
     const addEventItem = async (itiId, event) => {
         if (event.name.trim()) {
             const eventCollection = collection(database, `itineraries/${itiId}/events`);
@@ -123,7 +145,7 @@ export const ItineraryContextProvider = ({ children }) => {
     return (
         <ItineraryContext.Provider value={{
             upcomingItineraries, pastItineraries,
-            addItinerary, deleteItinerary, shareItinerary,
+            addItinerary, deleteItinerary, shareItinerary, duplicateItinerary,
             addEventItem, updateEventItem, removeEventItem,
             eventTypes, loading, error
         }}>

@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
 import "./style.css";
+import { Alert } from '../AlertMessage';
 
 const Modes = {
     EMAIL: "email",
     LINK: "link"
 }
 
-export const ShareItineraryItem = ({ itineraryId }) => {
+export const ShareItineraryItem = ({ itineraryId, setAlert }) => {
     const { shareItinerary } = useContext(ItineraryContext);
     const [email, setEmail] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -22,7 +23,7 @@ export const ShareItineraryItem = ({ itineraryId }) => {
         try {
             await shareItinerary(itineraryId, email);
             setEmail("");
-            // setMessage("Itinerary shared successfully.");
+            setAlert(new Alert(`Shared with ${email} successfully.`, 5000, "success"));
         } catch (error) {
             setErrorMessage(error.message);
         } finally {

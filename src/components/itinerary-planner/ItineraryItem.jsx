@@ -6,13 +6,15 @@ import { ItineraryContext } from '../../context/ItineraryContext';
 import { ClipLoader } from 'react-spinners';
 import { ShareItineraryItem } from './ShareItineraryItem';
 import { FaEllipsisVertical } from 'react-icons/fa6';
+import { Alert } from '../AlertMessage';
 
 function displayDate(date) {
     return date.toDate().toLocaleDateString("en-GB");
 }
 
-export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
+export const ItineraryItem = ({ itinerary, setAlert }) => {
     const navigate = useNavigate();
+    const { duplicateItinerary, deleteItinerary } = useContext(ItineraryContext);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [sharedUsers, setSharedUsers] = useState([]);
@@ -90,17 +92,33 @@ export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
                 setShowDropdown(false);
             }
         };
-    
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [dropdownRef]);
 
-    const handleDelete = () => {
-        const confirmDelete = window.confirm(`Are you sure you want to delete \"${itinerary.name}\"?`);
+    const handleDelete = async () => {
+        const confirmDelete = window.confirm(`Are you sure you want to delete "${itinerary.name}"?`);
         if (confirmDelete) {
-            deleteItinerary(itinerary.id);
+            try {
+                await deleteItinerary(itinerary.id);
+                setAlert(new Alert(`Deleted "${itinerary.name}" successfully.`, 5000, "success"));
+                setShowDropdown(false);
+            } catch (error) {
+                setAlert(new Alert(error.message, 8000, "error"));
+            }
+        }
+    };
+
+    const handleDuplicate = async () => {
+        try {
+            await duplicateItinerary(itinerary.id);
+            setAlert(new Alert(`Duplicated "${itinerary.name}".`, 5000, "success"));
+            setShowDropdown(false);
+        } catch (error) {
+            setAlert(new Alert(error.message, 8000, "error"));
         }
     };
 
@@ -133,19 +151,20 @@ export const ItineraryItem = ({ itinerary, deleteItinerary }) => {
                                 <div className="dropdown-menu">
                                     <ul>
                                         <li>
-                                            <ShareItineraryItem itineraryId={itinerary.id} />
+                                            <ShareItineraryItem itineraryId={itinerary.id} setAlert={setAlert} />
                                         </li>
                                         <li>
-                                            <button className="dropdown-menu-button" onClick={() => {
-                                                setShowDropdown(false);
-                                                handleDelete();
-                                            }}>Delete</button>
+                                            <button className="dropdown-menu-button" onClick={handleDuplicate}>Duplicate</button>
+                                        </li>
+                                        <li>
+                                            <button className="dropdown-menu-button" onClick={handleDelete}>Delete</button>
                                         </li>
                                     </ul>
                                 </div>
                             )}
                         </div>
                     </div>
+                    <div>{itinerary.destination}</div>
                     <div className="itinerary-dates">
                         {itinerary.startDate && itinerary.endDate
                             ? `${displayDate(itinerary.startDate)} – ${displayDate(itinerary.endDate)}`

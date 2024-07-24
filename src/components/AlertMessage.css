@@ -1,0 +1,24 @@
+.confirm-message {
+    position: fixed;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    font-family: inherit;
+    font-weight: 600;
+    text-align: center;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.confirm-message-success {
+    background: #3c9f20;
+    color: #ffffff;
+}
+
+.confirm-message-error {
+    background: #b81b1b;
+    color: #ffffff;
+}
