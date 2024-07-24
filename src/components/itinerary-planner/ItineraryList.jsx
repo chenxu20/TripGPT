@@ -1,11 +1,13 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
 import { AddItineraryItem } from './AddItineraryItem';
 import { ItineraryItem } from './ItineraryItem';
 import { ClipLoader } from 'react-spinners';
+import { AlertMessage } from '../AlertMessage';
 
 export const ItineraryList = () => {
-    const { upcomingItineraries, pastItineraries, deleteItinerary, loading, error } = useContext(ItineraryContext);
+    const { upcomingItineraries, pastItineraries, loading, error } = useContext(ItineraryContext);
+    const [alert, setAlert] = useState(null);
 
     if (loading) {
         return <div><ClipLoader color="#ffffff" /></div>;
@@ -17,7 +19,8 @@ export const ItineraryList = () => {
 
     return (
         <div>
-            <AddItineraryItem />
+            <AlertMessage alert={alert} setAlert={setAlert} />
+            <AddItineraryItem setAlert={setAlert} />
             <div className="itinerary-list-wrapper">
                 <div className="itinerary-list-column">
                     <h2>Upcoming Trips</h2>
@@ -25,7 +28,7 @@ export const ItineraryList = () => {
                         <div>No upcoming trips found.</div>
                     ) : (
                         upcomingItineraries.map(iti => (
-                            <ItineraryItem key={iti.id} itinerary={iti} deleteItinerary={deleteItinerary} />
+                            <ItineraryItem key={iti.id} itinerary={iti} setAlert={setAlert} />
                         ))
                     )}
                 </div>
@@ -35,7 +38,7 @@ export const ItineraryList = () => {
                         <div>No past trips found.</div>
                     ) : (
                         pastItineraries.map(iti => (
-                            <ItineraryItem key={iti.id} itinerary={iti} deleteItinerary={deleteItinerary} />
+                            <ItineraryItem key={iti.id} itinerary={iti} setAlert={setAlert} />
                         ))
                     )}
                 </div>
