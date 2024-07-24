@@ -6,12 +6,13 @@ import { ItineraryContext } from '../../context/ItineraryContext';
 import { ClipLoader } from 'react-spinners';
 import { ShareItineraryItem } from './ShareItineraryItem';
 import { FaEllipsisVertical } from 'react-icons/fa6';
+import { Alert } from '../AlertMessage';
 
 function displayDate(date) {
     return date.toDate().toLocaleDateString("en-GB");
 }
 
-export const ItineraryItem = ({ itinerary }) => {
+export const ItineraryItem = ({ itinerary, setAlert }) => {
     const navigate = useNavigate();
     const { duplicateItinerary, deleteItinerary } = useContext(ItineraryContext);
     const [loading, setLoading] = useState(false);
@@ -99,14 +100,14 @@ export const ItineraryItem = ({ itinerary }) => {
     }, [dropdownRef]);
 
     const handleDelete = async () => {
-        const confirmDelete = window.confirm(`Are you sure you want to delete \"${itinerary.name}\"?`);
+        const confirmDelete = window.confirm(`Are you sure you want to delete "${itinerary.name}"?`);
         if (confirmDelete) {
             try {
                 await deleteItinerary(itinerary.id);
-                //TODO: Confirm message
+                setAlert(new Alert(`Deleted "${itinerary.name}" successfully.`, 5000, "success"));
                 setShowDropdown(false);
             } catch (error) {
-                console.error(error);
+                setAlert(new Alert(error.message, 8000, "error"));
             }
         }
     };
@@ -114,10 +115,10 @@ export const ItineraryItem = ({ itinerary }) => {
     const handleDuplicate = async () => {
         try {
             await duplicateItinerary(itinerary.id);
-            //TODO: Send confirm duplicate message
+            setAlert(new Alert(`Duplicated "${itinerary.name}".`, 5000, "success"));
             setShowDropdown(false);
         } catch (error) {
-            console.error(error);
+            setAlert(new Alert(error.message, 8000, "error"));
         }
     };
 
@@ -150,7 +151,7 @@ export const ItineraryItem = ({ itinerary }) => {
                                 <div className="dropdown-menu">
                                     <ul>
                                         <li>
-                                            <ShareItineraryItem itineraryId={itinerary.id} />
+                                            <ShareItineraryItem itineraryId={itinerary.id} setAlert={setAlert} />
                                         </li>
                                         <li>
                                             <button className="dropdown-menu-button" onClick={handleDuplicate}>Duplicate</button>
@@ -163,6 +164,7 @@ export const ItineraryItem = ({ itinerary }) => {
                             )}
                         </div>
                     </div>
+                    <div>{itinerary.destination}</div>
                     <div className="itinerary-dates">
                         {itinerary.startDate && itinerary.endDate
                             ? `${displayDate(itinerary.startDate)} – ${displayDate(itinerary.endDate)}`

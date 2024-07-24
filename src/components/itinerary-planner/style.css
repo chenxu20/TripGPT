@@ -351,12 +351,13 @@
 #itinerary-add-form {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 2rem 2.5rem;
-    margin: 1rem;
-    width: fit-content;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    gap: 0.5rem;
+}
+
+#itinerary-add-form>label {
+    display: flex;
+    flex-direction: column;
+    margin: 0.2rem 0;
 }
 
 #itinerary-add-form input {
@@ -367,11 +368,14 @@
     padding: 0.5rem 0.8rem;
     border: 2px solid #8e9696;
     border-radius: 5px;
+    margin: 0.3rem 0;
+    max-width: 70%;
+    min-height: 1rem;
 }
 
-#itinerary-add-form>div {
-    display: flex;
-    gap: 2rem;
+#itinerary-add-form>button {
+    align-self: start;
+    margin: 0.5rem 0;
 }
 
 .itinerary-list-wrapper {

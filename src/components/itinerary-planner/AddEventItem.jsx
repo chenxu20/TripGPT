@@ -8,6 +8,7 @@ import { Food } from './events/Food';
 import { Flight } from './events/Flight';
 import { Transportation } from './events/Transportation';
 import { FaChevronLeft } from 'react-icons/fa';
+import { Alert } from '../AlertMessage';
 
 //Enum managing form step
 const Steps = {
@@ -26,14 +27,14 @@ function createDateTime(date, time) {
     return new Date(`${date}T${time}`);
 }
 
-export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit }) => {
+export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, setAlert }) => {
     const { addEventItem, updateEventItem, eventTypes } = useContext(ItineraryContext);
-    const initialEventState = { name: '', type: eventTypes.NO_TYPE, startDate: '', startTime: '', endDate: '', endTime: '' };
     const [step, setStep] = useState(Steps.SELECT_TYPE);
     const [activeType, setActiveType] = useState(eventTypes.NO_TYPE);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
+    const initialEventState = { name: '', type: eventTypes.NO_TYPE, startDate: '', startTime: '', endDate: '', endTime: '' };
     const stateMap = {
         [eventTypes.ACCOMMODATION]: Accommodation({
             initialEventState: {
@@ -172,15 +173,15 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit }) => {
             }
             if (eventToEdit) {
                 await updateEventItem(itiId, eventToEdit.id, newEvent);
-                // setEventMessage("Event updated successfully.");
+                setAlert(new Alert("Event updated successfully.", 5000, "success"));
             } else {
                 await addEventItem(itiId, newEvent);
                 if (inboundFlight) {
                     await addEventItem(itiId, inboundFlight);
                 }
-                // setEventMessage("Event added successfully.");
                 setStep(Steps.SELECT_TYPE);
                 resetForm();
+                setAlert(new Alert("Event added successfully.", 5000, "success"));
             }
         } catch (error) {
             setErrorMessage(error.message);
@@ -222,7 +223,7 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit }) => {
                                 <button type="button" className="itinerary-button" onClick={handleClear}>Clear</button>
                             </div>
                         </div>
-                        
+
                     </form>
                 );
             default:

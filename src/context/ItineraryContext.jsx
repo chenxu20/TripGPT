@@ -54,11 +54,11 @@ export const ItineraryContextProvider = ({ children }) => {
         }
     }, [user]);
 
-    const addItinerary = async name => {
-        if (name.trim()) {
-            await addDoc(itineraryCollection, { name, user: user.uid, startDate: null, endDate: null, sharedWith: [] });
+    const addItinerary = async (name, destination) => {
+        if (name.trim() && destination.trim()) {
+            await addDoc(itineraryCollection, { name, destination, user: user.uid, startDate: null, endDate: null, sharedWith: [] });
         } else {
-            throw new Error("Invalid itinerary name.");
+            throw new Error("Invalid itinerary details.");
         }
     };
 
