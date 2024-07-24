@@ -135,10 +135,6 @@ export default function Calculator() {
                 displayDate = transaction.date
                 return (
                     <div>
-                        {/* <button className="display-transaction-btn" onClick={() => toggleDateVisibility(transaction.date)}>
-                            <span>{transaction.date} Transactions</span>
-                            <span>{visibleDates.includes(transaction.date) ? "Hide information" : "Show information"}</span>
-                        </button> */}
                         <div className="display-transaction-el">
                             <h3>{transaction.date} Transactions</h3>
                             <button className="display-transaction-btn calculator-button" onClick={() => toggleDateVisibility(transaction.date)}>{visibleDates.includes(transaction.date) ? "Hide information" : "Show information"}</button>
@@ -490,33 +486,120 @@ export default function Calculator() {
         }
 
         const travellersInvolved = travellers.filter(traveller => traveller.toggle || traveller.isPayer)
+
+        let calculatedPayerExpense = (parseFloat(expense) / numPayer).toFixed(2) * numPayer
+        let diffInPayerExpense = (calculatedPayerExpense - expense).toFixed(2)
+        console.log(diffInPayerExpense)
+
+        let calculatedIndivExpense = (parseFloat(expense) / counter).toFixed(2) * counter
+        let diffInIndivExpense = (calculatedIndivExpense - expense).toFixed(2)
+        console.log(diffInIndivExpense)
+
         for (let i = 0; i < travellersInvolved.length; i++) {
             const docRef = doc(database, "calculators", userId, "travellers-info", travellersInvolved[i].id)
             if (travellersInvolved[i].isPayer) {
-                updateDoc(docRef, {
-                    netAmount: parseFloat(travellersInvolved[i].netAmount) + parseFloat(expense) / numPayer - parseFloat(travellersInvolved[i].expensePlaceholder)
-                })
+                if (diffInPayerExpense > 0) {
+                    diffInPayerExpense -= 0.01
+                    updateDoc(docRef, {
+                        netAmount: parseFloat(travellersInvolved[i].netAmount) + parseFloat(expense) / numPayer - parseFloat(travellersInvolved[i].expensePlaceholder) - 0.01
+                    })
+                } else if (diffInPayerExpense < 0) {
+                    diffInPayerExpense += 0.01
+                    updateDoc(docRef, {
+                        netAmount: parseFloat(travellersInvolved[i].netAmount) + parseFloat(expense) / numPayer - parseFloat(travellersInvolved[i].expensePlaceholder) + 0.01
+                    })
+                } else {
+                    updateDoc(docRef, {
+                        netAmount: parseFloat(travellersInvolved[i].netAmount) + parseFloat(expense) / numPayer - parseFloat(travellersInvolved[i].expensePlaceholder)
+                    })
+                }
             } else {
-                updateDoc(docRef, {
-                    netAmount: parseFloat(travellersInvolved[i].netAmount) - parseFloat(travellersInvolved[i].expensePlaceholder)
-                })
+                if (split.auto) {
+                    if (diffInIndivExpense > 0) {
+                        diffInIndivExpense -= 0.01
+                        updateDoc(docRef, {
+                            netAmount: parseFloat(travellersInvolved[i].netAmount) - parseFloat(travellersInvolved[i].expensePlaceholder) + 0.01
+                        })
+                    } else if (diffInIndivExpense < 0) {
+                        diffInIndivExpense += 0.01
+                        updateDoc(docRef, {
+                            netAmount: parseFloat(travellersInvolved[i].netAmount) - parseFloat(travellersInvolved[i].expensePlaceholder) - 0.01
+                        })
+                    } else {
+                        updateDoc(docRef, {
+                            netAmount: parseFloat(travellersInvolved[i].netAmount) - parseFloat(travellersInvolved[i].expensePlaceholder)
+                        })
+                    }
+                } else {
+                    updateDoc(docRef, {
+                        netAmount: parseFloat(travellersInvolved[i].netAmount) - parseFloat(travellersInvolved[i].expensePlaceholder)
+                    })
+                }
             }
         }
 
+        diffInPayerExpense = (calculatedPayerExpense - expense).toFixed(2)
+        diffInIndivExpense = (calculatedIndivExpense - expense).toFixed(2)
+
         const truncatedInfo = travellers.map(traveller => {
             if (traveller.isPayer) {
-                return {
-                    travellerName: traveller.travellerName,
-                    expensePlaceholder: expense / numPayer - traveller.expensePlaceholder,
-                    isPayer: traveller.isPayer,
-                    id: traveller.id
+                if (diffInPayerExpense > 0) {
+                    diffInPayerExpense -= 0.01
+                    return {
+                        travellerName: traveller.travellerName,
+                        expensePlaceholder: expense / numPayer - traveller.expensePlaceholder - 0.01,
+                        isPayer: traveller.isPayer,
+                        id: traveller.id
+                    }
+                } else if (diffInPayerExpense < 0) {
+                    diffInPayerExpense += 0.01
+                    return {
+                        travellerName: traveller.travellerName,
+                        expensePlaceholder: expense / numPayer - traveller.expensePlaceholder + 0.01,
+                        isPayer: traveller.isPayer,
+                        id: traveller.id
+                    }
+                } else {
+                    return {
+                        travellerName: traveller.travellerName,
+                        expensePlaceholder: expense / numPayer - traveller.expensePlaceholder,
+                        isPayer: traveller.isPayer,
+                        id: traveller.id
+                    }
                 }
             } else {
-                return {
-                    travellerName: traveller.travellerName,
-                    expensePlaceholder: traveller.expensePlaceholder,
-                    isPayer: traveller.isPayer,
-                    id: traveller.id
+                if (split.auto) {
+                    if (diffInIndivExpense > 0) {
+                        diffInIndivExpense -= 0.01
+                        return {
+                            travellerName: traveller.travellerName,
+                            expensePlaceholder: traveller.expensePlaceholder - 0.01,
+                            isPayer: traveller.isPayer,
+                            id: traveller.id
+                        }
+                    } else if (diffInIndivExpense < 0) {
+                        diffInIndivExpense += 0.01
+                        return {
+                            travellerName: traveller.travellerName,
+                            expensePlaceholder: traveller.expensePlaceholder + 0.01,
+                            isPayer: traveller.isPayer,
+                            id: traveller.id
+                        }
+                    } else {
+                        return {
+                            travellerName: traveller.travellerName,
+                            expensePlaceholder: traveller.expensePlaceholder,
+                            isPayer: traveller.isPayer,
+                            id: traveller.id
+                        }
+                    }
+                } else {
+                    return {
+                        travellerName: traveller.travellerName,
+                        expensePlaceholder: traveller.expensePlaceholder,
+                        isPayer: traveller.isPayer,
+                        id: traveller.id
+                    }
                 }
             }
         })
@@ -603,10 +686,10 @@ export default function Calculator() {
                 {editModal && (
                     <div className="modal">
                         <div onClick={toggleEditModal} className="overlay"></div>
-                        <div className="modal-content">
-                            <input name="edited-name" onChange={trackChanges} placeholder="Enter new name" />
+                        <div className="edit-modal-content">
+                            <input name="edited-name" onChange={trackChanges} placeholder="Enter new name" className="edit-name-el" />
                             <br />
-                            <button className="calculator-button" onClick={() => editTraveller(travellerId)}>Confirm</button>
+                            <button className="calculator-button" onClick={() => editTraveller(travellerId)}>Update</button>
                             <button className="close-modal calculator-button" onClick={toggleEditModal}>
                                 CLOSE
                             </button>

@@ -2,6 +2,7 @@ import React from "react"
 import { calculatorsCollection, transactionCollection, travellersCollection, database } from "../config/firebase"
 import { doc, addDoc, deleteDoc, getDocs, onSnapshot, collection, updateDoc, getDoc, writeBatch } from "firebase/firestore"
 import { Link } from "react-router-dom"
+import "./AddCalculator.css"
 
 export default function AddCalculator() {
     const [name, setName] = React.useState("")
@@ -87,7 +88,7 @@ export default function AddCalculator() {
             <h2>Bill Split Calculator</h2>
             <p>Travelling with friends? Add a calculator below to record your expenses and split the bill automatically!</p>
             <div>
-                <label>Enter name: <input placeholder="Calculator Name" onChange={handleChange} name="calculator-name" value={name}></input></label>
+                <label>Enter name: <input placeholder="Calculator Name" onChange={handleChange} name="calculator-name" value={name} className="add-calc-el"></input></label>
                 <br />
                 <button onClick={createCalculator} className="calculator-button">Add Calculator</button>
             </div>

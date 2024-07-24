@@ -1,0 +1,9 @@
+.add-calc-el {
+    font-size: 1rem;
+    font-family: inherit;
+    font-weight: 400;
+    background: #111;
+    padding: .5rem .8rem;
+    border: 2px solid #8e9696;
+    border-radius: 5px;
+}
