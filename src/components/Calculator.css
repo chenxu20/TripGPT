@@ -35,6 +35,10 @@ button:hover {
     height: 70%;
 }
 
+.edit-modal-content {
+    height: 15%;
+}
+
 .calculator-display-el {
     display: flex;
     align-items: flex-start;
@@ -54,7 +58,8 @@ button:hover {
     background: rgba(49, 49, 49, 0.8);
 }
 
-.modal-content {
+.modal-content,
+.edit-modal-content {
     position: absolute;
     top: 40%;
     left: 50%;
@@ -222,4 +227,14 @@ button:hover {
 
 .display-transaction-btn {
     display: inline-block;
+}
+
+.edit-name-el {
+    font-size: 1rem;
+    font-family: inherit;
+    font-weight: 400;
+    background: #111;
+    padding: .5rem .8rem;
+    border: 2px solid #8e9696;
+    border-radius: 5px;
 }
