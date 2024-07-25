@@ -1,24 +1,36 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
 import { Alert } from '../AlertMessage';
+import "./style.css";
 
-export const AddItineraryItem = ({ setAlert }) => {
-    const { addItinerary } = useContext(ItineraryContext);
+export const AddItineraryItem = ({ itineraryToEdit, setAlert }) => {
+    const { addItinerary, updateItinerary } = useContext(ItineraryContext);
     const [itineraryName, setItineraryName] = useState("");
     const [destination, setDestination] = useState("");
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    useEffect(() => {
+        setItineraryName(itineraryToEdit?.name || "");
+        setDestination(itineraryToEdit?.destination || "");
+    }, [itineraryToEdit]);
+
     const handleSubmit = async e => {
         e.preventDefault();
         setLoading(true);
         setErrorMessage("");
         try {
-            await addItinerary(itineraryName, destination);
-            setItineraryName("");
-            setDestination("")
-            setAlert(new Alert("Itinerary added successfully.", 5000, "success"));
+            if (itineraryToEdit) {
+                await updateItinerary(itineraryToEdit.id, itineraryName, destination);
+                setAlert(new Alert("Itinerary updated successfully.", 5000, "success"));
+            } else {
+                await addItinerary(itineraryName, destination);
+                setItineraryName("");
+                setDestination("");
+                closeModal();
+                setAlert(new Alert("Itinerary added successfully.", 5000, "success"));
+            }
         } catch (error) {
             setErrorMessage(error.message);
         } finally {
@@ -37,13 +49,16 @@ export const AddItineraryItem = ({ setAlert }) => {
 
     return (
         <>
-            <button onClick={openModal} className="itinerary-button">Add Itinerary</button>
+            {itineraryToEdit
+                ? <button onClick={openModal} className="dropdown-menu-button">Edit</button>
+                : <button onClick={openModal} className="itinerary-button">Add Itinerary</button>
+            }
             {isModalOpen && (
                 <div className="itinerary-modal">
                     <div className="itinerary-modal-overlay" onClick={closeModal}></div>
                     <div className="itinerary-modal-content">
                         <button className="itinerary-modal-close-button" onClick={closeModal}>X</button>
-                        <h2>Add Itinerary</h2>
+                        <h2>{itineraryToEdit ? "Edit" : "Add"} Itinerary</h2>
                         <form onSubmit={handleSubmit} id="itinerary-add-form" autoComplete="off">
                             <label>
                                 Name
@@ -70,7 +85,10 @@ export const AddItineraryItem = ({ setAlert }) => {
                                 />
                             </label>
                             <button type="submit" className="itinerary-button" disabled={loading}>
-                                {loading ? "Adding..." : "Add Itinerary"}
+                                {itineraryToEdit
+                                    ? loading ? "Editing..." : "Edit Itinerary"
+                                    : loading ? "Adding..." : "Add Itinerary"
+                                }
                             </button>
                             {errorMessage && <span>{errorMessage}</span>}
                         </form>

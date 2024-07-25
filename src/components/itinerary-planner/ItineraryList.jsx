@@ -4,6 +4,7 @@ import { AddItineraryItem } from './AddItineraryItem';
 import { ItineraryItem } from './ItineraryItem';
 import { ClipLoader } from 'react-spinners';
 import { AlertMessage } from '../AlertMessage';
+import "./style.css";
 
 export const ItineraryList = () => {
     const { upcomingItineraries, pastItineraries, loading, error } = useContext(ItineraryContext);
@@ -20,7 +21,7 @@ export const ItineraryList = () => {
     return (
         <div>
             <AlertMessage alert={alert} setAlert={setAlert} />
-            <AddItineraryItem setAlert={setAlert} />
+            <AddItineraryItem itineraryToEdit={null} setAlert={setAlert} />
             <div className="itinerary-list-wrapper">
                 <div className="itinerary-list-column">
                     <h2>Upcoming Trips</h2>

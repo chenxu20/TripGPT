@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
-import "./style.css";
 import { Alert } from '../AlertMessage';
+import "./style.css";
 
 const Modes = {
     EMAIL: "email",

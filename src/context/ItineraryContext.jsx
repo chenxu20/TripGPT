@@ -62,6 +62,11 @@ export const ItineraryContextProvider = ({ children }) => {
         }
     };
 
+    const updateItinerary = async (id, name, destination) => {
+        const itineraryRef = doc(database, 'itineraries', id);
+        await updateDoc(itineraryRef, { name, destination });
+    };
+
     const deleteItinerary = async itiId => {
         const itineraryRef = doc(database, 'itineraries', itiId);
         const itineraryDoc = await getDoc(itineraryRef);
@@ -145,7 +150,8 @@ export const ItineraryContextProvider = ({ children }) => {
     return (
         <ItineraryContext.Provider value={{
             upcomingItineraries, pastItineraries,
-            addItinerary, deleteItinerary, shareItinerary, duplicateItinerary,
+            addItinerary, updateItinerary, deleteItinerary, 
+            shareItinerary, duplicateItinerary,
             addEventItem, updateEventItem, removeEventItem,
             eventTypes, loading, error
         }}>

@@ -7,6 +7,8 @@ import { ClipLoader } from 'react-spinners';
 import { ShareItineraryItem } from './ShareItineraryItem';
 import { FaEllipsisVertical } from 'react-icons/fa6';
 import { Alert } from '../AlertMessage';
+import { AddItineraryItem } from './AddItineraryItem';
+import "./style.css";
 
 function displayDate(date) {
     return date.toDate().toLocaleDateString("en-GB");
@@ -151,6 +153,9 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
                                 <div className="dropdown-menu">
                                     <ul>
                                         <li>
+                                            <AddItineraryItem itineraryToEdit={itinerary} setAlert={setAlert} />
+                                        </li>
+                                        <li>
                                             <ShareItineraryItem itineraryId={itinerary.id} setAlert={setAlert} />
                                         </li>
                                         <li>
@@ -186,7 +191,6 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
     /*
         Future design:
         Discontinue view button, give functionality to title directly
-        Add a subheading to determine destination
         Add a picture on the right side, move dropdown to left of picture
     */
 };
