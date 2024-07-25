@@ -68,8 +68,8 @@ button:hover {
     background: #f1f1f1;
     padding: 14px 28px;
     border-radius: 3px;
+    min-width: 400px;
     max-width: 600px;
-    min-width: 300px;
     color: black;
 }
 
@@ -101,20 +101,32 @@ button:hover {
 
 .delete-btn {
     height: auto;
-    /* Reset the height to default */
     padding: 5px 10px;
-    /* Adjust padding to control the size of the button */
     background-color: #f44336;
     color: white;
     border: none;
-    border-radius: 20px;
-    /* Add border radius for rounded corners */
+    border-radius: 30px;
     cursor: pointer;
     font-weight: bold;
 }
 
 .delete-btn:hover {
     background-color: #da190b;
+}
+
+.edit-btn {
+    height: auto;
+    padding: 5px 10px;
+    background-color: #008CBA;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.delete-btn:hover {
+    background-color: #007BB5;
 }
 
 .traveller-title {
@@ -229,7 +241,8 @@ button:hover {
     display: inline-block;
 }
 
-.edit-name-el {
+.edit-name-el,
+.expense-input {
     font-size: 1rem;
     font-family: inherit;
     font-weight: 400;

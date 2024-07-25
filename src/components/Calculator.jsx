@@ -651,15 +651,15 @@ export default function Calculator() {
                         <div onClick={toggleModal} className="overlay"></div>
                         <div className="modal-content">
                             <label>Description:
-                                <input name="description" onChange={trackChanges} placeholder="Enter a description" required />
+                                <input name="description" onChange={trackChanges} placeholder="Enter a description" className="expense-input" required />
                             </label>
                             <br />
                             <label>Date:
-                                <input name="date" type="date" onChange={trackChanges} defaultValue={currDate} max={currDate} required />
+                                <input name="date" type="date" onChange={trackChanges} defaultValue={currDate} max={currDate} className="expense-input" required />
                             </label>
                             <br />
                             <label>Cost: $
-                                <input name="add-expense" onChange={trackChanges} required />
+                                <input name="add-expense" onChange={trackChanges} className="expense-input" required />
                             </label>
                             <br />
                             <p>Person who paid:</p>
@@ -685,6 +685,7 @@ export default function Calculator() {
                     <div className="modal">
                         <div onClick={toggleEditModal} className="overlay"></div>
                         <div className="edit-modal-content">
+                            <label>Enter New Name:</label>
                             <input name="edited-name" onChange={trackChanges} placeholder="Enter new name" className="edit-name-el" />
                             <br />
                             <button onClick={() => editTraveller(travellerId)}>Update</button>
