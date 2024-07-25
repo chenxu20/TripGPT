@@ -157,13 +157,13 @@ export default function AddCalculator() {
     }
 
     return (
-        <div>
+        <div className="calculator-wrapper">
             <h2>Bill Split Calculator</h2>
             <p>Travelling with friends? Add a calculator below to record your expenses and split the bill automatically!</p>
             <div>
                 <label>Enter name: <input placeholder="Calculator Name" onChange={handleChange} name="calculator-name" value={name} className="add-calc-el"></input></label>
                 <br />
-                <button onClick={createCalculator}>Add Calculator</button>
+                <button onClick={createCalculator} className="calculator-button">Add Calculator</button>
             </div>
             {displayCalculator}
             {modal && (

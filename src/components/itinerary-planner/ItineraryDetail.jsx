@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { AddEventItem } from './AddEventItem';
@@ -14,6 +14,7 @@ import "./style.css";
 import { FaChevronLeft } from 'react-icons/fa';
 import { FaHotel, FaLocationDot, FaLandmark, FaPlane, FaUtensils, FaBus, FaCar, FaShip, FaTrainSubway } from 'react-icons/fa6';
 import { ClipLoader } from 'react-spinners';
+import { Alert, AlertMessage } from '../AlertMessage';
 
 //Enum managing mode state.
 const Mode = {
@@ -30,8 +31,10 @@ export const ItineraryDetail = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [eventToEdit, setEventToEdit] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [alert, setAlert] = useState(null);
     const [mode, setMode] = useState(Mode.VIEW);
     const [loading, setLoading] = useState(true);
+    const timerRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -76,6 +79,15 @@ export const ItineraryDetail = () => {
 
     const handleModeChange = e => {
         setMode(e.target.value);
+    };
+
+    const handleRemoveEvent = async (itiId, eventId) => {
+        try {
+            await removeEventItem(itiId, eventId);
+            setAlert(new Alert("Event removed successfully", 5000, "success"));
+        } catch (error) {
+            setAlert(new Alert(error.message, 8000, "error"));
+        }
     };
 
     function displayDateTime(date) {
@@ -141,9 +153,11 @@ export const ItineraryDetail = () => {
 
     return (
         <div className="event-list-wrapper">
+            <AlertMessage alert={alert} setAlert={setAlert} />
             <button onClick={() => navigate("/trips")} className="event-back-button"><FaChevronLeft />Trips</button>
             <div className="event-list-header">
                 <h1 className="event-list-title">{itinerary?.name}</h1>
+                <h2>{itinerary?.destination}</h2>
                 <div className="mode-wrapper">
                     <select value={mode} onChange={handleModeChange} className="drop-down" id="itinerary-mode-toggle">
                         <option value={Mode.VIEW}>Viewing</option>
@@ -157,6 +171,7 @@ export const ItineraryDetail = () => {
                                 isOpen={isModalOpen}
                                 closeModal={closeModal}
                                 eventToEdit={eventToEdit}
+                                setAlert={setAlert}
                             />
                         </>
                     )}
@@ -178,7 +193,7 @@ export const ItineraryDetail = () => {
                             {mode === Mode.EDIT && (
                                 <div className="event-content-button">
                                     <button onClick={() => openEditEventModal(event)} className="itinerary-button">Edit</button>
-                                    <button onClick={() => removeEventItem(id, event.id)} className="itinerary-button">Remove</button>
+                                    <button onClick={() => handleRemoveEvent(id, event.id)} className="itinerary-button">Remove</button>
                                 </div>
                             )}
                         </div>
