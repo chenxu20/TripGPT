@@ -40,8 +40,6 @@ export default function Calculator() {
     let currDate = curr.toISOString().substring(0, 10)
 
     const [date, setDate] = React.useState(currDate)
-    console.log("currdate is " + currDate)
-    console.log("date is " + date)
 
     React.useEffect(() => {
         if (split.auto) {
@@ -99,7 +97,7 @@ export default function Calculator() {
             const fetchedData = snapshot.docs.map(doc => {
                 return {
                     description: doc.data().description,
-                    expenseTracker: JSON.parse(doc.data().expenseTracker),
+                    expenseTracker: doc.data().expenseTracker,
                     numPayer: doc.data().numPayer,
                     expense: doc.data().expense,
                     date: doc.data().date,
@@ -489,11 +487,9 @@ export default function Calculator() {
 
         let calculatedPayerExpense = (parseFloat(expense) / numPayer).toFixed(2) * numPayer
         let diffInPayerExpense = (calculatedPayerExpense - expense).toFixed(2)
-        console.log(diffInPayerExpense)
 
         let calculatedIndivExpense = (parseFloat(expense) / counter).toFixed(2) * counter
         let diffInIndivExpense = (calculatedIndivExpense - expense).toFixed(2)
-        console.log(diffInIndivExpense)
 
         for (let i = 0; i < travellersInvolved.length; i++) {
             const docRef = doc(database, "calculators", userId, "travellers-info", travellersInvolved[i].id)
@@ -605,7 +601,7 @@ export default function Calculator() {
         })
         addDoc(transactionColRef, {
             description: description,
-            expenseTracker: JSON.stringify(truncatedInfo),
+            expenseTracker: truncatedInfo,
             numPayer: numPayer,
             expense: expense,
             date: date
