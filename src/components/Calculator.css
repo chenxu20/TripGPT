@@ -126,7 +126,7 @@ body.active-modal {
     font-weight: bold;
 }
 
-.delete-btn:hover {
+.edit-btn:hover {
     background-color: #007BB5;
 }
 

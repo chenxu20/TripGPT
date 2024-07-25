@@ -49,9 +49,9 @@ export default function AddCalculator() {
             <div className="calc-div">
                 <h3>{data.calculatorName}</h3>
                 <div className="calculator-btns">
-                    <Link to={`calculator/${data.id}`}><button>View Calculator</button></Link>
-                    <button onClick={() => deleteCalculator(data.id, data.calculatorName)}>Delete Calculator</button>
-                    <button onClick={() => toggleModal(data.id)}>Share Calculator</button>
+                    <Link to={`calculator/${data.id}`}><button className="calculator-btn">View Calculator</button></Link>
+                    <button onClick={() => deleteCalculator(data.id, data.calculatorName)} className="calculator-btn">Delete Calculator</button>
+                    <button onClick={() => toggleModal(data.id)} className="calculator-btn">Share Calculator</button>
                 </div>
             </div>
         )
