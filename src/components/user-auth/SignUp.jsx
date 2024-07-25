@@ -1,9 +1,9 @@
 import React, { useState, useContext } from 'react';
-import "./style.css";
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { getErrorMsg } from './ui';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import "./style.css";
 
 export const SignUp = () => {
     const [name, setName] = useState("");

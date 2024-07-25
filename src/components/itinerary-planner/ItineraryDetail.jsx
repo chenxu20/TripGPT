@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { AddEventItem } from './AddEventItem';
@@ -10,11 +10,11 @@ import { AttractionDetails } from './events/Attraction';
 import { FlightDetails } from './events/Flight';
 import { FoodDetails } from './events/Food';
 import { TransportationDetails } from './events/Transportation';
-import "./style.css";
 import { FaChevronLeft } from 'react-icons/fa';
 import { FaHotel, FaLocationDot, FaLandmark, FaPlane, FaUtensils, FaBus, FaCar, FaShip, FaTrainSubway } from 'react-icons/fa6';
 import { ClipLoader } from 'react-spinners';
 import { Alert, AlertMessage } from '../AlertMessage';
+import "./style.css";
 
 //Enum managing mode state.
 const Mode = {
@@ -28,13 +28,10 @@ export const ItineraryDetail = () => {
     const { upcomingItineraries, pastItineraries, removeEventItem, eventTypes } = useContext(ItineraryContext);
     const [events, setEvents] = useState([]);
     const [itinerary, setItinerary] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [eventToEdit, setEventToEdit] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [alert, setAlert] = useState(null);
     const [mode, setMode] = useState(Mode.VIEW);
     const [loading, setLoading] = useState(true);
-    const timerRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -61,21 +58,6 @@ export const ItineraryDetail = () => {
 
         return () => unsubscribe();
     }, [id, upcomingItineraries, pastItineraries]);
-
-    function openAddEventModal() {
-        setIsModalOpen(true);
-    }
-
-    function openEditEventModal(event) {
-        setEventToEdit(event);
-        setIsModalOpen(true);
-    }
-
-    function closeModal() {
-        setErrorMessage("");
-        setEventToEdit(null);
-        setIsModalOpen(false);
-    }
 
     const handleModeChange = e => {
         setMode(e.target.value);
@@ -165,12 +147,9 @@ export const ItineraryDetail = () => {
                     </select>
                     {mode === Mode.EDIT && (
                         <>
-                            <button onClick={openAddEventModal} className="itinerary-button">Add Event</button>
                             <AddEventItem
                                 itiId={id}
-                                isOpen={isModalOpen}
-                                closeModal={closeModal}
-                                eventToEdit={eventToEdit}
+                                eventToEdit={null}
                                 setAlert={setAlert}
                             />
                         </>
@@ -192,7 +171,11 @@ export const ItineraryDetail = () => {
                             </div>
                             {mode === Mode.EDIT && (
                                 <div className="event-content-button">
-                                    <button onClick={() => openEditEventModal(event)} className="itinerary-button">Edit</button>
+                                    <AddEventItem
+                                        itiId={id}
+                                        eventToEdit={event}
+                                        setAlert={setAlert}
+                                    />
                                     <button onClick={() => handleRemoveEvent(id, event.id)} className="itinerary-button">Remove</button>
                                 </div>
                             )}

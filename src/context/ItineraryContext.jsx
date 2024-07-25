@@ -62,13 +62,22 @@ export const ItineraryContextProvider = ({ children }) => {
         }
     };
 
+    const updateItinerary = async (id, name, destination) => {
+        const itineraryRef = doc(database, 'itineraries', id);
+        await updateDoc(itineraryRef, { name, destination });
+    };
+
     const deleteItinerary = async itiId => {
         const itineraryRef = doc(database, 'itineraries', itiId);
         const itineraryDoc = await getDoc(itineraryRef);
-        if (itineraryDoc.exists && itineraryDoc.data().user !== user.uid) {
+        if (!itineraryDoc.exists) {
+            throw new Error("Itinerary not found.");
+        }
+        
+        if (itineraryDoc.data().user !== user.uid) {
             throw new Error("Only the owner can delete the itinerary.");
         }
-
+        
         const batch = writeBatch(database);
         const eventCollection = collection(itineraryRef, 'events');
         const eventsSnapshot = await getDocs(eventCollection);
@@ -145,7 +154,8 @@ export const ItineraryContextProvider = ({ children }) => {
     return (
         <ItineraryContext.Provider value={{
             upcomingItineraries, pastItineraries,
-            addItinerary, deleteItinerary, shareItinerary, duplicateItinerary,
+            addItinerary, updateItinerary, deleteItinerary, 
+            shareItinerary, duplicateItinerary,
             addEventItem, updateEventItem, removeEventItem,
             eventTypes, loading, error
         }}>

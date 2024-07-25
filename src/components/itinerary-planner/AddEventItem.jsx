@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { ItineraryContext } from '../../context/ItineraryContext';
-import "./style.css";
 import { Accommodation } from './events/Accommodation';
 import { Activity } from './events/Activity';
 import { Attraction } from './events/Attraction';
@@ -9,6 +8,7 @@ import { Flight } from './events/Flight';
 import { Transportation } from './events/Transportation';
 import { FaChevronLeft } from 'react-icons/fa';
 import { Alert } from '../AlertMessage';
+import "./style.css";
 
 //Enum managing form step
 const Steps = {
@@ -27,12 +27,13 @@ function createDateTime(date, time) {
     return new Date(`${date}T${time}`);
 }
 
-export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, setAlert }) => {
+export const AddEventItem = ({ itiId, eventToEdit, setAlert }) => {
     const { addEventItem, updateEventItem, eventTypes } = useContext(ItineraryContext);
     const [step, setStep] = useState(Steps.SELECT_TYPE);
     const [activeType, setActiveType] = useState(eventTypes.NO_TYPE);
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const initialEventState = { name: '', type: eventTypes.NO_TYPE, startDate: '', startTime: '', endDate: '', endTime: '' };
     const stateMap = {
@@ -85,7 +86,7 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, setAlert 
     };
 
     useEffect(() => {
-        if (isOpen) {
+        if (isModalOpen) {
             if (eventToEdit) {
                 setStep(Steps.INPUT_DETAILS);
                 setActiveType(eventToEdit.type);
@@ -101,7 +102,16 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, setAlert 
                 resetForm();
             }
         }
-    }, [isOpen, eventToEdit]);
+    }, [isModalOpen, eventToEdit]);
+
+    function openModal() {
+        setIsModalOpen(true);
+    }
+
+    function closeModal() {
+        setErrorMessage("");
+        setIsModalOpen(false);
+    }
 
     function resetForm() {
         Object.values(stateMap).forEach(state => {
@@ -236,19 +246,27 @@ export const AddEventItem = ({ itiId, isOpen, closeModal, eventToEdit, setAlert 
         return currentState ? currentState.eventForm() : <div>An Error occurred. Unable to display form.</div>;
     };
 
-    return isOpen && (
-        <div className="itinerary-modal">
-            <div className="itinerary-modal-overlay" onClick={closeModal}></div>
-            <div className="itinerary-modal-content">
-                <button className="itinerary-modal-close-button" onClick={closeModal}>X</button>
-                {step === Steps.INPUT_DETAILS && !eventToEdit &&
-                    <button type="button" className="itinerary-modal-back-button" onClick={() => {
-                        setStep(Steps.SELECT_TYPE);
-                        setActiveType(eventTypes.NO_TYPE);
-                    }}><FaChevronLeft />Event type</button>}
-                <h2>{eventToEdit ? "Edit" : "Add"} {capitalizeFirstLetter(activeType) || "Event"}</h2>
-                {renderForm()}
-            </div>
-        </div>
-    );
+    return (
+        <>
+            {eventToEdit
+                ? <button onClick={openModal} className="itinerary-button">Edit</button>
+                : <button onClick={openModal} className="itinerary-button">Add Event</button>
+            }
+            {isModalOpen && (
+                <div className="itinerary-modal">
+                    <div className="itinerary-modal-overlay" onClick={closeModal}></div>
+                    <div className="itinerary-modal-content">
+                        <button className="itinerary-modal-close-button" onClick={closeModal}>X</button>
+                        {step === Steps.INPUT_DETAILS && !eventToEdit &&
+                            <button type="button" className="itinerary-modal-back-button" onClick={() => {
+                                setStep(Steps.SELECT_TYPE);
+                                setActiveType(eventTypes.NO_TYPE);
+                            }}><FaChevronLeft />Event type</button>}
+                        <h2>{eventToEdit ? "Edit" : "Add"} {capitalizeFirstLetter(activeType) || "Event"}</h2>
+                        {renderForm()}
+                    </div>
+                </div>
+            )}
+        </>
+    )
 };

@@ -7,6 +7,8 @@ import { ClipLoader } from 'react-spinners';
 import { ShareItineraryItem } from './ShareItineraryItem';
 import { FaEllipsisVertical } from 'react-icons/fa6';
 import { Alert } from '../AlertMessage';
+import { AddItineraryItem } from './AddItineraryItem';
+import "./style.css";
 
 function displayDate(date) {
     return date.toDate().toLocaleDateString("en-GB");
@@ -27,10 +29,17 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
         const fetchItinerary = async () => {
             setLoading(true);
             try {
-                const eventsCollection = collection(database, `itineraries/${itinerary.id}/events`);
                 const itineraryRef = doc(database, 'itineraries', itinerary.id);
+                const itineraryDoc = await getDoc(itineraryRef);
 
-                unsubscribeEvents = onSnapshot(eventsCollection, async snapshot => {
+                const eventsCollection = collection(database, `itineraries/${itinerary.id}/events`);
+                unsubscribeEvents = onSnapshot(eventsCollection, async snapshot => {       
+                    const itineraryDoc = await getDoc(itineraryRef);
+                    if (!itineraryDoc.exists()) {
+                        setLoading(false);
+                        return;
+                    }
+                                 
                     const events = snapshot.docs.map(doc => doc.data());
                     if (events.length > 0) {
                         const startDate = events
@@ -51,9 +60,7 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
                     }
                 });
 
-                const itineraryDoc = await getDoc(itineraryRef)
                 const { user, sharedWith } = itineraryDoc.data();
-
                 const userQuery = query(collection(database, "users"), where("uid", "==", user));
                 const userSnapshot = await getDocs(userQuery);
                 if (!userSnapshot.empty) {
@@ -151,6 +158,9 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
                                 <div className="dropdown-menu">
                                     <ul>
                                         <li>
+                                            <AddItineraryItem itineraryToEdit={itinerary} setAlert={setAlert} />
+                                        </li>
+                                        <li>
                                             <ShareItineraryItem itineraryId={itinerary.id} setAlert={setAlert} />
                                         </li>
                                         <li>
@@ -186,7 +196,6 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
     /*
         Future design:
         Discontinue view button, give functionality to title directly
-        Add a subheading to determine destination
         Add a picture on the right side, move dropdown to left of picture
     */
 };

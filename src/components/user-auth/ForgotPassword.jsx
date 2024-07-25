@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
-import "./style.css";
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { getErrorMsg } from './ui';
+import "./style.css";
 
 export const ForgotPassword = () => {
     const [email, setEmail] = useState("");
