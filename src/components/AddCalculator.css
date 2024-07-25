@@ -52,3 +52,15 @@
     border: 2px solid #8e9696;
     border-radius: 5px;
 }
+
+.calculator-btn {
+    padding: 0.7rem 1.2rem;
+    border: 2px solid #afafaf;
+    border-radius: 3px;
+    background-color: black;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
