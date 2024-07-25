@@ -64,3 +64,8 @@
     cursor: pointer;
     transition: 0.25s ease;
 }
+
+.calculator-btn:hover {
+    border-color: #646cff;
+    background: #444444;
+}
