@@ -4,6 +4,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { getErrorMsg } from './ui';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import "./style.css";
+import { Alert } from '../AlertMessage';
 
 export const SignUp = () => {
     const [name, setName] = useState("");
@@ -25,8 +26,7 @@ export const SignUp = () => {
                 throw new Error("Passwords do not match.");
             }
             await userSignUp(email, password, sanitizedDisplayName);
-            alert("Your account has been created successfully.");
-            navigate("/account");
+            navigate("/account", { replace: true, state: { alert: new Alert("You have signed up successfully.", 5000, "success") } });
         } catch (err) {
             setErrorMessage(getErrorMsg(err));
         } finally {
