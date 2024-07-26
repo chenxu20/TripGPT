@@ -12,6 +12,10 @@ export default function ManualAddExpense(props) {
         setExpense(event.target.value)
     }
 
+    function reset() {
+        setExpense()
+    }
+
     const manualInput =
         <div className="indiv-expense-container">
             <span>$</span>
@@ -21,21 +25,22 @@ export default function ManualAddExpense(props) {
                 value={expense}
                 onChange={individualExpense}
                 onClick={(e) => e.stopPropagation()}
+                type="number"
+                min={0}
             />
         </div>
     return (
         <div>
-            <div className="display-expense" onClick={props.onClick}>
-                {/* <div className="expense-content" onClick={props.onClick} style={{
-                    backgroundColor: props.toggle ? 'red' : 'black',
-                    color: props.toggle ? 'black' : 'white',
-                }}>{props.name}</div> */}
+            <div className="display-expense" onClick={() => {
+                props.onClick()
+                reset()
+            }}>
                 <button className={`indiv-traveller ${props.toggle ? "payee" : ""}`}>
                     <span className="expense-content">
                         {props.name}
                     </span>
                     <div>
-                        <input type="checkbox" checked={props.toggle} onChange={props.onClick}/>
+                        <input type="checkbox" checked={props.toggle} onChange={props.onClick} />
                     </div>
                 </button>
             </div>

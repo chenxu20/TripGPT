@@ -41,6 +41,8 @@ export default function Calculator() {
 
     const [date, setDate] = React.useState(currDate)
 
+    console.log(counter)
+
     React.useEffect(() => {
         if (split.auto) {
             setTravellers(prev => prev.map(
@@ -80,7 +82,7 @@ export default function Calculator() {
             }
         }
         for (let i = 0; i < travellers.length; i++) {
-            if (travellers[i].expensePlaceholder !== 0) {
+            if (!isNaN(travellers[i].expensePlaceholder) && travellers[i].expensePlaceholder !== 0) {
                 numPayee++
                 remainingAmount -= travellers[i].expensePlaceholder
                 remainingAmount = remainingAmount.toFixed(2)
@@ -89,7 +91,7 @@ export default function Calculator() {
         setNumPayee(numPayee)
         setNumPayer(numPayer)
         setRemainingAmount(remainingAmount)
-    }, [travellers])
+    }, [travellers, expense])
 
     React.useEffect(() => {
         const q = query(transactionColRef, orderBy("date", "desc"))
@@ -666,10 +668,10 @@ export default function Calculator() {
                             <button name="manual" className={`manual-btn calculator-button ${split.manual ? "manual-click" : ""}`} onClick={toggleSplit}>Split manually</button>
                             {split.auto && displayAutoSplit}
                             {split.manual && displayManualSplit}
-                            {split.manual && numPayee > 0 && remainingAmount >= 0 && (
+                            {split.manual && counter > 0 && remainingAmount >= 0 && (
                                 <p>total expenditure: ${expense}, remaining amount: ${remainingAmount}</p>
                             )}
-                            {split.manual && numPayee > 0 && remainingAmount < 0 && (
+                            {split.manual && counter > 0 && remainingAmount < 0 && (
                                 <p>error!</p>
                             )}
                             {(split.auto || split.manual) && <button className="calculator-button" onClick={updateDatabase}>Confirm</button>}
