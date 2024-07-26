@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { getErrorMsg } from './ui';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import "./style.css";
 import { Alert } from '../AlertMessage';
+import "./style.css";
 
 export const SignUp = () => {
     const [name, setName] = useState("");

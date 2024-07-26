@@ -27,7 +27,8 @@
 .itinerary-modal-close-button {
     background: transparent;
     border: none;
-    font-size: 1.25rem;
+    font-size: 1.3rem;
+    color: #c0c0c0;
     position: absolute;
     top: 10px;
     right: 10px;
@@ -134,6 +135,10 @@
     align-items: center;
 }
 
+#no-end-checkbox:hover {
+    cursor: pointer;
+}
+
 .flight-divider {
     display: flex;
     align-items: center;
@@ -231,7 +236,15 @@
 }
 
 .event-list-title {
-    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 1rem 0;
+}
+
+.event-list-destination {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0.6rem 0;
 }
 
 .mode-wrapper {
@@ -445,6 +458,11 @@
 
 .itinerary-item .dropdown-menu>ul>li {
     padding: 0.4rem 0.7rem;
+    border-bottom: 2px solid #808080;
+}
+
+.itinerary-item .dropdown-menu>ul>li:last-of-type {
+    border-bottom: 0;
 }
 
 .itinerary-item .dropdown-menu-button {

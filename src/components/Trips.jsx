@@ -1,6 +1,5 @@
 import React from 'react'
 import Calculator from './Calculator'
-import MyTrips from './MyTrips'
 import AddCalculator from './AddCalculator'
 import { ItineraryContextProvider } from '../context/ItineraryContext'
 import { ItineraryList } from './itinerary-planner/ItineraryList'

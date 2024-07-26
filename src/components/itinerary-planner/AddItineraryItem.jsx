@@ -57,7 +57,7 @@ export const AddItineraryItem = ({ itineraryToEdit, setAlert }) => {
                 <div className="itinerary-modal">
                     <div className="itinerary-modal-overlay" onClick={closeModal}></div>
                     <div className="itinerary-modal-content">
-                        <button className="itinerary-modal-close-button" onClick={closeModal}>X</button>
+                        <button className="itinerary-modal-close-button" onClick={closeModal}>&#10006;</button>
                         <h2>{itineraryToEdit ? "Edit" : "Add"} Itinerary</h2>
                         <form onSubmit={handleSubmit} id="itinerary-add-form" autoComplete="off">
                             <label>

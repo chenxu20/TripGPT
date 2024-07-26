@@ -3,8 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { getErrorMsg } from './ui';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import "./style.css";
 import { Alert, AlertMessage } from '../AlertMessage';
+import "./style.css";
 
 export const SignIn = () => {
     const [email, setEmail] = useState(localStorage.getItem("rememberMe") || "");

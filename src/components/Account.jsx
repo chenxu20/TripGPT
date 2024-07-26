@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
-import "./user-auth/style.css";
 import { Alert, AlertMessage } from './AlertMessage';
+import "./user-auth/style.css";
+import "./Account.css"
 
 export const Account = () => {
     const { user, userSignOut } = useContext(AuthContext);
@@ -28,7 +29,7 @@ export const Account = () => {
     return (
         <>
             <AlertMessage alert={alert} setAlert={setAlert} />
-            <div>
+            <div className="account-wrapper">
                 <h1>Account</h1>
                 <p>Name: {user.displayName}</p>
                 <p>Email: {user.email}</p>
