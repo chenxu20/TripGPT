@@ -17,10 +17,7 @@ const Steps = {
 };
 
 function capitalizeFirstLetter(str) {
-    if (str) {
-        return str.charAt(0).toUpperCase() + str.substring(1);
-    }
-    return str;
+    return str?.charAt(0).toUpperCase() + str.substring(1);
 }
 
 function createDateTime(date, time) {

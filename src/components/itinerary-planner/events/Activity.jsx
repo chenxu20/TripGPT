@@ -45,6 +45,7 @@ export const Activity = ({ initialEventState, eventToEdit }) => {
                         onChange={handleChange}
                         placeholder="Activity name"
                         required
+                        maxLength={100}
                     />
                 </label>
             </div>
@@ -110,6 +111,7 @@ export const Activity = ({ initialEventState, eventToEdit }) => {
                         value={event.location}
                         onChange={handleChange}
                         placeholder="Location (Optional)"
+                        maxLength={100}
                     />
                 </label>
             </div>
@@ -121,6 +123,7 @@ export const Activity = ({ initialEventState, eventToEdit }) => {
                         value={event.notes}
                         onChange={handleChange}
                         placeholder="Notes (Optional)"
+                        maxLength={400}
                     />
                 </label>
             </div>

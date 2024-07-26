@@ -14,7 +14,7 @@ export const AddItineraryItem = ({ itineraryToEdit, setAlert }) => {
     useEffect(() => {
         setItineraryName(itineraryToEdit?.name || "");
         setDestination(itineraryToEdit?.destination || "");
-    }, [itineraryToEdit]);
+    }, [isModalOpen, itineraryToEdit]);
 
     const handleSubmit = async e => {
         e.preventDefault();
@@ -70,6 +70,7 @@ export const AddItineraryItem = ({ itineraryToEdit, setAlert }) => {
                                     placeholder="Itinerary name"
                                     required
                                     disabled={loading}
+                                    maxLength={40}
                                 />
                             </label>
                             <label>
@@ -82,6 +83,7 @@ export const AddItineraryItem = ({ itineraryToEdit, setAlert }) => {
                                     placeholder="Destination"
                                     required
                                     disabled={loading}
+                                    maxLength={80}
                                 />
                             </label>
                             <button type="submit" className="itinerary-button" disabled={loading}>

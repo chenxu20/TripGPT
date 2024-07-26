@@ -62,6 +62,7 @@ export const Transportation = ({ initialEventState, eventToEdit }) => {
                         onChange={handleChange}
                         placeholder="Origin"
                         required
+                        maxLength={70}
                     />
                 </label>
             </div>
@@ -75,6 +76,7 @@ export const Transportation = ({ initialEventState, eventToEdit }) => {
                         onChange={handleChange}
                         placeholder="Destination"
                         required
+                        maxLength={70}
                     />
                 </label>
             </div>

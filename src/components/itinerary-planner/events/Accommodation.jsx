@@ -38,6 +38,7 @@ export const Accommodation = ({ initialEventState, eventToEdit }) => {
                         onChange={handleChange}
                         placeholder="Accommodation name"
                         required
+                        maxLength={100}
                     />
                 </label>
             </div>
@@ -50,6 +51,7 @@ export const Accommodation = ({ initialEventState, eventToEdit }) => {
                         onChange={handleChange}
                         placeholder="Accommodation address"
                         required
+                        maxLength={200}
                     />
                 </label>
             </div>
