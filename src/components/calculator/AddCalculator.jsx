@@ -1,5 +1,5 @@
 import React from "react"
-import { calculatorsCollection, transactionCollection, travellersCollection, database, auth } from "../config/firebase"
+import { calculatorsCollection, transactionCollection, travellersCollection, database, auth } from "../../config/firebase"
 import { doc, addDoc, deleteDoc, getDocs, onSnapshot, collection, updateDoc, getDoc, writeBatch, query, where, setIndexConfiguration } from "firebase/firestore"
 import { Link } from "react-router-dom"
 import "./AddCalculator.css"
@@ -46,7 +46,7 @@ export default function AddCalculator() {
 
     const displayCalculator = calculatorData.map(data => {
         return (
-            <div className="calc-div">
+            <div key={data.id} className="calc-div">
                 <h3>{data.calculatorName}</h3>
                 <div className="calculator-btns">
                     <Link to={`calculator/${data.id}`}><button className="calculator-btn">View Calculator</button></Link>
@@ -130,7 +130,6 @@ export default function AddCalculator() {
         });
 
         await batch.commit()
-        console.log('Subcollection deleted successfully')
     }
 
     function handleChange(event) {

@@ -1,6 +1,6 @@
 import React from 'react'
-import Calculator from './Calculator'
-import AddCalculator from './AddCalculator'
+import Calculator from './calculator/Calculator'
+import AddCalculator from './calculator/AddCalculator'
 import { ItineraryContextProvider } from '../context/ItineraryContext'
 import { ItineraryList } from './itinerary-planner/ItineraryList'
 import { Route, Routes } from 'react-router-dom'

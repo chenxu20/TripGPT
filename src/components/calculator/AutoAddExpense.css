@@ -1,0 +1,23 @@
+.display-expense {
+    display: flex;
+    justify-content: space-between;
+}
+
+.expense-content {
+    padding: 2px 8px;
+}
+
+.indiv-traveller {
+    width: 100%;
+    height: 100%;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.payee {
+    background-color: #18da11;
+}
