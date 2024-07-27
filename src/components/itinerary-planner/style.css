@@ -48,6 +48,7 @@
 
 .itinerary-modal-back-button {
     background-color: inherit;
+    color: inherit;
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -215,6 +216,7 @@
 
 .event-back-button {
     background-color: inherit;
+    color: inherit;
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -282,6 +284,7 @@
     cursor: pointer;
     padding: 0.7rem 1.4rem;
     background: #111111;
+    color: inherit;
     transition: border-color 0.25s;
     border: 2px solid #c0c0c0;
     border-radius: 2px;
@@ -438,6 +441,7 @@
 
 .itinerary-item .dropdown-button {
     background: none;
+    color: inherit;
     border: none;
     cursor: pointer;
     padding: 0.2rem;
@@ -476,6 +480,7 @@
     width: 100%;
     padding: 0.4rem 0.5rem;
     background: none;
+    color: inherit;
     border: none;
     text-align: center;
     cursor: pointer;

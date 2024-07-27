@@ -86,13 +86,13 @@ export const AddItineraryItem = ({ itineraryToEdit, setAlert }) => {
                                     maxLength={80}
                                 />
                             </label>
+                            {errorMessage && <span>{errorMessage}</span>}
                             <button type="submit" className="itinerary-button" disabled={loading}>
                                 {itineraryToEdit
                                     ? loading ? "Editing..." : "Edit Itinerary"
                                     : loading ? "Adding..." : "Add Itinerary"
                                 }
                             </button>
-                            {errorMessage && <span>{errorMessage}</span>}
                         </form>
                     </div>
                 </div>
