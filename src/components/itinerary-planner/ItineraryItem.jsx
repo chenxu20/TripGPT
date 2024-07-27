@@ -91,7 +91,7 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
         return () => {
             unsubscribeEvents?.();
         };
-    }, [itinerary]);
+    }, [itinerary.id]);
 
     useEffect(() => {
         const handleClickOutside = e => {
