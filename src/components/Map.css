@@ -1,0 +1,125 @@
+.map-container {
+    height: 80vh;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20vh;
+}
+
+.leaflet-control-geosearch .results {
+    background-color: #ffffff;
+    color: black;
+}
+
+.leaflet-control-geosearch .results:hover {
+    color: #000000;
+}
+
+.leaflet-geosearch-bar form {
+    padding: 0;
+}
+
+.leaflet-geosearch-bar form input {
+    background-color: white;
+    color: black;
+}
+
+.leaflet-routing-container {
+    background-color: white !important;
+    color: black !important;
+    border: 1px solid #ccc !important;
+}
+
+.leaflet-routing-container a {
+    color: black !important;
+}
+
+.leaflet-routing-container .leaflet-routing-alt {
+    background-color: white !important;
+    color: black !important;
+}
+
+.leaflet-routing-container .leaflet-routing-alt a {
+    color: black !important;
+}
+
+.leaflet-routing-container .leaflet-routing-form {
+    background-color: white !important;
+    color: black !important;
+}
+
+.leaflet-routing-container .leaflet-routing-form input {
+    background-color: white !important;
+    color: black !important;
+    border: 1px solid #ccc !important;
+}
+
+.leaflet-routing-container .leaflet-routing-geocoders img {
+    filter: invert(0%) !important;
+}
+
+.leaflet-routing-container .leaflet-routing-geocoders .leaflet-routing-geocoder {
+    background-color: white !important;
+    color: black !important;
+}
+
+.leaflet-routing-container .leaflet-routing-geocoders .leaflet-routing-geocoder input {
+    background-color: white !important;
+    color: black !important;
+    border: 1px solid #ccc !important;
+}
+
+.leaflet-routing-container .leaflet-routing-form button,
+.leaflet-routing-container .leaflet-routing-form .leaflet-routing-waypoint-add,
+.leaflet-routing-container .leaflet-routing-form .leaflet-routing-waypoint-remove {
+    background-color: white !important;
+    color: black !important;
+    border: 1px solid #ccc !important;
+}
+
+.leaflet-routing-container .leaflet-routing-form button:hover,
+.leaflet-routing-container .leaflet-routing-form .leaflet-routing-waypoint-add:hover,
+.leaflet-routing-container .leaflet-routing-form .leaflet-routing-waypoint-remove:hover {
+    background-color: #f0f0f0 !important;
+    color: black !important;
+}
+
+.leaflet-routing-geocoders button {
+    background-color: green !important;
+}
+
+.leaflet-routing-remove-waypoint:after {
+    background-color: red !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.leaflet-routing-container .leaflet-routing-form button,
+.leaflet-routing-container .leaflet-routing-form .leaflet-routing-waypoint-remove,
+.leaflet-routing-remove-waypoint:after {
+    width: 15px !important;
+    height: 20px !important;
+    margin: auto !important;
+}
+
+.leaflet-routing-container {
+    padding: 10px !important;
+    margin: 10px !important;
+    width: 350px !important;
+}
+
+.leaflet-routing-geocoder {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 80%;
+    margin: auto;
+}
+
+.leaflet-routing-remove-waypoint {
+    margin-left: 20px;
+}
+
+tr {
+    color: black;
+}
