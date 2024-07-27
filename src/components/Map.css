@@ -24,22 +24,10 @@
     color: black;
 }
 
-/* .leaflet-routing-geocoders input,
-.leaflet-routing-remove-waypoint,
-.leaflet-routing-geocoder {
-    background-color: white;
-    color: black;
-}
-
-td {
-    color: black;
-} */
-
 .leaflet-routing-container {
     background-color: white !important;
     color: black !important;
     border: 1px solid #ccc !important;
-    /* Light border for better contrast */
 }
 
 .leaflet-routing-container a {
@@ -64,12 +52,10 @@ td {
     background-color: white !important;
     color: black !important;
     border: 1px solid #ccc !important;
-    /* Light border for better contrast */
 }
 
 .leaflet-routing-container .leaflet-routing-geocoders img {
     filter: invert(0%) !important;
-    /* No inversion needed for light icons */
 }
 
 .leaflet-routing-container .leaflet-routing-geocoders .leaflet-routing-geocoder {
@@ -81,24 +67,20 @@ td {
     background-color: white !important;
     color: black !important;
     border: 1px solid #ccc !important;
-    /* Light border for better contrast */
 }
 
-/* Custom styles for buttons */
 .leaflet-routing-container .leaflet-routing-form button,
 .leaflet-routing-container .leaflet-routing-form .leaflet-routing-waypoint-add,
 .leaflet-routing-container .leaflet-routing-form .leaflet-routing-waypoint-remove {
     background-color: white !important;
     color: black !important;
     border: 1px solid #ccc !important;
-    /* Light border for better contrast */
 }
 
 .leaflet-routing-container .leaflet-routing-form button:hover,
 .leaflet-routing-container .leaflet-routing-form .leaflet-routing-waypoint-add:hover,
 .leaflet-routing-container .leaflet-routing-form .leaflet-routing-waypoint-remove:hover {
     background-color: #f0f0f0 !important;
-    /* Light grey background on hover */
     color: black !important;
 }
 
@@ -115,8 +97,6 @@ td {
 .leaflet-routing-container .leaflet-routing-form button,
 .leaflet-routing-container .leaflet-routing-form .leaflet-routing-waypoint-remove,
 .leaflet-routing-remove-waypoint:after {
-    /* min-width: 100px !important;
-    height: 40px !important; */
     width: 15px !important;
     height: 20px !important;
     margin: auto !important;
@@ -124,9 +104,7 @@ td {
 
 .leaflet-routing-container {
     padding: 10px !important;
-    /* Add padding to the container */
     margin: 10px !important;
-    /* Add margin to ensure space around container */
     width: 350px !important;
 }
 
