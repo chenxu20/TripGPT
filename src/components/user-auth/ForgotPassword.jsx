@@ -27,7 +27,7 @@ export const ForgotPassword = () => {
     return (
         <div className='wrapper'>
             <h1>Forgot Password</h1>
-            <fieldset disabled={loading} className={`fieldset ${loading ? 'fieldset-disabled' : ''}`}>
+            <fieldset disabled={loading} className={`auth-fieldset ${loading ? 'auth-fieldset-disabled' : ''}`}>
                 <form onSubmit={handleResetPassword} id="forgot-password-form">
                     <input
                         className="input-field"

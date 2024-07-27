@@ -133,7 +133,7 @@
     color: #646cff;
 }
 
-.fieldset {
+.auth-fieldset {
     border: none;
     margin: 0;
     padding: 0;
@@ -144,7 +144,7 @@
     align-items: center;
 }
 
-.fieldset-disabled {
+.auth-fieldset-disabled {
     color: #888888;
     pointer-events: none;
 }

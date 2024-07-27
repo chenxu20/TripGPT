@@ -62,7 +62,7 @@ export const SignIn = () => {
             <AlertMessage alert={alert} setAlert={setAlert} />
             <div className='wrapper'>
                 <h1>Sign In</h1>
-                <fieldset disabled={loading} className={`fieldset ${loading ? 'fieldset-disabled' : ''}`}>
+                <fieldset disabled={loading} className={`auth-fieldset ${loading ? 'auth-fieldset-disabled' : ''}`}>
                     <button onClick={handleGoogleSignIn} className="form-button">
                         {loading ? "Signing in..." : "Sign in with Google"}
                     </button>

@@ -76,17 +76,42 @@
     font-family: inherit;
     font-weight: 400;
     background: #111111;
-    padding: 0.5rem 0.8rem;
+    padding: 0.5rem 2rem 0.5rem 0.8rem;
     border: 2px solid #8e9696;
     border-radius: 5px;
     margin: 0.3rem 0;
-    max-width: 70%;
+    width: 60%;
     min-height: 1rem;
+}
+
+#change-password-form input:disabled {
+    background: #4b4b4b;
 }
 
 #change-password-form>button {
     align-self: start;
     margin: 0.5rem 0;
+}
+
+#change-password-form>button:disabled {
+    background: #4b4b4b;
+}
+
+#change-password-form .change-password-field {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    position: relative;
+}
+
+#change-password-form .show-password-icon {
+    background: none;
+    border: none;
+    display: flex;
+    position: relative;
+    right: 2rem;
+    cursor: pointer;
+    user-select: none;
 }
 
 .account-modal-close-button {
@@ -105,4 +130,16 @@
 
 .account-modal-close-button:hover {
     color: #646cff;
+}
+
+.change-password-fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.change-password-fieldset-disabled {
+    color: #888888;
+    pointer-events: none;
 }

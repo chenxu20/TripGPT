@@ -46,7 +46,7 @@ export const Account = () => {
                     <div>Email: {user.email}</div>
                     <div className="account-button-wrapper">
                         <button className="account-button" onClick={openModal}>Change Password</button>
-                        <ChangePasswordModal isModalOpen={isModalOpen} closeModal={closeModal} changePassword={changePassword} />
+                        <ChangePasswordModal isModalOpen={isModalOpen} closeModal={closeModal} changePassword={changePassword} setAlert={setAlert} />
                         <button className="account-button" onClick={handleSignOut}>Sign Out</button>
                     </div>
                 </div>

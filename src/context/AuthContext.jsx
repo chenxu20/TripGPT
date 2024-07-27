@@ -3,7 +3,6 @@ import { auth, database, googleProvider } from '../config/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import {
     createUserWithEmailAndPassword,
-    EmailAuthCredential,
     EmailAuthProvider,
     onAuthStateChanged,
     reauthenticateWithCredential,
@@ -73,16 +72,12 @@ export const AuthContextProvider = ({ children }) => {
 
     const changePassword = async (password, newPassword) => {
         const user = auth.currentUser;
-        console.log("a");
         const credential = EmailAuthProvider.credential(
             user.email,
             password
         );
-        console.log("b");
         await reauthenticateWithCredential(user, credential);
-        console.log("c");
         await updatePassword(user, newPassword);
-        console.log("d");
     };
 
     const forgotPassword = async email => {
