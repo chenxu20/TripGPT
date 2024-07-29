@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { doc, updateDoc, collection, onSnapshot, query, where, getDocs, getDoc } from 'firebase/firestore';
 import { database } from '../../config/firebase';
 import { useNavigate } from 'react-router-dom';
@@ -33,13 +33,13 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
                 const itineraryDoc = await getDoc(itineraryRef);
 
                 const eventsCollection = collection(database, `itineraries/${itinerary.id}/events`);
-                unsubscribeEvents = onSnapshot(eventsCollection, async snapshot => {       
+                unsubscribeEvents = onSnapshot(eventsCollection, async snapshot => {
                     const itineraryDoc = await getDoc(itineraryRef);
                     if (!itineraryDoc.exists()) {
                         setLoading(false);
                         return;
                     }
-                                 
+
                     const events = snapshot.docs.map(doc => doc.data());
                     if (events.length > 0) {
                         const startDate = events
@@ -104,7 +104,7 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [dropdownRef]);
+    }, []);
 
     const handleDelete = async () => {
         const confirmDelete = window.confirm(`Are you sure you want to delete "${itinerary.name}"?`);
@@ -130,13 +130,16 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
     };
 
     function displaySharedUsers() {
-        const maxNumber = 2;
+        const maxNumber = 1;
+        if (sharedUsers.length === 0) {
+            return "Private itinerary";
+        }
         if (sharedUsers.length <= maxNumber) {
-            return sharedUsers.map(user => user.name).join(', ');
+            return `${owner.name}, ${sharedUsers.map(user => user.name).join(', ')}`;
         } else {
             const shownUsers = sharedUsers.slice(0, maxNumber).map(user => user.name).join(', ');
             const remainingUsers = sharedUsers.length - maxNumber;
-            return `${shownUsers} +${remainingUsers}`;
+            return `${owner.name}, ${shownUsers} +${remainingUsers}`;
         }
     }
 
@@ -150,8 +153,11 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
         <div key={itinerary.id} className="itinerary-item">
             {errorMessage ? <div className="error-message">{errorMessage}</div> :
                 <>
-                    <div className="itinerary-header">
-                        <div className="itinerary-title">{itinerary.name}</div>
+                    <div className="itinerary-item-section">
+                        <div className="itinerary-item-text">
+                            <div className="itinerary-title">{itinerary.name}</div>
+                            <div className="itinerary-destination">{itinerary.destination}</div>
+                        </div>
                         <div className="dropdown-wrapper" ref={dropdownRef}>
                             <button className="dropdown-button" onClick={toggleDropdown}><FaEllipsisVertical size="1.4rem" /></button>
                             {showDropdown && (
@@ -174,19 +180,19 @@ export const ItineraryItem = ({ itinerary, setAlert }) => {
                             )}
                         </div>
                     </div>
-                    <div>{itinerary.destination}</div>
-                    <div className="itinerary-dates">
-                        {itinerary.startDate && itinerary.endDate
-                            ? `${displayDate(itinerary.startDate)} – ${displayDate(itinerary.endDate)}`
-                            : "Undated"}
-                    </div>
-                    <div className="itinerary-item-bottom">
-                        <div className="user-details">
-                            <div>{owner ? `Owned by ${owner.name}` : "Loading owner..."}</div>
-                            <div>{sharedUsers.length > 0 ? `Shared with ${displaySharedUsers()}` : "Private itinerary"}</div>
+                    <div className="itinerary-item-section">
+                        <div className="itinerary-item-text">
+                            <div className="itinerary-dates">
+                                {itinerary.startDate && itinerary.endDate
+                                    ? `${displayDate(itinerary.startDate)} – ${displayDate(itinerary.endDate)}`
+                                    : "Undated"}
+                            </div>
+                            <div>
+                                <div>{displaySharedUsers()}</div>
+                            </div>
                         </div>
                         <div className="view-button">
-                            <button className="itinerary-button view-button" onClick={() => navigate(`./${itinerary.id}`)}>View</button>
+                            <button className="itinerary-button" onClick={() => navigate(`./${itinerary.id}`)}>View</button>
                         </div>
                     </div>
                 </>

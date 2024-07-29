@@ -45,18 +45,19 @@ export const Food = ({ initialEventState, eventToEdit }) => {
                         onChange={handleChange}
                         placeholder="Venue"
                         required
+                        maxLength={100}
                     />
                 </label>
             </div>
             <div>
                 <label>
                     Address
-                    <input
-                        type="text"
+                    <textarea
                         name="address"
                         value={event.address}
                         onChange={handleChange}
                         placeholder="Address (Optional)"
+                        maxLength={200}
                     />
                 </label>
             </div>
@@ -121,6 +122,7 @@ export const Food = ({ initialEventState, eventToEdit }) => {
                         value={event.notes}
                         onChange={handleChange}
                         placeholder="Notes (Optional)"
+                        maxLength={400}
                     />
                 </label>
             </div>

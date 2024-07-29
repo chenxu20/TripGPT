@@ -35,11 +35,11 @@ export const ItineraryContextProvider = ({ children }) => {
                 const fetchedItineraries = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
                 const currentDate = new Date();
                 const pastItineraries = fetchedItineraries.filter(iti => iti.endDate?.toDate() < currentDate);
-                const futureItineraries = fetchedItineraries.filter(iti => iti.startDate?.toDate() >= currentDate);
+                const futureItineraries = fetchedItineraries.filter(iti => iti.endDate?.toDate() >= currentDate);
                 const undatedItineraries = fetchedItineraries.filter(iti => !iti.startDate);
 
                 pastItineraries.sort((x, y) => y.endDate.toDate() - x.endDate.toDate());
-                futureItineraries.sort((x, y) => x.startDate.toDate() - y.startDate.toDate());
+                futureItineraries.sort((x, y) => x.endDate.toDate() - y.endDate.toDate());
 
                 setUpcomingItineraries([...undatedItineraries, ...futureItineraries]);
                 setPastItineraries(pastItineraries);

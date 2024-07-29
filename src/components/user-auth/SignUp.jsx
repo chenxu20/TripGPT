@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { getErrorMsg } from './ui';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Alert } from '../AlertMessage';
 import "./style.css";
 
 export const SignUp = () => {
@@ -25,8 +26,7 @@ export const SignUp = () => {
                 throw new Error("Passwords do not match.");
             }
             await userSignUp(email, password, sanitizedDisplayName);
-            alert("Your account has been created successfully.");
-            navigate("/account");
+            navigate("/account", { replace: true, state: { alert: new Alert("You have signed up successfully.", 5000, "success") } });
         } catch (err) {
             setErrorMessage(getErrorMsg(err));
         } finally {
@@ -48,7 +48,7 @@ export const SignUp = () => {
     return (
         <div className='wrapper'>
             <h1>Sign Up</h1>
-            <fieldset disabled={loading} className={`fieldset ${loading ? 'fieldset-disabled' : ''}`}>
+            <fieldset disabled={loading} className={`auth-fieldset ${loading ? 'auth-fieldset-disabled' : ''}`}>
                 <form onSubmit={handleSignUp} id="user-sign-up-form">
                     <input
                         className="input-field"

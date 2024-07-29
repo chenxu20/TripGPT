@@ -45,18 +45,19 @@ export const Attraction = ({ initialEventState, eventToEdit }) => {
                         onChange={handleChange}
                         placeholder="Attraction name"
                         required
+                        maxLength={100}
                     />
                 </label>
             </div>
             <div>
                 <label>
                     Address
-                    <input
-                        type="text"
+                    <textarea
                         name="address"
                         value={event.address}
                         onChange={handleChange}
                         placeholder="Address (Optional)"
+                        maxLength={200}
                     />
                 </label>
             </div>

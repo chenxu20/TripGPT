@@ -27,7 +27,8 @@
 .itinerary-modal-close-button {
     background: transparent;
     border: none;
-    font-size: 1.25rem;
+    font-size: 1.3rem;
+    color: #c0c0c0;
     position: absolute;
     top: 10px;
     right: 10px;
@@ -47,6 +48,7 @@
 
 .itinerary-modal-back-button {
     background-color: inherit;
+    color: inherit;
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -134,6 +136,10 @@
     align-items: center;
 }
 
+#no-end-checkbox:hover {
+    cursor: pointer;
+}
+
 .flight-divider {
     display: flex;
     align-items: center;
@@ -210,6 +216,7 @@
 
 .event-back-button {
     background-color: inherit;
+    color: inherit;
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -231,7 +238,15 @@
 }
 
 .event-list-title {
-    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 1rem 0;
+}
+
+.event-list-destination {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0.6rem 0;
 }
 
 .mode-wrapper {
@@ -269,6 +284,7 @@
     cursor: pointer;
     padding: 0.7rem 1.4rem;
     background: #111111;
+    color: inherit;
     transition: border-color 0.25s;
     border: 2px solid #c0c0c0;
     border-radius: 2px;
@@ -330,8 +346,12 @@
     padding: 1.2rem 1rem;
     border-radius: 4px;
     margin-left: 2rem;
-    width: 20rem;
+    width: 22rem;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    overflow-wrap: break-word;
 }
 
 .event-content-button {
@@ -412,6 +432,7 @@
 .itinerary-item .itinerary-title {
     font-size: 1.4rem;
     font-weight: 700;
+    overflow: hidden;
 }
 
 .itinerary-item .dropdown-wrapper {
@@ -420,6 +441,7 @@
 
 .itinerary-item .dropdown-button {
     background: none;
+    color: inherit;
     border: none;
     cursor: pointer;
     padding: 0.2rem;
@@ -433,8 +455,8 @@
     border: 1px solid #cccccc;
     border-radius: 2px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-height: 9rem;
-    overflow: auto;
+    max-height: 7.2rem;
+    overflow-y: auto;
 }
 
 .itinerary-item .dropdown-menu>ul {
@@ -445,6 +467,11 @@
 
 .itinerary-item .dropdown-menu>ul>li {
     padding: 0.4rem 0.7rem;
+    border-bottom: 2px solid #808080;
+}
+
+.itinerary-item .dropdown-menu>ul>li:last-of-type {
+    border-bottom: 0;
 }
 
 .itinerary-item .dropdown-menu-button {
@@ -453,6 +480,7 @@
     width: 100%;
     padding: 0.4rem 0.5rem;
     background: none;
+    color: inherit;
     border: none;
     text-align: center;
     cursor: pointer;
@@ -463,22 +491,28 @@
     color: #646cff;
 }
 
-.itinerary-item-bottom {
-    display: flex;
-    gap: 1rem;
+.itinerary-item .itinerary-destination {
+    font-size: 1.1rem;
+    font-weight: 600;
+    overflow-wrap: break-word;
 }
 
-.itinerary-item-bottom .user-details {
-    flex: 2;
+.itinerary-item .itinerary-item-section {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     gap: 0.5rem;
 }
 
-.itinerary-item-bottom .view-button {
-    flex: 1;
-    text-align: center;
-    margin: auto;
+.itinerary-item .itinerary-item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.itinerary-item .view-button {
+    padding: 0 0.7rem 0.3rem 0;
+    display: flex;
+    align-items: end;
 }
 
 .itinerary-share-section {

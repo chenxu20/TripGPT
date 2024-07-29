@@ -80,6 +80,7 @@ export const Flight = ({ initialEventState, eventToEdit }) => {
                         onChange={handleChange}
                         placeholder="Flight origin"
                         required
+                        maxLength={70}
                     />
                 </label>
             </div>
@@ -93,6 +94,7 @@ export const Flight = ({ initialEventState, eventToEdit }) => {
                         onChange={handleChange}
                         placeholder="Flight destination"
                         required
+                        maxLength={70}
                     />
                 </label>
             </div>
@@ -111,6 +113,7 @@ export const Flight = ({ initialEventState, eventToEdit }) => {
                         onChange={handleChange}
                         placeholder="Flight number"
                         required
+                        maxLength={7}
                     />
                 </label>
             </div>
@@ -171,6 +174,7 @@ export const Flight = ({ initialEventState, eventToEdit }) => {
                                 onChange={handleInboundChange}
                                 placeholder="Flight number"
                                 required
+                                maxLength={7}
                             />
                         </label>
                     </div>

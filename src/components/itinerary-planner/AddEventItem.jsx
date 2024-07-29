@@ -17,10 +17,7 @@ const Steps = {
 };
 
 function capitalizeFirstLetter(str) {
-    if (str) {
-        return str.charAt(0).toUpperCase() + str.substring(1);
-    }
-    return str;
+    return str?.charAt(0).toUpperCase() + str.substring(1);
 }
 
 function createDateTime(date, time) {
@@ -256,7 +253,7 @@ export const AddEventItem = ({ itiId, eventToEdit, setAlert }) => {
                 <div className="itinerary-modal">
                     <div className="itinerary-modal-overlay" onClick={closeModal}></div>
                     <div className="itinerary-modal-content">
-                        <button className="itinerary-modal-close-button" onClick={closeModal}>X</button>
+                        <button className="itinerary-modal-close-button" onClick={closeModal}>&#10006;</button>
                         {step === Steps.INPUT_DETAILS && !eventToEdit &&
                             <button type="button" className="itinerary-modal-back-button" onClick={() => {
                                 setStep(Steps.SELECT_TYPE);

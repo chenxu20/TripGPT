@@ -14,7 +14,7 @@ export const AddItineraryItem = ({ itineraryToEdit, setAlert }) => {
     useEffect(() => {
         setItineraryName(itineraryToEdit?.name || "");
         setDestination(itineraryToEdit?.destination || "");
-    }, [itineraryToEdit]);
+    }, [isModalOpen, itineraryToEdit]);
 
     const handleSubmit = async e => {
         e.preventDefault();
@@ -57,7 +57,7 @@ export const AddItineraryItem = ({ itineraryToEdit, setAlert }) => {
                 <div className="itinerary-modal">
                     <div className="itinerary-modal-overlay" onClick={closeModal}></div>
                     <div className="itinerary-modal-content">
-                        <button className="itinerary-modal-close-button" onClick={closeModal}>X</button>
+                        <button className="itinerary-modal-close-button" onClick={closeModal}>&#10006;</button>
                         <h2>{itineraryToEdit ? "Edit" : "Add"} Itinerary</h2>
                         <form onSubmit={handleSubmit} id="itinerary-add-form" autoComplete="off">
                             <label>
@@ -70,6 +70,7 @@ export const AddItineraryItem = ({ itineraryToEdit, setAlert }) => {
                                     placeholder="Itinerary name"
                                     required
                                     disabled={loading}
+                                    maxLength={40}
                                 />
                             </label>
                             <label>
@@ -82,15 +83,16 @@ export const AddItineraryItem = ({ itineraryToEdit, setAlert }) => {
                                     placeholder="Destination"
                                     required
                                     disabled={loading}
+                                    maxLength={80}
                                 />
                             </label>
+                            {errorMessage && <span>{errorMessage}</span>}
                             <button type="submit" className="itinerary-button" disabled={loading}>
                                 {itineraryToEdit
                                     ? loading ? "Editing..." : "Edit Itinerary"
                                     : loading ? "Adding..." : "Add Itinerary"
                                 }
                             </button>
-                            {errorMessage && <span>{errorMessage}</span>}
                         </form>
                     </div>
                 </div>

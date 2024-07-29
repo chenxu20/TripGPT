@@ -138,8 +138,8 @@ export const ItineraryDetail = () => {
             <AlertMessage alert={alert} setAlert={setAlert} />
             <button onClick={() => navigate("/trips")} className="event-back-button"><FaChevronLeft />Trips</button>
             <div className="event-list-header">
-                <h1 className="event-list-title">{itinerary?.name}</h1>
-                <h2>{itinerary?.destination}</h2>
+                <div className="event-list-title">{itinerary?.name}</div>
+                <div className="event-list-destination">{itinerary?.destination}</div>
                 <div className="mode-wrapper">
                     <select value={mode} onChange={handleModeChange} className="drop-down" id="itinerary-mode-toggle">
                         <option value={Mode.VIEW}>Viewing</option>

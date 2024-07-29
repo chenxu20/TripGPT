@@ -3,12 +3,15 @@ import { auth, database, googleProvider } from '../config/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import {
     createUserWithEmailAndPassword,
+    EmailAuthProvider,
     onAuthStateChanged,
+    reauthenticateWithCredential,
     sendEmailVerification,
     sendPasswordResetEmail,
     signInWithEmailAndPassword,
     signInWithPopup,
     signOut,
+    updatePassword,
     updateProfile
 } from "firebase/auth";
 
@@ -67,12 +70,22 @@ export const AuthContextProvider = ({ children }) => {
         setUser(null);
     };
 
+    const changePassword = async (password, newPassword) => {
+        const user = auth.currentUser;
+        const credential = EmailAuthProvider.credential(
+            user.email,
+            password
+        );
+        await reauthenticateWithCredential(user, credential);
+        await updatePassword(user, newPassword);
+    };
+
     const forgotPassword = async email => {
         await sendPasswordResetEmail(auth, email);
     };
 
     return (
-        <AuthContext.Provider value={{ forgotPassword, googleUserSignIn, loading, setLoading, user, userSignUp, userSignIn, userSignOut }}>
+        <AuthContext.Provider value={{ changePassword, forgotPassword, googleUserSignIn, loading, setLoading, user, userSignUp, userSignIn, userSignOut }}>
             {children}
         </AuthContext.Provider>
     );
