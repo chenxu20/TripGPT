@@ -11,7 +11,7 @@ import { FlightDetails } from './events/Flight';
 import { FoodDetails } from './events/Food';
 import { TransportationDetails } from './events/Transportation';
 import { FaChevronLeft } from 'react-icons/fa';
-import { FaHotel, FaLocationDot, FaLandmark, FaPlane, FaUtensils, FaBus, FaCar, FaShip, FaTrainSubway } from 'react-icons/fa6';
+import { FaHotel, FaLocationDot, FaLandmark, FaPlane, FaUtensils, FaBus, FaCar, FaShip, FaTrainSubway, FaRegTrashCan } from 'react-icons/fa6';
 import { ClipLoader } from 'react-spinners';
 import { Alert, AlertMessage } from '../AlertMessage';
 import "./style.css";
@@ -170,13 +170,13 @@ export const ItineraryDetail = () => {
                                 {renderEventDetails(event)}
                             </div>
                             {mode === Mode.EDIT && (
-                                <div className="event-content-button">
+                                <div className="event-content-buttons">
                                     <AddEventItem
                                         itiId={id}
                                         eventToEdit={event}
                                         setAlert={setAlert}
                                     />
-                                    <button onClick={() => handleRemoveEvent(id, event.id)} className="itinerary-button">Remove</button>
+                                    <button onClick={() => handleRemoveEvent(id, event.id)} className="event-item-button" id="event-item-delete"><FaRegTrashCan size="1.1rem" /></button>
                                 </div>
                             )}
                         </div>

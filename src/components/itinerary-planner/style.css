@@ -337,35 +337,63 @@
 }
 
 .event-content-wrapper {
-    display: flex;
-}
-
-.event-content {
+    position: relative;
     background: #242424;
     border-left: 3px solid #646cff;
     padding: 1.2rem 1rem;
     border-radius: 4px;
     margin-left: 2rem;
-    width: 22rem;
+    width: 25rem;
+    height: fit-content;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+}
+
+.event-content {
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
     overflow-wrap: break-word;
+    max-width: 20.2rem;
 }
 
-.event-content-button {
-    display: inherit;
+.event-content-buttons {
+    position: absolute;
+    top: 0.65rem;
+    right: 0.65rem;
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
-    margin: 1rem 2rem;
-    height: 6.5rem;
+    gap: 0.6rem;
 }
 
 .event-content-title {
     font-size: 1.2rem;
     font-weight: 700;
     margin-bottom: 0.7rem;
+}
+
+.event-item-button {
+    background: inherit;
+    border: 2px solid #c0c0c0;
+    border-radius: 50%;
+    width: 2.4rem;
+    height: 2.4rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.event-item-button:hover {
+    border-color: #646cff;
+    color: #646cff;
+}
+
+#event-item-delete:hover {
+    border-color: #d32f2f;
+    color: #d32f2f;
 }
 
 #itinerary-add-form {
