@@ -144,12 +144,6 @@ export const FoodDetails = ({ event, displayDateTime }) => (
     <>
         <div className="event-content-title">{event.name}</div>
         {event.address && <div>Address: {event.address}</div>}
-        {event.endDate ? (
-            <>
-                <div>From: {displayDateTime(event.startDate)}</div>
-                <div>To: {displayDateTime(event.endDate)}</div>
-            </>
-        ) : <div>At: {displayDateTime(event.startDate)}</div>}
         {event.notes && <div>Notes: {event.notes}</div>}
     </>
 );
