@@ -11,7 +11,7 @@ import { FlightDetails } from './events/Flight';
 import { FoodDetails } from './events/Food';
 import { TransportationDetails } from './events/Transportation';
 import { FaChevronLeft } from 'react-icons/fa';
-import { FaHotel, FaLocationDot, FaLandmark, FaPlane, FaUtensils, FaBus, FaCar, FaShip, FaTrainSubway } from 'react-icons/fa6';
+import { FaHotel, FaLocationDot, FaLandmark, FaPlane, FaUtensils, FaBus, FaCar, FaShip, FaTrainSubway, FaRegTrashCan } from 'react-icons/fa6';
 import { ClipLoader } from 'react-spinners';
 import { Alert, AlertMessage } from '../AlertMessage';
 import "./style.css";
@@ -76,6 +76,74 @@ export const ItineraryDetail = () => {
         return date.toDate().toLocaleString("en-GB");
     }
 
+    const renderEvents = () => {
+        let prevDate = null;
+
+        return events.map(event => {
+            const eventDate = event.startDate.toDate();
+            const eventDateString = eventDate.toLocaleDateString("en-GB");
+
+            const eventEndDateObj = event.endDate;
+            const isDateDifferent = eventEndDateObj &&
+                eventDateString !== eventEndDateObj.toDate().toLocaleDateString("en-GB");
+
+            const showDateBar = prevDate !== eventDateString;
+            prevDate = eventDateString;
+
+            return (
+                <React.Fragment key={event.id}>
+                    {showDateBar && (
+                        <div className="event-date-bar">
+                            {eventDate.toLocaleDateString("en-GB", { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                        </div>
+                    )}
+                    <li key={event.id} className="event-wrapper">
+                        <div className={`event-time-wrapper ${!eventEndDateObj && "event-time-wrapper-padding"}`}>
+                            <div>
+                                {eventDate.toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                            {eventEndDateObj && (
+                                <>
+                                    <div>&ndash;</div>
+                                    {isDateDifferent &&
+                                        <div>
+                                            {eventEndDateObj.toDate().toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                                        </div>
+                                    }
+                                    <div>
+                                        {eventEndDateObj.toDate().toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit' })}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                        <div className="event-timeline-wrapper">
+                            <div className="timeline-line-before"></div>
+                            <div className="event-icon">
+                                {getEventTypeIcon(event)}
+                            </div>
+                            <div className="timeline-line-after"></div>
+                        </div>
+                        <div className="event-content-wrapper">
+                            <div className="event-content">
+                                {renderEventDetails(event)}
+                            </div>
+                            {mode === Mode.EDIT && (
+                                <div className="event-content-buttons">
+                                    <AddEventItem
+                                        itiId={id}
+                                        eventToEdit={event}
+                                        setAlert={setAlert}
+                                    />
+                                    <button onClick={() => handleRemoveEvent(id, event.id)} className="event-item-button" id="event-item-delete"><FaRegTrashCan size="1.1rem" /></button>
+                                </div>
+                            )}
+                        </div>
+                    </li>
+                </React.Fragment>
+            );
+        });
+    };
+
     const renderEventDetails = event => {
         switch (event.type) {
             case eventTypes.ACCOMMODATION:
@@ -95,34 +163,26 @@ export const ItineraryDetail = () => {
         }
     };
 
-    function getEventTypeIcon(event) {
-        switch (event.type) {
-            case eventTypes.ACCOMMODATION:
-                return <FaHotel />;
-            case eventTypes.ACTIVITY:
-                return <FaLocationDot />;
-            case eventTypes.ATTRACTION:
-                return <FaLandmark />;
-            case eventTypes.FLIGHT:
-                return <FaPlane />;
-            case eventTypes.FOOD:
-                return <FaUtensils />;
-            case eventTypes.TRANSPORTATION:
-                switch (event.name) {
-                    case "bus":
-                        return <FaBus />;
-                    case "car":
-                        return <FaCar />;
-                    case "ferry":
-                        return <FaShip />;
-                    case "train":
-                        return <FaTrainSubway />;
-                    default:
-                        return "";
-                }
-            default:
-                return "";
+
+    const eventTypeIcons = {
+        [eventTypes.ACCOMMODATION]: <FaHotel />,
+        [eventTypes.ACTIVITY]: <FaLocationDot />,
+        [eventTypes.ATTRACTION]: <FaLandmark />,
+        [eventTypes.FLIGHT]: <FaPlane />,
+        [eventTypes.FOOD]: <FaUtensils />,
+        [eventTypes.TRANSPORTATION]: {
+            bus: <FaBus />,
+            car: <FaCar />,
+            ferry: <FaShip />,
+            train: <FaTrainSubway />,
         }
+    };
+
+    function getEventTypeIcon(event) {
+        if (event.type === eventTypes.TRANSPORTATION) {
+            return eventTypeIcons[event.type][event.name] || "";
+        }
+        return eventTypeIcons[event.type] || "";
     }
 
     if (loading) {
@@ -157,31 +217,7 @@ export const ItineraryDetail = () => {
                 </div>
             </div>
             <ul className="event-display">
-                {events.map(event => (
-                    <li key={event.id} className="event-wrapper">
-                        <div className="event-timeline">
-                            <div className="event-icon">
-                                {getEventTypeIcon(event)}
-                            </div>
-                            <div className="timeline-line"></div>
-                        </div>
-                        <div className="event-content-wrapper">
-                            <div className="event-content">
-                                {renderEventDetails(event)}
-                            </div>
-                            {mode === Mode.EDIT && (
-                                <div className="event-content-button">
-                                    <AddEventItem
-                                        itiId={id}
-                                        eventToEdit={event}
-                                        setAlert={setAlert}
-                                    />
-                                    <button onClick={() => handleRemoveEvent(id, event.id)} className="itinerary-button">Remove</button>
-                                </div>
-                            )}
-                        </div>
-                    </li>
-                ))}
+                {renderEvents()}
             </ul>
         </div>
     );

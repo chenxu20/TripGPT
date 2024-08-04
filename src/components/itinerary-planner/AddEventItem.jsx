@@ -9,6 +9,7 @@ import { Transportation } from './events/Transportation';
 import { FaChevronLeft } from 'react-icons/fa';
 import { Alert } from '../AlertMessage';
 import "./style.css";
+import { FaPenToSquare } from 'react-icons/fa6';
 
 //Enum managing form step
 const Steps = {
@@ -246,7 +247,7 @@ export const AddEventItem = ({ itiId, eventToEdit, setAlert }) => {
     return (
         <>
             {eventToEdit
-                ? <button onClick={openModal} className="itinerary-button">Edit</button>
+                ? <button onClick={openModal} className="event-item-button"><FaPenToSquare size="1.1rem" /></button>
                 : <button onClick={openModal} className="itinerary-button">Add Event</button>
             }
             {isModalOpen && (

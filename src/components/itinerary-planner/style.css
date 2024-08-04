@@ -298,18 +298,42 @@
 
 .event-display {
     position: relative;
-    margin: 0;
+    margin: 1rem;
     padding: 0;
     list-style: none;
+    width: fit-content;
+}
+
+.event-date-bar {
+    background-color: #808080;
+    padding: 0.3rem 1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    position: relative;
+    z-index: 10;
 }
 
 .event-wrapper {
     display: flex;
-    margin: 2rem 1rem;
+    padding-right: 1rem;
 }
 
-.event-timeline {
-    padding-top: 0.6rem;
+.event-time-wrapper {
+    margin: 1.6rem 0;
+    padding-bottom: 1.2rem;
+    width: 5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 500;
+}
+
+.event-time-wrapper-padding {
+    padding-top: 1.2rem;
+}
+
+.event-timeline-wrapper {
+    margin: 0 2rem 0 1rem;
 }
 
 .event-icon {
@@ -325,47 +349,86 @@
     font-size: 1.5rem;
 }
 
-.timeline-line {
+.timeline-line-before, .timeline-line-after {
     margin: 0 auto;
     width: 4px;
-    height: 100%;
     background-color: #646cff;
 }
 
-.event-wrapper:last-child .timeline-line {
+.timeline-line-before {
+    height: 2.2rem;
+}
+
+.timeline-line-after {
+    height: 100%;
+}
+
+.event-wrapper:first-of-type .timeline-line-before {
+    background: none;
+}
+
+.event-wrapper:last-of-type .timeline-line-after {
     display: none;
 }
 
 .event-content-wrapper {
-    display: flex;
+    position: relative;
+    background: #242424;
+    border-left: 3px solid #646cff;
+    margin: 1.6rem 0;
+    padding: 1.2rem 1rem;
+    border-radius: 4px;
+    width: 25rem;
+    height: fit-content;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
 }
 
 .event-content {
-    background: #242424;
-    border-left: 3px solid #646cff;
-    padding: 1.2rem 1rem;
-    border-radius: 4px;
-    margin-left: 2rem;
-    width: 22rem;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
     overflow-wrap: break-word;
+    max-width: 20.2rem;
 }
 
-.event-content-button {
-    display: inherit;
-    flex-direction: column;
+.event-content-buttons {
+    position: absolute;
+    top: 0.65rem;
+    right: 0.65rem;
+    display: flex;
     justify-content: space-between;
-    margin: 1rem 2rem;
-    height: 6.5rem;
+    gap: 0.6rem;
 }
 
 .event-content-title {
     font-size: 1.2rem;
     font-weight: 700;
     margin-bottom: 0.7rem;
+    width: 17.5rem;
+}
+
+.event-item-button {
+    background: inherit;
+    border: 2px solid #c0c0c0;
+    border-radius: 50%;
+    width: 2.4rem;
+    height: 2.4rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.event-item-button:hover {
+    border-color: #646cff;
+    color: #646cff;
+}
+
+#event-item-delete:hover {
+    border-color: #d32f2f;
+    color: #d32f2f;
 }
 
 #itinerary-add-form {

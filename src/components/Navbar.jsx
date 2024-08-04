@@ -22,7 +22,7 @@ export default function Navbar() {
 
     return (
         <nav className="navbar">
-            <h2><FaEarthAmericas />TripGPT</h2>
+            <h2 style={{fontFamily: "Helvetica"}}><FaEarthAmericas />TripGPT</h2>
             <ul>
                 {items.map((x, index) => {
                     return (

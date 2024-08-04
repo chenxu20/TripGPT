@@ -144,12 +144,6 @@ export const Activity = ({ initialEventState, eventToEdit }) => {
 export const ActivityDetails = ({ event, displayDateTime }) => (
     <>
         <div className="event-content-title">{event.name}</div>
-        {event.endDate ? (
-            <>
-                <div>From: {displayDateTime(event.startDate)}</div>
-                <div>To: {displayDateTime(event.endDate)}</div>
-            </>
-        ) : <div>At: {displayDateTime(event.startDate)}</div>}
         {event.location && <div>Location: {event.location}</div>}
         {event.notes && <div>Notes: {event.notes}</div>}
     </>

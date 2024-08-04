@@ -131,12 +131,6 @@ export const Attraction = ({ initialEventState, eventToEdit }) => {
 export const AttractionDetails = ({ event, displayDateTime }) => (
     <>
         <div className="event-content-title">{event.name}</div>
-        {event.endDate ? (
-            <>
-                <div>From: {displayDateTime(event.startDate)}</div>
-                <div>To: {displayDateTime(event.endDate)}</div>
-            </>
-        ) : <div>At: {displayDateTime(event.startDate)}</div>}
         {event.address && <div>Address: {event.address}</div>}
     </>
 );
